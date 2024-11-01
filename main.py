@@ -1,3 +1,5 @@
+import requests
+import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -18,6 +20,10 @@ def getjpg(url):
     driver.get(url)
     driver.implicitly_wait(2)
     snippet = driver.find_element(By.CSS_SELECTOR,"img[alt='View from Second Link at Tuas']")
-    print('hi')
+    snippet_src = snippet.get_attribute('src')
+    response = requests.get(snippet_src)
+    with open("first_snippet.jpg", "wb") as file:
+        file.write(response.content)
     driver.quit()
-print(getjpg(url))
+    print('yuh')
+
