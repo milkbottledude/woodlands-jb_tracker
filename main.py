@@ -1,5 +1,7 @@
-import requests
 import datetime
+
+import requests
+from datetime import timedelta
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -19,11 +21,24 @@ def getjpg(url):
     driver = webdriver.Chrome(service=driver_service, options=chrome_options)
     driver.get(url)
     driver.implicitly_wait(2)
-    snippet = driver.find_element(By.CSS_SELECTOR,"img[alt='View from Second Link at Tuas']")
+    snippet = driver.find_element(By.CSS_SELECTOR,"img[alt='View from Woodlands Causeway (Towards Johor)']")
     snippet_src = snippet.get_attribute('src')
+    # print(snippet_src)
     response = requests.get(snippet_src)
-    with open("first_snippet.jpg", "wb") as file:
+    now = datetime.now()
+    day = now.strftime("%A")[:3]
+    date = now.strftime("%Y-%m-%d")
+    time = now.strftime("%H-%M")
+    filename = f'{day}_{date}_{time}.jpg'
+    with open(filename, "wb") as file:
         file.write(response.content)
     driver.quit()
     print('yuh')
+# print(getjpg(url))
+now = datetime.datetime.now(datetime.UTC)
+day = now.strftime("%A")[:3]
+date = now.strftime("%m-%d")
+time = now.strftime("%H:%M")
+filename = f'{day}_{date}_{time}.jpg'
+print(filename)
 
