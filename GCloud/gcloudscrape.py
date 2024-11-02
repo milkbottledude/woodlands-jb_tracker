@@ -24,7 +24,7 @@ offset = datetime.timedelta(hours=8)
 
 utc_now = datetime.datetime.now(datetime.UTC)
 sg_time = utc_now + offset
-day = sg_time.strftime("%A")[:3]
+day = sg_time.strftime("%A")#[:3]
 date = sg_time.strftime("%m-%d")
 time = sg_time.strftime("%H-%M")
 
@@ -42,6 +42,7 @@ def adddatetime(bucketname, data):
     print('returned to sender')
 
 def scrapeaddpic(url, bucketname, pics):
+    print('scraping')
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(url)
     driver.implicitly_wait(2)
@@ -49,7 +50,7 @@ def scrapeaddpic(url, bucketname, pics):
     snippet_src = snippet.get_attribute('src')
     response = requests.get(snippet_src)
     #addtofolder portion from here onwards
-
+    print('adding to folder')
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucketname)
     filename = f'{day}_{date}_{time}.jpg'
@@ -60,5 +61,7 @@ def scrapeaddpic(url, bucketname, pics):
     print('yuh')
 
 
-adddatetime(BUCKET_NAME, datetimes)
-scrapeaddpic(url, BUCKET_NAME, pics)
+def execute(request):
+    adddatetime(BUCKET_NAME, datetimes)
+    scrapeaddpic(url, BUCKET_NAME, pics)
+    return "Success", 200  # Return a success message and HTTP 200 status
