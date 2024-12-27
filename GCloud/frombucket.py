@@ -1,6 +1,9 @@
 from google.cloud import storage
 import os
 
+# creds
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"C:\Users\Yu Zen\Documents\Coding\sapient-metrics-436909-v6-09e1f1ee28c1.json"
+
 # downloading stuff in folder from bucket
 def download_folder(bucket_name, folder_name, local_destination):
     storage_client = storage.Client()
@@ -22,6 +25,6 @@ def download_folder(bucket_name, folder_name, local_destination):
 # Example usage
 bucket_name = "frickubucket"
 folder_name = "snapshots/"  # Ensure it ends with a slash
-local_destination = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\snaps"  # Path to your 'ballsy' folder
+local_destination = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\snaps"  # Path to folder
 
 download_folder(bucket_name, folder_name, local_destination)

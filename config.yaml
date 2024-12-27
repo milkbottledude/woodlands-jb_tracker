@@ -1,0 +1,7 @@
+path: C:\Users\Yu Zen\Documents\Coding\Project-JBridge\cvat # dataset root directory
+train: train\images # training images (relative to path)
+val: val\images # val images (relative to path)
+
+# classes
+names:
+  0: jam
