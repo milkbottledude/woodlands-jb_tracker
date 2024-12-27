@@ -1,3 +1,3 @@
-GCloud/snaps
 .idea
 myenv
+GCloud/snaps since dec 27th
