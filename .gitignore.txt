@@ -1,0 +1,2 @@
+GCloud/snaps
+.idea
