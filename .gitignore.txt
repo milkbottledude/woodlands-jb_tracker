@@ -1,2 +1,3 @@
 GCloud/snaps
 .idea
+myenv
