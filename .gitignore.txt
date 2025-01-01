@@ -1,3 +1,7 @@
 .idea
 myenv
-GCloud/snaps since dec 27th
+snaps_3
+snaps_4
+snaps_5
+snaps_6
+snaps_7
