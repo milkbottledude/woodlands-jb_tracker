@@ -5,19 +5,28 @@ import numpy as np
 
 coords_1_path = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\coords_1"
 coords_2_path = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\coords_2"
-coordpaths = [coords_1_path, coords_2_path]
+coords_3_path = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\coords_3"
+coordpaths = [coords_1_path, coords_2_path, coords_3_path]
 
 days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 times = ['00-00', '01-00', '02-00', '03-00', '04-00', '05-00', '06-00', '07-00', '08-00', '09-00', '10-00', '11-00', '12-00', '13-00', '14-00', '15-00', '16-00', '17-00', '18-00', '19-00', '20-00', '21-00', '22-00', '23-00']
 
 area_dict = {}
 for day in days:
-    area_dict[day] = [0, 0] # 1st value is congestion area, 2nd area is for number of images/instances, can use for finding average area over time instances as we might have more of 1 day than another
+    area_dict[day] = {}
+    for time in times:
+        area_dict[day][time] = [0, 0] # 1st digit total area, 2nd digit number of instances
+
+# creating pandas df with the days as columns and times for the row index
+table = pd.DataFrame(columns=days, index=times)
 
 for path in coordpaths:
     for file_name in os.listdir(path):
-        day = file_name[:3]
-        area_dict[day][1] += 1
+        parts = file_name.split('_')
+        date = parts[0]
+        time = parts[1]
+        day = parts[2][:3]
+        area_dict[day][time][1] += 1
         file_path = os.path.join(path, file_name)
         with open(file_path, 'r') as file:
             total_box_area = 0
@@ -29,11 +38,14 @@ for path in coordpaths:
                 if actual_y < y:
                     box_area = float(numbers[3]) * float(numbers[4])
                     total_box_area += box_area
-            area_dict[day][0] += total_box_area
+            area_dict[day][time][0] += total_box_area
+            total_area = area_dict[day][time][0]
+            instance_no = area_dict[day][time][1]
+            table.loc[time, day] = total_area/instance_no
 
-for key in area_dict:
-    area = area_dict[key][0]
-    instance_no = area_dict[key][1]
-    avg_area = area/instance_no
-    area_dict[key].append(avg_area)
-    print(key, area_dict[key])
+# applying min-max scaling to the table
+max_value = table.max().max()
+table = table.astype(float)
+table = table/max_value * 5 # scaled values range from 0 to 5; 0 = no jam, 5 = very congested, then rounding to 2dp for readability
+table = table.apply(lambda x: x.round(2))
+print(table)

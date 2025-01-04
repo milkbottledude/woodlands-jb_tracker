@@ -1,5 +1,6 @@
 .idea
 myenv
+__pycache__
 snaps_3
 snaps_4
 snaps_5
