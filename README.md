@@ -82,4 +82,37 @@ Lets also do the same for the road going into Woodlands from Johor. (Fig to wdln
 The line graph did not turn out very well, its quite hard to make sense of it and thats not good. On the bright side however, the bar graph/histogram came out pretty well. Aside from the slight overlapping of labels, it makes very clear how much congestion you are likely to encounter on each time of day, based on the limited data we have scrounged in the past 2 months.
 These graphs are not major, but they definitely give us food for thought coming into the next section of the project: Machine Learning.
 
+# Machine Learning 
+To be able to do any proper machine learning and extract reliable patterns through neural network models, we will need a lot more data than what is currently available. Theres barely about 2 months worth of information collected since the gcloud run function started near the beginning the November 2024. This is a disclaimer that the output predictions from this data analysis may not be 100% accurate.
+Lets start by identifying the public holiday periods of schools in Singapore in 2024. (Fig sch hols) We can ignore the holiday periods that dont overlap with the time period when gcloud was collecting images (from 4th Nov onwards). 
+So the only school holiday periods we are interested in are those closer to the year end. Also ill be grouping the year end holiday periods of j2s and j1s together, because j2s make up a very small fraction of total students in the nation, especially when you consider only 30% of students go to JC.
 
+Actually, the holiday periods for jc as well as for pri, sec and kindergarten students are almost the same. ill group them together into 1 column for simplicity.
+
+As for the holiday periods of polytechnics, they mostly overlap between early/mid December 2024 to early Jan 2025 (ALL figs poly)
+So i will set the poly holiday period to be 12 Dec - 1 Jan.
+
+We can feed this information to our machine learning model as binary columns, eg: column name: within sch hols, True/ False.
+
+As for public holidays, the only public holidays we should be concerned with given our current data are 25th Dec 2024, which is Christmas on a wednesday and 1st Jan 2025, New Years which is also on a Wednesday. 
+We can do a 'proximity to Christmas' or 'proximity to New Years' column, which shows the number of days between the date of the image and the public holiday. To make things simpler ill cap the number at 7 days away, so if the date is more than 7 days away, the value in that column would still be 7.
+
+Another idea i have for a variable is the amount of jam in the previous hour or previous few hours. An instance is likely to have a jam if there was already a build up of cars in the previous hour/hours. We can implement this using the 'shift' function from pandas.
+
+So far, the independent variables we have are:
+
+1) time of day
+2) day
+3) whether the date is within sch hols period
+4) variable 3 but for poly
+5) days to Christmas
+6) days to New Years
+7) previous hour's traffic
+
+When fed to a machine learning model, hopefully it can identify patterns between them and the dependent variable, area of traffic. 
+
+Lets start prepping the data into a dataframe with these 6 columns that can be trained with by a machine learning model.
+
+We have already been able to extract the time of day and day of the week in our previous data analysis, now we need to extract the date and compare it to get the 3rd to 6th variable values.
+
+To start, i will use a standard neural network with 3 layers. (delete n put at next para later: Now ill use a slightly more advanced recurrent neural network model for better time-series predictions.)
