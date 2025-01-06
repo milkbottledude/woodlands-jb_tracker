@@ -7,7 +7,7 @@ Stage 2: We will now be moving on to the machine learning part of the project. U
 Stage 3: I will pick the most suitable and convenient machine learning frameworks out of those mentioned above, and utilise it in the rest of my project. Now we will be attempting to automate this whole process, from starting the code for selenium to scrape the website, all the way to counting the number of cars and saving the number in a csv file. To automate all of this, i will be using Google Cloud Run, because my broke ass cannot afford AWS. It is simply a matter of moving all the code in PyCharm to Google Cloud's code editor and editing the code to ensure it works in Google Cloud's CLoud Run.
 
 Stage 4: After quantifying the crowdedness data of the bridge for different days and different time of days, we can visualise this data through the use of bar graphs to try and identify any patterns or relationships, as well as any hidden factors that may influence the number of cars on the bridge. 
-If time permits, i will also use machine learning methods to identify patterns that i could not identify myself, either through simple linear models from sklearn or more complex models such as neural networks from TensorFlow. I will probably use the latter.
+If time permits, i will also use machine learning methods to identify patterns that i could not identify myself, either through simple linear models from sklearn or more complex models such as neural networks from TensorFlow. I will probably use the latter. After the model is reliable, not only can we use it to predict traffic conditions a few days prior, i will also use gcloud to set up a 'real time' traffic prediction, which should be more reliable as it can see the traffic of the previous few hours and make a more informed decision on the upcoming traffic condition. We could even set up an alert system to notify you on your phone when the jam will occur on the day itself.
 
 
 Hello guys, been a while since i updated the README, there have been some big changes. Due to the not so sharp quality of the snapshots from the LTA live cameras, it is near impossible for YOLO to learn what pixels constitute a car with so little pixels to play with.
@@ -65,3 +65,21 @@ Not so easy on the eyes, with weird numbers with many decimal places all over th
 Slightly better, people should be able to visualise these 2dp numbers as congestion on the road to a greater degree. But the table and its information can definitely still be improved, aesthetics wise too.
 The values here not just show the amount of congestion, but it also kind of represents the probability of congestion at that time of day. For example, if 10am on a Saturday has heavy congestion almost every time the scraper captures the image of the road at that moment, then the total area would be greater, so quotient would be greater.
 However, if lets say at 1300 on Thurday, there are 2 instances, 11-07 and 11-14. The latter has heavy congestion, but the other instance has no jam. Number of instances are 2, but total area is less, making the average area lesser. So the values in the table can also be used as an estimate of whether the road would have congestion or not at that time of day.
+
+Here is the same table in a line graph format, although its a little cramped with all 7 days of the week (Fig colorful line graph).
+
+The graph seems to align with some of the known behaviours that we know of, for example:
+
+- presence of jam from 1900 to 2300 for only Fridays as that is the period after work when people want to spend the weekend in Johor
+- large spike in jam on Saturday mornings for people that are not willing to go to Johor immediately after work on Friday but still want to spend some weekend time in Johor
+
+However, its interesting to note that there is not much jam on Sundays. I would have thought both days of the weekend would have large jams, but i guess people arent as willing to go to Johor on Sunday compared to Sat. Rather, there might be a large jam towards Woodlands from people that came to Johor on Saturday and Sunday coming back to SG.
+
+If Fig colorful line graph was too messy or hard to understand, here are separate bar graphs of each day of the week (Fig separate histos). Its basically like a histogram in that it shows the distribution of numerical values not categorical values. Apologies for the overlapping of labels between the upper and lower rows, but they cannot be adjusted further or they would be too small to be read.
+
+Lets also do the same for the road going into Woodlands from Johor. (Fig to wdlnads colorful line graph) (Fig to wdlnads separate histos)
+
+The line graph did not turn out very well, its quite hard to make sense of it and thats not good. On the bright side however, the bar graph/histogram came out pretty well. Aside from the slight overlapping of labels, it makes very clear how much congestion you are likely to encounter on each time of day, based on the limited data we have scrounged in the past 2 months.
+These graphs are not major, but they definitely give us food for thought coming into the next section of the project: Machine Learning.
+
+

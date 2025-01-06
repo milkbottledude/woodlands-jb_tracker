@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 coords_1_path = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\coords_1"
@@ -35,7 +36,7 @@ for path in coordpaths:
                 x = float(numbers[1])
                 actual_y = float(numbers[2])
                 y = 1 / (1 + np.exp(4 * (x - 0.73)))
-                if actual_y < y:
+                if actual_y > y:
                     box_area = float(numbers[3]) * float(numbers[4])
                     total_box_area += box_area
             area_dict[day][time][0] += total_box_area
@@ -49,3 +50,27 @@ table = table.astype(float)
 table = table/max_value * 5 # scaled values range from 0 to 5; 0 = no jam, 5 = very congested, then rounding to 2dp for readability
 table = table.apply(lambda x: x.round(2))
 print(table)
+
+d = 0
+color = ['red', 'blue', 'green', 'yellow', 'black', 'purple', 'pink']
+fig, axes = plt.subplots(2, 4)
+axesrows = [0, 0, 0, 0, 1, 1, 1]
+axescols = [0, 1, 2, 3, 0, 1, 2]
+for col in table.columns:
+    y = list(table[col])
+    # plt.plot(times, y, label=days[d], color=color[d])
+    axes[axesrows[d], axescols[d]].bar(range(24), y)
+    axes[axesrows[d], axescols[d]].set_xticks(range(24))
+    axes[axesrows[d], axescols[d]].set_xticklabels(times, rotation=66, fontsize=7)
+    axes[axesrows[d], axescols[d]].set_title(days[d])
+    axes[axesrows[d], axescols[d]].set_ylim(0, 5)
+    d += 1
+axes[1, 3].axis('off')
+plt.show()
+
+# plt.title('Area of each day at different times')
+# plt.xlabel('time')
+# plt.ylabel('area')
+# plt.legend()
+# plt.grid(True)
+# plt.show()
