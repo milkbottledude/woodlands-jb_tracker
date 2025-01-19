@@ -1,5 +1,6 @@
+# Project: Woodlands-JB Tracker
 
-![alt text](project_banner.jpg)
+![image](https://github.com/user-attachments/assets/a4218ac1-2360-4fce-a188-989eb53b923c)
 
 - 🗪 Feel free to telegram me [@milkbottledude](https://t.me/milkbottledude) if you have any questions, or just want to chat :)
 
@@ -18,43 +19,43 @@ Tools and libraries used in this project:
 
 - **Google Cloud**, for automation of code running and image storage
     - Cloud Run Functions
-    ![Fig I](<gcloud run functions preview.jpg>)
+    ![image](https://github.com/user-attachments/assets/98180aa1-de2b-4275-a018-eeb5f2986578)
 
         Figure I: Preview of GCloud Run Functions
 
     - Cloud Scheduler
-    ![Fig II](<gcloud scheduler preview.jpg>)
+    ![image](https://github.com/user-attachments/assets/abc07e8f-9c6a-4727-b787-a40276d4a65c)
 
         Figure II: Preview of GCloud Scheduler Preview
 
     - Cloud Storage
-    ![Fig III](<gcloud storage preview.jpg>)
+    ![image](https://github.com/user-attachments/assets/430074de-c37f-43fb-b0c4-c42e76a51a3b)
 
         Figure III: Preview of GCloud Storage
 
 - **YOLO** (You Only Look Once), for object detection 
-![Fig IV](yolo_beachscreenshot.jpg)
+    ![image](https://github.com/user-attachments/assets/f3b00fb4-42d4-4dbe-82c7-9f74fb8784b2)
 
     Figure IV: YOLO in action on a picture of the beach
 
 - **Selenium**, for web scraping
 
     You can see Selenium in action in the GIF below, with the chromedriver opening the LTA website for a split second during web scraping.
-![Fig V](selenium_screenrecord.gif)
+  ![selenium gif](progress_pics/selenium_screenrecord.gif)
+
 
     Fig V: Selenium in action on LTA's traffic camera website
 
 - **Pandas** and **Numpy**, for storing the quantified data into neat tables
-![Fig VI](hourjam_table.jpg)
-
+    ![hourjam table](progress_pics/hourjam_table.jpg)
     Fig VI: Table of relative congestion values for every hour of the day
 
 - **Matplotlib** for visualization of data with graphs and charts.
-![Fig VII](coords_colour_classified.jpg)
+    ![Fig VII](progress_pics/coords_colour_classified.jpg)
 
     Fig VII: Graph of coordinates of bounding boxes, with each colour representing one side of the bridge.
 
-The full list of libraries I imported to use in this project can be found in the [requirements.txt](./requirements.txt) file, but do check their versions in case they are outdated.
+The full list of libraries I imported to use in this project can be found in the [requirements.txt](miscellaneous/requirements.txt) file, but do check their versions in case they are outdated.
 
 This project will be divided into 5 chapters✋:
 
@@ -106,7 +107,7 @@ Chapter 1: Collecting raw data
 - 1.1: [Web Scraping](#web-scraping) 
 - 1.2: [Automating Web Scraping with GCloud](#automating-web-scraping-with-gcloud) 
 - 1.3: [Creating a Dockerized Container](#creating-a-dockerized-container) 
-- 1.4: [Creating and Linking GCloud Bucket](#creating-and-linking-gcloud-bucket)
+- 1.4: [Creating and Linking GCloud Bucket](#creating-and-linking-gcloud-bucket) (delete when done)
 
 
 Chapter 2: Prepping Images for Object Detection
@@ -167,7 +168,7 @@ from selenium.webdriver.chrome.options import Options
 ```
 - Now moving on to the actual code, starting with the function `getjpg(url)`, where the 'url' inside the brackets is the only argument of the function and is where we will pass the LTA website's url.
 
-    ![Fig 1.1](image-1.png)
+    ![Fig 1.1](progress_pics/first part of getjpg function.jpg)
 
     Fig 1.1: Web scraping portion of `getjpg` function
 
@@ -179,7 +180,7 @@ from selenium.webdriver.chrome.options import Options
 
 - The second part of the function focuses on the format of the image file name after downloading it, as that will be important in the later chapters for organizing and visualising of data.
 
-    ![Fig 1.2](<naming part of getjpg.jpg>)
+    ![Fig 1.2](progress_pics/naming_part_of_getjpg.jpg)
 
     Fig 1.2: Constructing image file name
 
