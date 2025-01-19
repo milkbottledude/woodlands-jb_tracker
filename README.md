@@ -108,6 +108,7 @@ Chapter 1: Collecting raw data
 - 1.2: [Automating Web Scraping with GCloud](#automating-web-scraping-with-gcloud) 
 - 1.3: [Creating a Dockerized Container](#creating-a-dockerized-container) 
 - 1.4: [Creating and Linking GCloud Bucket](#creating-and-linking-gcloud-bucket) (delete when done)
+- 1.5: [Cloud Scheduler](#cloud-scheduler) (delete when done)
 
 
 Chapter 2: Prepping Images for Object Detection
@@ -280,8 +281,23 @@ It was pretty discouraging, because the more I learnt, the more I realised how m
 But after 2 arduous weeks, I finally managed to get a container, with chrome and chromedriver properly installed, up and running without any problems. That was a good day, felt super accomplished.
 
 ### 1.4: Creating and Linking GCloud Bucket
+First I created the bucket in GCloud storage called 'frickubucket' (don't ask me about the name I made it at 2am on a Sunday morning), then added 2 folders. One for pictures of the crossover before Singapore Woodlands Checkpoint called towardsbkesnapshot/, and the other for pictures of the crossover after the SG checkpoint and leading up to the JB customs. This folder was simply called snapshots/.
 
-take it away
+insert pic herrererere
+
+Fig 1.6: Bucket and folders in GCloud storage
+
+Below are all the pictures that have accumulated in snapshots/ since I started the cloud scheduler in the 4th quarter of 2024, I can't quite remember the exact month.
+
+As you can see all the filenames are formatted nicely as date_time_day.
+
+Fig 1.7: Picture files inside the snapshot/ folder
+
+The linking of the bucket and folders to the python code was already covered in Chapter 1.1, shld i cover more??????????????
+
+
+
+
 
 ## unprocessed desc, rough work
 TLDR outline of project.
