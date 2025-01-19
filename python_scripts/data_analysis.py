@@ -36,7 +36,7 @@ for path in coordpaths:
                 x = float(numbers[1])
                 actual_y = float(numbers[2])
                 y = 1 / (1 + np.exp(4 * (x - 0.73)))
-                if actual_y > y:
+                if actual_y < y:
                     box_area = float(numbers[3]) * float(numbers[4])
                     total_box_area += box_area
             area_dict[day][time][0] += total_box_area
@@ -50,6 +50,7 @@ table = table.astype(float)
 table = table/max_value * 5 # scaled values range from 0 to 5; 0 = no jam, 5 = very congested, then rounding to 2dp for readability
 table = table.apply(lambda x: x.round(2))
 print(table)
+# table.to_csv('sorted_data.csv', index=False)
 
 d = 0
 color = ['red', 'blue', 'green', 'yellow', 'black', 'purple', 'pink']

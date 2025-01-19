@@ -1,4 +1,289 @@
-TLDR, heres the outline of what will be done in this project.
+
+![alt text](project_banner.jpg)
+
+- 🗪 Feel free to telegram me [@milkbottledude](https://t.me/milkbottledude) if you have any questions, or just want to chat :)
+
+## Overview 🔍
+Welcome to Project: Woodlands-JB Tracker!
+
+This project aims to predict the congestion level of the bridge at the Singapore Woodlands Checkpoint Causeway based on variables like:
+- Time of day 🕑 
+- Day of the week 🌞 (i think generally wkends are more congested but we'll see what the data tells us)
+- Presence of holidays (public hol & sch hol) 🏖️
+- Month of the year 📅
+
+Known as the most busiest land crossing in the world, the bridge allows cars to go to and fro between Johor, Malaysia and Singapore. It would certainly help us if we could know when the bridge was clear so that we can pop into Johor for a shopping trip, or a day out with the family without being stuck in traffic for hours.
+
+Tools and libraries used in this project:
+
+- **Google Cloud**, for automation of code running and image storage
+    - Cloud Run Functions
+    ![Fig I](<gcloud run functions preview.jpg>)
+
+        Figure I: Preview of GCloud Run Functions
+
+    - Cloud Scheduler
+    ![Fig II](<gcloud scheduler preview.jpg>)
+
+        Figure II: Preview of GCloud Scheduler Preview
+
+    - Cloud Storage
+    ![Fig III](<gcloud storage preview.jpg>)
+
+        Figure III: Preview of GCloud Storage
+
+- **YOLO** (You Only Look Once), for object detection 
+![Fig IV](yolo_beachscreenshot.jpg)
+
+    Figure IV: YOLO in action on a picture of the beach
+
+- **Selenium**, for web scraping
+
+    You can see Selenium in action in the GIF below, with the chromedriver opening the LTA website for a split second during web scraping.
+![Fig V](selenium_screenrecord.gif)
+
+    Fig V: Selenium in action on LTA's traffic camera website
+
+- **Pandas** and **Numpy**, for storing the quantified data into neat tables
+![Fig VI](hourjam_table.jpg)
+
+    Fig VI: Table of relative congestion values for every hour of the day
+
+- **Matplotlib** for visualization of data with graphs and charts.
+![Fig VII](coords_colour_classified.jpg)
+
+    Fig VII: Graph of coordinates of bounding boxes, with each colour representing one side of the bridge.
+
+The full list of libraries I imported to use in this project can be found in the [requirements.txt](./requirements.txt) file, but do check their versions in case they are outdated.
+
+This project will be divided into 5 chapters✋:
+
+Chapter 1️⃣ : Collecting Raw Data
+
+In order to gather raw data 🔍, we'll first use Selenium to web scrape snapshots of the bridge from the LTA woodlands causeway website at fixed time intervals ⏳. 
+
+To automate this process, we shall write a script 💻 and dockerfile for ☁️**Google Cloud Run** ☁️to run the web scraping code directly from the cloud without the need for my laptop to switched on.
+
+Chapter 2️⃣ : Prepping Images for Object Detection
+
+With the few jpegs 🛣️ of the bridge that we have collected, we will experiment with different deep learning models for object detection, mainly OpenCV and YOLO. However, YOLO requires manual annotatation of the pictures with bounding boxes 🔲.
+
+Unfortunately, manual annotation of thousands of cars is very tedious and time consuming ⏳, and cannot be automated until the YOlO model is sufficiently well trained to do so itself. 
+
+Hence, i will be splitting the images up into batches for me to annotate them a batch at a time. The more batches annotated, the more training data we can feed the YOLO model, the more accurate the image detection will be.
+
+Chapter 3️⃣ : Processing and Visualizing Data (currently at this stage)
+
+Although during this time we still will not have insufficient manually annotated images for the YOLO model, we can still process the limited number of annotated snapshots we have into scaled and interpretable data. 
+
+The area of the bounding boxes 🔲 for each picture will be calculated and stored, then plotted into graphs and tables so that we can have a visual representation 📊 of the data, as well as a rough idea of what kind of patterns 📈📉 there are between congestion and the variables. 
+
+Chapter 4️⃣ : Machine Learning
+
+We can also do some machine learning 🤖 with the data, using tensorflow neural networks 🧠 to capture complex relationships between variables and even tell how much traffic will be on the bridge at a future time and date. 
+
+🙋‍♂️ However, the congestion status predictions may not be accurate if there is little training data to learn from.
+
+
+Chapter 5️⃣ : Automation
+
+After we have achieved a YOLO model with weights ⚖️ that have been trained well enough such that it can detect congestion on the bridge accurately, we can move the YOLO code and weights to GCloud run for the annotation process to be automated 🔄 as well together with the web scraping process.
+
+#### If you are still interested and would like to know more, below is a more detailed documentation of the 4 stages.
+
+I will be going more in depth on setting up of the code and dockerized container 📦 for the GCloud functions, the headaches and setbacks 🤕, processing of the image data into clear readable data, and more. 
+
+I also added screenshots and pictures 🖼️ of the processes in the documentation below if you like visual learning 👁️, from boring things like manually drawing bounding boxes to more cool stuff such as experimenting with object detection ML models.
+
+- All pictures of the project can be found in the [progress_pics](progress_pics/) folder
+
+- The python code files can all be found in the [python_scripts](python_scripts/) folder
+
+Once again, feel free to skip ⏭️ to any chapters or versions that interest you 😊.
+
+## Table of Content 📖
+Chapter 1: Collecting raw data 
+- 1.1: [Web Scraping](#web-scraping) 
+- 1.2: [Automating Web Scraping with GCloud](#automating-web-scraping-with-gcloud) 
+- 1.3: [Creating a Dockerized Container](#creating-a-dockerized-container) 
+- 1.4: [Creating and Linking GCloud Bucket](#creating-and-linking-gcloud-bucket)
+
+
+Chapter 2: Prepping Images for Object Detection
+- 2.1: [OpenCV](#OpenCV) (delete when done)
+- 2.2: [Annotating with CVAT](#annotating-with-CVAT) (delete when done)
+- 2.3: [YOLOv8 and pain](#yolov8-and-pain) (delete when done)
+- 2.4: [Increasing Training Data](#increasing-training-data) (delete when done)
+
+Chapter 3: Processing and Visualizing Data
+- 3.1: [Differentiating the Roads](#differentiating-the-roads) (delete when done)
+- Stage 3.2: [Exploratory Data Analysis (EDA)](#exploratory-data-analysis-eda) (delete when done)
+- Stage 3.3: [Potential Variables](#potential-variables) (delete when done)
+
+Chapter 4: Machine Learning
+- Stage 4.1: [Feature Engineering](#feature-engineering) (delete when done)
+- Stage 4.2: [Training Neural Network Model](#training-neural-network-model) (delete when done)
+
+Chapter 5: Automation
+- Stage 1: [tbc](#tbc) (delete when done)
+
+
+[Conclusion](#conclusion)
+
+
+
+## 📚 Documentation 
+
+
+## Chapter 1 - Collecting raw data
+### 1.1: Web Scraping
+Time to collect the most important ingredient in any data analysis or machine learning project: **Data**. Firstly, I import all the necessary libraries to use Selenium to scrape live data from a website:
+
+>We need the **datetime** class, as it helps us to organize the data neatly by date and time. It also allows us to manage the date and time values which can be used during machine learning and graphing in Chapter 3 and 4.
+```
+from datetime import datetime
+```
+>We need the **Requests** library for interacting with websites and scraping them too.
+```
+import requests
+```
+>**Webdriver** works together with chromedriver.exe to create a 'robot' Google Chrome window, which you saw for a split second in the GIF above (Fig smth).
+```
+from selenium import webdriver
+```
+**Service** provides the path to the local chromedriver.exe file to Selenium
+```
+from selenium.webdriver.chrome.service import Service
+```
+**By** helps me to find the object I want to scrape by letting me key in attributes of the object so that Selenium knows what object i want to scrape.
+```
+from selenium.webdriver.common.by import By
+```
+**Options** allows us to modify the web scraping process. For example, we can run chrome in 'headless mode' by doing this `chrome_options.add_argument("--headless")`.
+
+This allows us to carry out the web scraping task but without the chrome window popping up like you saw in the earlier GIF.
+```
+from selenium.webdriver.chrome.options import Options
+```
+- Now moving on to the actual code, starting with the function `getjpg(url)`, where the 'url' inside the brackets is the only argument of the function and is where we will pass the LTA website's url.
+
+    ![Fig 1.1](image-1.png)
+
+    Fig 1.1: Web scraping portion of `getjpg` function
+
+    Let's go through each line of code one by one:
+
+    For Line 16, we are launching the Chrome window with our custom chrome options. Line 17 then gives the url for the Chrome window to go to, followed by Line 18 which waits 2 seconds for all html elements to load.
+
+    Lines 19 and 20 gets the snapshot of the bridge from the website using attributes and tags unique to the snapshot object, and Line 21 captures the actual image and downloads it into the current directory, the project's repository folder.
+
+- The second part of the function focuses on the format of the image file name after downloading it, as that will be important in the later chapters for organizing and visualising of data.
+
+    ![Fig 1.2](<naming part of getjpg.jpg>)
+
+    Fig 1.2: Constructing image file name
+
+    Line 22 gets the day, date and time at the moment the code is run, all in a single datetime object. Lines 23, 24 and 25 split the datetime up into its day, date and time components after it is converted to a string using strftime.
+
+    Line 26 forms the filename by using an f-string to structure the day, date, time and jpeg file extension into a neat filename. Line 27 and 28 adds the file to my laptop, and Line 29 ends the Chrome window session.
+
+
+The result is what you see in Figure V, I also wrote a print() statement which displays the name of the file saved, as you can see at the bottom of the screen where my mouse is circling. This is just to confirm the naming format is correct.
+
+The 'yay' is a another print statement i put at the end of the web scraping `getjpeg` function so I know that the code ran smoothly. 
+
+These print statements may not look important now, but in the next subchapter where I move this code to Google Cloud Run Functions, there will be many hiccups and errors. 
+
+I need to know at which point did the code stop working, so its important to set up logging statements here and there, which allows us to pinpoint where the code stopped based on which statements are output.
+
+I know this is in the overview above already, but I like GIFs so ill put it down here again👍.
+
+![Fig V](selenium_screenrecord.gif)
+
+The web scraping script works and all, but I want to be able to automate it and not have to open my laptop every hour to run the code. In the next subchapter, I prepare my code to run in a dockerized container from Google Cloud.
+
+### 1.2 : Automating Web Scraping with GCloud
+
+After trying out various cloud services like PythonAnywhere and Amazon Web Services (AWS), I eventually settled on Google Cloud
+
+One reason is because PythonAnywhere could not run Selenium chromedriver (which I only found out after paying for it 🥲). Plus I already had a Google account with billing set up prior to this project 💸, but not for Amazon. Also I don't like Jeff Bezos, but thats a story for another day.
+
+Anyway, let's adapt this code to Google Cloud Run Functions. Google Cloud is Linux-based, so we will have to change the way the chromedriver is installed and run 🔧.
+
+The adapted code is in [gcloudscrape.py](python_scripts/gcloudscrape.py). Very similar, but with more imported libraries and functions. Let's start with the new libraries.
+
+```
+from google.cloud import storage 
+```
+This library is for storing the image files to Google Storage Bucket 🪣
+```
+from io import StringIO
+```
+StringIO allows for reading of file data from a Storage Bucket without needing to download it, which requires additional code and runs the risk of having duplicate files in the Bucket afterwards 📂. 
+
+```
+import chromedriver_binary
+```
+As dockerized containers are Linux-based, the process of running a Chrome window using chromedriver here requires directing the chromedriver path to the directory using this method instead.
+
+Moving on to the code:
+
+- For the function `adddatetime(bucketname, data)`, its primary use was to write down the date and time for every web scrape session into a csv file for tracking purposes 📝. But ever since I managed to code the datetime info into the filenames, the function is not of much use anymore.
+
+    ![Fig 1.3](<adddatetime function.jpg>)
+
+    Fig 1.3: `adddatetime()` function 
+
+- The meat of the script is actually the function `scrapeaddpic()`, which not only scrapes the LTA website for the images like in Chapter 1.1, but also saves the images to the Google Storage Bucket. 
+
+    I also added code to scrape the part of the crossing before the Singapore Woodlands Customs, as you can see in Line 53.
+
+    ![Fig 1.4](image-2.png)
+
+    Fig 1.4: `scrapeaddpic()` function, such an eyesore...
+
+    You can also see I've sprinkled some print statements here and there ✨ (Lines 47, 54, 57, 60, 62, 73, & 76). 
+    
+    I can look back at the logs after running the code and see which statements were printed and which were not, allowing me to pinpoint where the code went wrong 🎯.
+
+    To not bore ourselves with the nitty gritty, let's skip the parts already covered in Chapter 1.1 and go through this quickly 🧐:
+
+    Lines 61-64 obtain the Bucket which we will be storing our image files in 🪣, and Lines 71 to 76 write the files to the bucket as 'blobs', which is Google Cloud's way of handling data for standardization purposes.
+
+That's the main python script for Google Cloud, but theres more to automating code than just the code itself. Next we will be creating the GCloud dockerized container for the code to run in 📦.
+
+> If you have any questions just telegram me, my @ is linked at the top. Like fr i need someone to discuss my projects with 🗿.
+
+### 1.3: Creating a Dockerized Container
+
+As the web scraping code will be running from the cloud without a platform like VS Code or PyCharm to execute it, we need to create whats called a "container" for the code instead with our very own [Dockerfile](GCloud/Dockerfile).
+
+![Fig 1.5](<Dockerfile screenshot.jpg>)
+
+Fig 1.5: Dockerfile code
+
+Line 8 gets the latest version of Google Chrome and Line 9 installs it 📥. Line 4 ensures that all the packages installed is the most updated version  🔄 there is, while Line 5 installs all Chrome libraries that could not be installed from the code in Line 9.
+
+Take note that due to Line 4, the container's google chrome version will always stay updated, but the chromedriver version won't. Be sure to monitor the logs of the GCloud function 👀 and update the chromedriver binary version in requirements.txt when necessary.
+
+Lines 12 and 13 moves our python file 🚚➡️ into the /app directory in the container 📦, and makes sure that subsequent commands like COPY in Line 14 and RUN in Line 17 will execute relative to /app. 
+
+Line 14 copies all files that are created in the Run Function, but for some reason it was not working, so i ran the command again in Line 16 for requirements.txt. Then I installed the requirements into the container in Line 17. Finally, Line 19 runs main.py ▶️, our web scraping python file.
+
+**Quick Reflection:** The code itself is really little, but don't let that fool you. This was the hardest part of the project 💪, and it really killed me because I had never used Google Cloud to run code or used Linux before, let alone know what a dockerized container was 📦. 
+
+I had to borrow many 'Google Cloud for beginners' books 📖 and watch numerous tutorials 👨‍💻💢, just to get the knowledge i needed to make this little shi-
+
+It was pretty discouraging, because the more I learnt, the more I realised how much *I didn't know*. Furthermore, some of the books and tutorials were outdated and did not work like it was supposed to, which I only realized after spending weeks trying to learn it 😩. That's probably my bad though I should have picked the more recent ones from the start.
+
+But after 2 arduous weeks, I finally managed to get a container, with chrome and chromedriver properly installed, up and running without any problems. That was a good day, felt super accomplished.
+
+### 1.4: Creating and Linking GCloud Bucket
+
+take it away
+
+## unprocessed desc, rough work
+TLDR outline of project.
 
 Stage 1: Testing to see if selenium can enter the LTA woodlands causeway website. If yes, we will try to extract the jpeg link of the woodlands checkpoint at that point in time, then download it and save it in my laptop using requests. This will all be done using PyCharm.
 
