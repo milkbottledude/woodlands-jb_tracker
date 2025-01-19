@@ -168,7 +168,7 @@ from selenium.webdriver.chrome.options import Options
 ```
 - Now moving on to the actual code, starting with the function `getjpg(url)`, where the 'url' inside the brackets is the only argument of the function and is where we will pass the LTA website's url.
 
-    ![Fig 1.1](progress_pics/first part of getjpg function.jpg)
+    ![Fig 1.1](progress_pics/first_part_of_getjpg_function.jpg)
 
     Fig 1.1: Web scraping portion of `getjpg` function
 
@@ -199,7 +199,7 @@ I need to know at which point did the code stop working, so its important to set
 
 I know this is in the overview above already, but I like GIFs so ill put it down here again👍.
 
-![Fig V](selenium_screenrecord.gif)
+![Fig V](progress_pics/selenium_screenrecord.gif)
 
 The web scraping script works and all, but I want to be able to automate it and not have to open my laptop every hour to run the code. In the next subchapter, I prepare my code to run in a dockerized container from Google Cloud.
 
@@ -231,7 +231,7 @@ Moving on to the code:
 
 - For the function `adddatetime(bucketname, data)`, its primary use was to write down the date and time for every web scrape session into a csv file for tracking purposes 📝. But ever since I managed to code the datetime info into the filenames, the function is not of much use anymore.
 
-    ![Fig 1.3](<adddatetime function.jpg>)
+    ![Fig 1.3](progress_pics/adddatetime_function.jpg)
 
     Fig 1.3: `adddatetime()` function 
 
@@ -239,7 +239,7 @@ Moving on to the code:
 
     I also added code to scrape the part of the crossing before the Singapore Woodlands Customs, as you can see in Line 53.
 
-    ![Fig 1.4](image-2.png)
+    ![Fig 1.4](progress_pics/scrapeaddpic_function.jpg)
 
     Fig 1.4: `scrapeaddpic()` function, such an eyesore...
 
@@ -259,7 +259,7 @@ That's the main python script for Google Cloud, but theres more to automating co
 
 As the web scraping code will be running from the cloud without a platform like VS Code or PyCharm to execute it, we need to create whats called a "container" for the code instead with our very own [Dockerfile](GCloud/Dockerfile).
 
-![Fig 1.5](<Dockerfile screenshot.jpg>)
+![Fig 1.5](progress_pics/Dockerfile_screenshot.jpg)
 
 Fig 1.5: Dockerfile code
 
