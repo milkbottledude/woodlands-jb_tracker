@@ -107,11 +107,10 @@ Chapter 1: Collecting raw data
 - 1.1: [Web Scraping](#web-scraping) 
 - 1.2: [Automating Web Scraping with GCloud](#automating-web-scraping-with-gcloud) 
 - 1.3: [Creating a Dockerized Container](#creating-a-dockerized-container) 
-- 1.4: [Creating and Linking GCloud Bucket](#creating-and-linking-gcloud-bucket) (delete when done)
-- 1.5: [Cloud Scheduler](#cloud-scheduler) (delete when done)
+- 1.4: [Setting up GCloud Bucket and Scheduler](#setting-up-gcloud-bucket-and-scheduler)
 
 
-Chapter 2: Prepping Images for Object Detection
+Chapter 2: Object Detection
 - 2.1: [OpenCV](#OpenCV) (delete when done)
 - 2.2: [Annotating with CVAT](#annotating-with-CVAT) (delete when done)
 - 2.3: [YOLOv8 and pain](#yolov8-and-pain) (delete when done)
@@ -280,22 +279,53 @@ It was pretty discouraging, because the more I learnt, the more I realised how m
 
 But after 2 arduous weeks, I finally managed to get a container, with chrome and chromedriver properly installed, up and running without any problems. That was a good day, felt super accomplished.
 
-### 1.4: Creating and Linking GCloud Bucket
-First I created the bucket in GCloud storage called 'frickubucket' (don't ask me about the name I made it at 2am on a Sunday morning), then added 2 folders. One for pictures of the crossover before Singapore Woodlands Checkpoint called towardsbkesnapshot/, and the other for pictures of the crossover after the SG checkpoint and leading up to the JB customs. This folder was simply called snapshots/.
+### 1.4: Setting up GCloud Bucket and Scheduler
+First I created the bucket 🪣 in GCloud storage called 'frickubucket' (don't ask me about the name I made it at 2am on a Sunday morning 😵‍💫), then added 2 folders 📁. One for pictures of the crossover before Singapore Woodlands Checkpoint called towardsbkesnapshot/, and the other for pictures of the crossover after the SG checkpoint and leading up to the JB customs. This folder was simply called snapshots/.
 
 insert pic herrererere
 
 Fig 1.6: Bucket and folders in GCloud storage
 
-Below are all the pictures that have accumulated in snapshots/ since I started the cloud scheduler in the 4th quarter of 2024, I can't quite remember the exact month.
+Below are all the pictures that have accumulated in snapshots/ since I started the cloud scheduler in November 2024 📸.
 
 As you can see all the filenames are formatted nicely as date_time_day.
 
-Fig 1.7: Picture files inside the snapshot/ folder
+insert pic herrererere
 
-The linking of the bucket and folders to the python code was already covered in Chapter 1.1, shld i cover more??????????????
+Fig 1.7: jpeg files inside the snapshot/ folder
+
+Of course, all the work prior would be useless if not for the GCloud Scheduler job running everything periodically 🔁. Here is it's configuration:
+
+insert sched pic here
+
+Fig 1.8: Scheduler job's configuration
+
+At the bottom, you can see the execution target type is set to `HTTP`. This is to tell the job that our code is a webscraping code that targets `HTTP`/`HTTPS` websites 🌐 (all standard Google website links start with either one or the other).
+
+At the top, you can see the job frequency, which controls the dates and times at which your code runs.
+
+Scraping the LTA website at a high frequency 📶 (eg: every 2, 5 or 10 minutes) may help pinpoint times of congestion more accurately, but it will also:
+
+ 1) take up more space in the Bucket folder, and 
+ 2) mean that the code has to run more often in a short span of time. 
+
+These make the process more computationally expensive and would lead to additional costs for me 💸😭. However, having too much time between web scrapes makes it hard to capture congestion trends.
+
+Finally I settled on what I think is a balanced time interval of 1 hour between scrapes, thats why the timestamps of the images in Fig 1.7 are all an hour from each other.
+
+This translates to a frequency configuration of `0 * * * *`, which is quite confusing if you are not familiar with the time-field formatting which GCloud Scheduler uses (like me at the start of this project).
+
+Here is a snippet from Google's Cloud scheduler guide 📝 to help you.
+
+insert time-format here
+
+Fig 1.9: Cloud Scheduler time-field formatting information
+
+That wraps up Chapter 1, let's move on to barely successful object detection in Chapter 2.
 
 
+## Chapter 2 - Object Detection
+### 2.1: OpenCV
 
 
 
