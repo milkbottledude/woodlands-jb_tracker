@@ -111,7 +111,7 @@ Chapter 1: Collecting raw data
 
 
 Chapter 2: Object Detection
-- 2.1: [OpenCV](#OpenCV) (delete when done)
+- 2.1: [OpenCV and YOLOv4](#OpenCV-and-YOLOv4)
 - 2.2: [Annotating with CVAT](#annotating-with-CVAT) (delete when done)
 - 2.3: [YOLOv8 and pain](#yolov8-and-pain) (delete when done)
 - 2.4: [Increasing Training Data](#increasing-training-data) (delete when done)
@@ -325,7 +325,27 @@ That wraps up Chapter 1, let's move on to barely successful object detection in 
 
 
 ## Chapter 2 - Object Detection
-### 2.1: OpenCV
+### 2.1: OpenCV and YOLOv4 !!
+
+I found OpenCV and YOLO from a nice chap who goes by the name of [Pysource](https://www.youtube.com/@pysource-com) on YouTube, it was from his videos that I got introduced to computer vision and its many uses. 
+
+In this particular [video](https://www.youtube.com/watch?v=O3b8lVF93jU&t=46s&ab_channel=Pysource), he shares the weights of a yoloV4 object detection model that was already pre-trained 🏋️‍♀️ on tens of thousands of cars, which saves us the hassle of manually drawing the car objects' bounding boxes ✍️ and feeding the training images to the model. 
+
+The object detection model consists of 2 files. One is[vehicle_detector.py](link to python file), which defines the object classes and retrieves the pre-trained weights ⚖️ using OpenCV. The other is [yoloimage](link to python file), where you define the image you want to carry out object detection on and feed it to the model. The results are quite accurate, as you can see in the figure below 🎯.
+
+insert pysource homie pic here
+
+Fig 2.1: Pysource's YOLOv4 model performance
+
+However, the difference in resolution between pictures taken from afar by LTA traffic cameras (installed more than 2 decades ago) and modern webcams much closer to the highway 🛣️ (like in Fig 2.1) is large 👀. Below is a picture of the causeway after annotations by the pre-trained YOLOv4 model.
+
+insert lil red boxes pic here
+
+Fig 2.2: Pre-trained YOLOv4 model's annotations on a picture of the causeway
+
+While some vehicles were detected 🔍, the majority of the cars were not. So this model may work if the camera pictures were of higher quality, but the data quality cannot be changed. Instead, we have no choice but to improve the model. Easier said than done though🥴...
+
+### 2.2: Annotating with CVAT
 
 
 
