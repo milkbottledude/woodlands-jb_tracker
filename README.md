@@ -19,39 +19,39 @@ Tools and libraries used in this project:
 
 - **Google Cloud**, for automation of code running and image storage
     - Cloud Run Functions
-    ![image](https://github.com/user-attachments/assets/98180aa1-de2b-4275-a018-eeb5f2986578)
+    ![image](progress_pics/Fig-I-gcloud_run_functions_preview.jpg)
 
         Figure I: Preview of GCloud Run Functions
 
     - Cloud Scheduler
-    ![image](https://github.com/user-attachments/assets/abc07e8f-9c6a-4727-b787-a40276d4a65c)
+    ![image](progress_pics/Fig-II-gcloud_scheduler_preview.jpg)
 
         Figure II: Preview of GCloud Scheduler Preview
 
     - Cloud Storage
-    ![image](https://github.com/user-attachments/assets/430074de-c37f-43fb-b0c4-c42e76a51a3b)
+    ![image](progress_pics/Fig-III-gcloud_storage_preview.jpg)
 
         Figure III: Preview of GCloud Storage
 
 - **YOLO** (You Only Look Once), for object detection 
-    ![image](https://github.com/user-attachments/assets/f3b00fb4-42d4-4dbe-82c7-9f74fb8784b2)
+    ![image](progress_pics/Fig-IV-yolo_beachscreenshot.jpg)
 
     Figure IV: YOLO in action on a picture of the beach
 
 - **Selenium**, for web scraping
 
     You can see Selenium in action in the GIF below, with the chromedriver opening the LTA website for a split second during web scraping.
-  ![selenium gif](progress_pics/selenium_screenrecord.gif)
+  ![selenium gif](progress_pics/Fig-V-selenium_screenrecord.gif)
 
 
     Fig V: Selenium in action on LTA's traffic camera website
 
 - **Pandas** and **Numpy**, for storing the quantified data into neat tables
-    ![hourjam table](progress_pics/hourjam_table.jpg)
+    ![hourjam table](progress_pics/Fig-VI-hourjam_table.jpg)
     Fig VI: Table of relative congestion values for every hour of the day
 
 - **Matplotlib** for visualization of data with graphs and charts.
-    ![Fig VII](progress_pics/coords_colour_classified.jpg)
+    ![Fig VII](progress_pics/Fig-VII-coords_colour_classified.jpg)
 
     Fig VII: Graph of coordinates of bounding boxes, with each colour representing one side of the bridge.
 
@@ -168,7 +168,7 @@ from selenium.webdriver.chrome.options import Options
 ```
 - Now moving on to the actual code, starting with the function `getjpg(url)`, where the 'url' inside the brackets is the only argument of the function and is where we will pass the LTA website's url.
 
-    ![Fig 1.1](progress_pics/first_part_of_getjpg_function.jpg)
+    ![Fig 1.1](progress_pics/Fig-1.1-first_part_of_getjpg_function.jpg)
 
     Fig 1.1: Web scraping portion of `getjpg` function
 
@@ -180,7 +180,7 @@ from selenium.webdriver.chrome.options import Options
 
 - The second part of the function focuses on the format of the image file name after downloading it, as that will be important in the later chapters for organizing and visualising of data.
 
-    ![Fig 1.2](progress_pics/naming_part_of_getjpg.jpg)
+    ![Fig 1.2](progress_pics/Fig-1.2-naming_part_of_getjpg.jpg)
 
     Fig 1.2: Constructing image file name
 
@@ -199,7 +199,7 @@ I need to know at which point did the code stop working, so its important to set
 
 I know this is in the overview above already, but I like GIFs so ill put it down here again👍.
 
-![Fig V](progress_pics/selenium_screenrecord.gif)
+![Fig V](progress_pics/Fig-V-selenium_screenrecord.gif)
 
 The web scraping script works and all, but I want to be able to automate it and not have to open my laptop every hour to run the code. In the next subchapter, I prepare my code to run in a dockerized container from Google Cloud.
 
@@ -231,7 +231,7 @@ Moving on to the code:
 
 - For the function `adddatetime(bucketname, data)`, its primary use was to write down the date and time for every web scrape session into a csv file for tracking purposes 📝. But ever since I managed to code the datetime info into the filenames, the function is not of much use anymore.
 
-    ![Fig 1.3](progress_pics/adddatetime_function.jpg)
+    ![Fig 1.3](progress_pics/Fig-1.3-adddatetime_function.jpg)
 
     Fig 1.3: `adddatetime()` function 
 
@@ -239,7 +239,7 @@ Moving on to the code:
 
     I also added code to scrape the part of the crossing before the Singapore Woodlands Customs, as you can see in Line 53.
 
-    ![Fig 1.4](progress_pics/scrapeaddpic_function.jpg)
+    ![Fig 1.4](progress_pics/Fig-1.4-scrapeaddpic_function.jpg)
 
     Fig 1.4: `scrapeaddpic()` function, such an eyesore...
 
@@ -259,7 +259,7 @@ That's the main python script for Google Cloud, but theres more to automating co
 
 As the web scraping code will be running from the cloud without a platform like VS Code or PyCharm to execute it, we need to create whats called a "container" for the code instead with our very own [Dockerfile](GCloud/Dockerfile).
 
-![Fig 1.5](progress_pics/Dockerfile_screenshot.jpg)
+![Fig 1.5](progress_pics/Fig-1.5-Dockerfile_screenshot.jpg)
 
 Fig 1.5: Dockerfile code
 
@@ -282,7 +282,7 @@ But after 2 arduous weeks, I finally managed to get a container, with chrome and
 ### 1.4: Setting up GCloud Bucket and Scheduler
 First I created the bucket 🪣 in GCloud storage called 'frickubucket' (don't ask me about the name I made it at 2am on a Sunday morning 😵‍💫), then added 2 folders 📁. One for pictures of the crossover before Singapore Woodlands Checkpoint called towardsbkesnapshot/, and the other for pictures of the crossover after the SG checkpoint and leading up to the JB customs. This folder was simply called snapshots/.
 
-insert pic herrererere
+![](progress_pics/Fig-1.6-buckets.jpg)
 
 Fig 1.6: Bucket and folders in GCloud storage
 
@@ -290,13 +290,13 @@ Below are all the pictures that have accumulated in snapshots/ since I started t
 
 As you can see all the filenames are formatted nicely as date_time_day.
 
-insert pic herrererere
+![](progress_pics/Fig-1.7-snapshotsfiles.jpg)
 
 Fig 1.7: jpeg files inside the snapshot/ folder
 
 Of course, all the work prior would be useless if not for the GCloud Scheduler job running everything periodically 🔁. Here is it's configuration:
 
-insert sched pic here
+![](progress_pics/Fig-1.8-scheduler_config.jpg)
 
 Fig 1.8: Scheduler job's configuration
 
@@ -317,7 +317,7 @@ This translates to a frequency configuration of `0 * * * *`, which is quite conf
 
 Here is a snippet from Google's Cloud scheduler guide 📝 to help you.
 
-insert time-format here
+![](progress_pics/Fig-1.9-Scheduler_time_format.jpg)
 
 Fig 1.9: Cloud Scheduler time-field formatting information
 
@@ -333,13 +333,13 @@ In this particular [video](https://www.youtube.com/watch?v=O3b8lVF93jU&t=46s&ab_
 
 The object detection model consists of 2 files. One is[vehicle_detector.py](link to python file), which defines the object classes and retrieves the pre-trained weights ⚖️ using OpenCV. The other is [yoloimage](link to python file), where you define the image you want to carry out object detection on and feed it to the model. The results are quite accurate, as you can see in the figure below 🎯.
 
-insert pysource homie pic here
+![](progress_pics/Fig-2.1-Pysource-video-YOLOv4.jpg)
 
-Fig 2.1: Pysource's YOLOv4 model performance
+Fig 2.1: Pysource's YOLOv4 model performance (a screenshot from his video)
 
 However, the difference in resolution between pictures taken from afar by LTA traffic cameras (installed more than 2 decades ago) and modern webcams much closer to the highway 🛣️ (like in Fig 2.1) is large 👀. Below is a picture of the causeway after annotations by the pre-trained YOLOv4 model.
 
-insert lil red boxes pic here
+![](progress_pics/Fig-2.2-annotated_pre-trained_YOLOv4.jpg)
 
 Fig 2.2: Pre-trained YOLOv4 model's annotations on a picture of the causeway
 
