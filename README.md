@@ -1,6 +1,6 @@
 # Project: Woodlands-JB Tracker
 
-![image](https://github.com/user-attachments/assets/a4218ac1-2360-4fce-a188-989eb53b923c)
+![image](progress_pics/project_banner.jpg)
 
 - 🗪 Feel free to telegram me [@milkbottledude](https://t.me/milkbottledude) if you have any questions, or just want to chat :)
 
@@ -176,13 +176,20 @@ from selenium.webdriver.chrome.options import Options
 
     For Line 16, we are launching the Chrome window with our custom chrome options. Line 17 then gives the url for the Chrome window to go to, followed by Line 18 which waits 2 seconds for all html elements to load.
 
-    Lines 19 and 20 gets the snapshot of the bridge from the website using attributes and tags unique to the snapshot object, and Line 21 captures the actual image and downloads it into the current directory, the project's repository folder.
+    Line 19 gets the snapshot element from the website using the attribute 'alt' which is unique to the snapshot object. Then in Line 20 we get the actual image url through the 'src' attribute, as you can see in Fig 1.2 below.
+
+    insert html ss hereeeee
+
+    Fig 1.2: Attributes and tags of snapshot element can be seen by right clicking and pressing 'Inspect'/ 
+
+
+    Line 21 captures the actual image and downloads it into the current directory, the project's repository folder.
 
 - The second part of the function focuses on the format of the image file name after downloading it, as that will be important in the later chapters for organizing and visualising of data.
 
-    ![Fig 1.2](progress_pics/Fig-1.2-naming_part_of_getjpg.jpg)
+    ![Fig 1.3](progress_pics/Fig-1.3-naming_part_of_getjpg.jpg)
 
-    Fig 1.2: Constructing image file name
+    Fig 1.3: Constructing image file name
 
     Line 22 gets the day, date and time at the moment the code is run, all in a single datetime object. Lines 23, 24 and 25 split the datetime up into its day, date and time components after it is converted to a string using strftime.
 
@@ -231,17 +238,17 @@ Moving on to the code:
 
 - For the function `adddatetime(bucketname, data)`, its primary use was to write down the date and time for every web scrape session into a csv file for tracking purposes 📝. But ever since I managed to code the datetime info into the filenames, the function is not of much use anymore.
 
-    ![Fig 1.3](progress_pics/Fig-1.3-adddatetime_function.jpg)
+    ![Fig 1.4](progress_pics/Fig-1.4-adddatetime_function.jpg)
 
-    Fig 1.3: `adddatetime()` function 
+    Fig 1.4: `adddatetime()` function 
 
 - The meat of the script is actually the function `scrapeaddpic()`, which not only scrapes the LTA website for the images like in Chapter 1.1, but also saves the images to the Google Storage Bucket. 
 
     I also added code to scrape the part of the crossing before the Singapore Woodlands Customs, as you can see in Line 53.
 
-    ![Fig 1.4](progress_pics/Fig-1.4-scrapeaddpic_function.jpg)
+    ![Fig 1.5](progress_pics/Fig-1.5-scrapeaddpic_function.jpg)
 
-    Fig 1.4: `scrapeaddpic()` function, such an eyesore...
+    Fig 1.5: `scrapeaddpic()` function, such an eyesore...
 
     You can also see I've sprinkled some print statements here and there ✨ (Lines 47, 54, 57, 60, 62, 73, & 76). 
     
@@ -259,9 +266,9 @@ That's the main python script for Google Cloud, but theres more to automating co
 
 As the web scraping code will be running from the cloud without a platform like VS Code or PyCharm to execute it, we need to create whats called a "container" for the code instead with our very own [Dockerfile](GCloud/Dockerfile).
 
-![Fig 1.5](progress_pics/Fig-1.5-Dockerfile_screenshot.jpg)
+![Fig 1.6](progress_pics/Fig-1.6-Dockerfile_screenshot.jpg)
 
-Fig 1.5: Dockerfile code
+Fig 1.6: Dockerfile code
 
 Line 8 gets the latest version of Google Chrome and Line 9 installs it 📥. Line 4 ensures that all the packages installed is the most updated version  🔄 there is, while Line 5 installs all Chrome libraries that could not be installed from the code in Line 9.
 
@@ -282,23 +289,23 @@ But after 2 arduous weeks, I finally managed to get a container, with chrome and
 ### 1.4: Setting up GCloud Bucket and Scheduler
 First I created the bucket 🪣 in GCloud storage called 'frickubucket' (don't ask me about the name I made it at 2am on a Sunday morning 😵‍💫), then added 2 folders 📁. One for pictures of the crossover before Singapore Woodlands Checkpoint called towardsbkesnapshot/, and the other for pictures of the crossover after the SG checkpoint and leading up to the JB customs. This folder was simply called snapshots/.
 
-![](progress_pics/Fig-1.6-buckets.jpg)
+![](progress_pics/Fig-1.7-buckets.jpg)
 
-Fig 1.6: Bucket and folders in GCloud storage
+Fig 1.7: Bucket and folders in GCloud storage
 
 Below are all the pictures that have accumulated in snapshots/ since I started the cloud scheduler in November 2024 📸.
 
 As you can see all the filenames are formatted nicely as date_time_day.
 
-![](progress_pics/Fig-1.7-snapshotsfiles.jpg)
+![](progress_pics/Fig-1.8-snapshotsfiles.jpg)
 
-Fig 1.7: jpeg files inside the snapshot/ folder
+Fig 1.8: jpeg files inside the snapshot/ folder
 
 Of course, all the work prior would be useless if not for the GCloud Scheduler job running everything periodically 🔁. Here is it's configuration:
 
-![](progress_pics/Fig-1.8-scheduler_config.jpg)
+![](progress_pics/Fig-1.9-scheduler_config.jpg)
 
-Fig 1.8: Scheduler job's configuration
+Fig 1.9: Scheduler job's configuration
 
 At the bottom, you can see the execution target type is set to `HTTP`. This is to tell the job that our code is a webscraping code that targets `HTTP`/`HTTPS` websites 🌐 (all standard Google website links start with either one or the other).
 
@@ -317,9 +324,9 @@ This translates to a frequency configuration of `0 * * * *`, which is quite conf
 
 Here is a snippet from Google's Cloud scheduler guide 📝 to help you.
 
-![](progress_pics/Fig-1.9-Scheduler_time_format.jpg)
+![](progress_pics/Fig-1.10-Scheduler_time_format.jpg)
 
-Fig 1.9: Cloud Scheduler time-field formatting information
+Fig 1.10: Cloud Scheduler time-field formatting information
 
 That wraps up Chapter 1, let's move on to barely successful object detection in Chapter 2.
 
