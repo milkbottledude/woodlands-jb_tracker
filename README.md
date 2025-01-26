@@ -178,7 +178,7 @@ from selenium.webdriver.chrome.options import Options
 
     Line 19 gets the snapshot element from the website using the attribute 'alt' which is unique to the snapshot object. Then in Line 20 we get the actual image url through the 'src' attribute, as you can see in Fig 1.2 below.
 
-    insert html ss hereeeee
+    ![](progress_pics/Fig-1.2-LTA-website-inspect-ss.jpg)
 
     Fig 1.2: Attributes and tags of snapshot element can be seen by right clicking and pressing 'Inspect'/ 
 
