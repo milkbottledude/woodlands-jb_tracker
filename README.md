@@ -15,6 +15,8 @@ This project aims to predict the congestion level of the bridge at the Singapore
 
 Known as the most busiest land crossing in the world, the bridge allows cars to go to and fro between Johor, Malaysia and Singapore. It would certainly help us if we could know when the bridge was clear so that we can pop into Johor for a shopping trip, or a day out with the family without being stuck in traffic for hours.
 
+---
+
 Tools and libraries used in this project:
 
 - **Google Cloud**, for automation of code running and image storage
@@ -59,11 +61,15 @@ The full list of libraries I imported to use in this project can be found in the
 
 This project will be divided into 5 chapters✋:
 
+---
+
 Chapter 1️⃣ : Collecting Raw Data
 
 In order to gather raw data 🔍, we'll first use Selenium to web scrape snapshots of the bridge from the LTA woodlands causeway website at fixed time intervals ⏳. 
 
 To automate this process, we shall write a script 💻 and dockerfile for ☁️**Google Cloud Run** ☁️to run the web scraping code directly from the cloud without the need for my laptop to switched on.
+
+---
 
 Chapter 2️⃣ : Prepping Images for Object Detection
 
@@ -73,11 +79,15 @@ Unfortunately, manual annotation of thousands of cars is very tedious and time c
 
 Hence, i will be splitting the images up into batches for me to annotate them a batch at a time. The more batches annotated, the more training data we can feed the YOLO model, the more accurate the image detection will be.
 
+---
+
 Chapter 3️⃣ : Processing and Visualizing Data (currently at this stage)
 
 Although during this time we still will not have insufficient manually annotated images for the YOLO model, we can still process the limited number of annotated snapshots we have into scaled and interpretable data. 
 
 The area of the bounding boxes 🔲 for each picture will be calculated and stored, then plotted into graphs and tables so that we can have a visual representation 📊 of the data, as well as a rough idea of what kind of patterns 📈📉 there are between congestion and the variables. 
+
+---
 
 Chapter 4️⃣ : Machine Learning
 
@@ -85,10 +95,13 @@ We can also do some machine learning 🤖 with the data, using tensorflow neural
 
 🙋‍♂️ However, the congestion status predictions may not be accurate if there is little training data to learn from.
 
+---
 
 Chapter 5️⃣ : Automation
 
 After we have achieved a YOLO model with weights ⚖️ that have been trained well enough such that it can detect congestion on the bridge accurately, we can move the YOLO code and weights to GCloud run for the annotation process to be automated 🔄 as well together with the web scraping process.
+
+---
 
 #### If you are still interested and would like to know more, below is a more detailed documentation of the 4 stages.
 
@@ -118,12 +131,12 @@ Chapter 2: Object Detection
 
 Chapter 3: Processing and Visualizing Data
 - 3.1: [Differentiating the Roads](#differentiating-the-roads) (delete when done)
-- Stage 3.2: [Exploratory Data Analysis (EDA)](#exploratory-data-analysis-eda) (delete when done)
-- Stage 3.3: [Potential Variables](#potential-variables) (delete when done)
+- 3.2: [Exploratory Data Analysis (EDA)](#exploratory-data-analysis-eda) (delete when done)
+- 3.3: [Potential Variables](#potential-variables) (delete when done)
 
 Chapter 4: Machine Learning
-- Stage 4.1: [Feature Engineering](#feature-engineering) (delete when done)
-- Stage 4.2: [Training Neural Network Model](#training-neural-network-model) (delete when done)
+- 4.1: [Feature Engineering](#feature-engineering) (delete when done)
+- 4.2: [Training Neural Network Model](#training-neural-network-model) (delete when done)
 
 Chapter 5: Automation
 - Stage 1: [tbc](#tbc) (delete when done)
@@ -133,11 +146,18 @@ Chapter 5: Automation
 
 
 
-## 📚 Documentation 
+## 📚 Documentation
+
+
+
 
 
 ## Chapter 1 - Collecting raw data
+
+
 ### 1.1: Web Scraping
+
+
 Time to collect the most important ingredient in any data analysis or machine learning project: **Data**. Firstly, I import all the necessary libraries to use Selenium to scrape live data from a website:
 
 >We need the **datetime** class, as it helps us to organize the data neatly by date and time. It also allows us to manage the date and time values which can be used during machine learning and graphing in Chapter 3 and 4.
@@ -212,6 +232,8 @@ The web scraping script works and all, but I want to be able to automate it and 
 
 ### 1.2 : Automating Web Scraping with GCloud
 
+---
+
 After trying out various cloud services like PythonAnywhere and Amazon Web Services (AWS), I eventually settled on Google Cloud
 
 One reason is because PythonAnywhere could not run Selenium chromedriver (which I only found out after paying for it 🥲). Plus I already had a Google account with billing set up prior to this project 💸, but not for Amazon. Also I don't like Jeff Bezos, but thats a story for another day.
@@ -264,6 +286,8 @@ That's the main python script for Google Cloud, but theres more to automating co
 
 ### 1.3: Creating a Dockerized Container
 
+---
+
 As the web scraping code will be running from the cloud without a platform like VS Code or PyCharm to execute it, we need to create whats called a "container" for the code instead with our very own [Dockerfile](GCloud/Dockerfile).
 
 ![Fig 1.6](progress_pics/Fig-1.6-Dockerfile_screenshot.jpg)
@@ -287,6 +311,9 @@ It was pretty discouraging, because the more I learnt, the more I realised how m
 But after 2 arduous weeks, I finally managed to get a container, with chrome and chromedriver properly installed, up and running without any problems. That was a good day, felt super accomplished.
 
 ### 1.4: Setting up GCloud Bucket and Scheduler
+
+---
+
 First I created the bucket 🪣 in GCloud storage called 'frickubucket' (don't ask me about the name I made it at 2am on a Sunday morning 😵‍💫), then added 2 folders 📁. One for pictures of the crossover before Singapore Woodlands Checkpoint called towardsbkesnapshot/, and the other for pictures of the crossover after the SG checkpoint and leading up to the JB customs. This folder was simply called snapshots/.
 
 ![](progress_pics/Fig-1.7-buckets.jpg)
@@ -332,7 +359,7 @@ That wraps up Chapter 1, let's move on to barely successful object detection in 
 
 
 ## Chapter 2 - Object Detection
-### 2.1: OpenCV and YOLOv4 !!
+### 2.1: OpenCV and YOLOv4
 
 I found OpenCV and YOLO from a nice chap who goes by the name of [Pysource](https://www.youtube.com/@pysource-com) on YouTube, it was from his videos that I got introduced to computer vision and its many uses. 
 
@@ -350,9 +377,85 @@ However, the difference in resolution between pictures taken from afar by LTA tr
 
 Fig 2.2: Pre-trained YOLOv4 model's annotations on a picture of the causeway
 
-While some vehicles were detected 🔍, the majority of the cars were not. So this model may work if the camera pictures were of higher quality, but the data quality cannot be changed. Instead, we have no choice but to improve the model. Easier said than done though🥴...
+While some vehicles were detected 🔍, the majority of the cars were not. It also detected a bus which is not our intention.
+
+This model may work if the camera pictures were of higher quality, but the data quality cannot be changed. Instead, we have no choice but to improve the model. Easier said than done though🥴...
 
 ### 2.2: Annotating with CVAT
+
+---
+
+#### How object detection works
+To train an object detection model, you need to tell it what kind of object you want it to detect. This means force-feeding it pictures of said object highlighted in a bounding box until it learns what the object 'looks like'. 
+
+A bounding box is the box that surrounds the object in the image, you can see a couple in [Figure IV LINK THIS AFTERWARDS OKKK]() above in the Overview🔎. 
+
+Each bounding box has a centre coordinate value, a width and length value, and a class value, which tells the YOLO model what object class it is (ill explain more later). The centre coordinate value will come in handy later on in [Chapter 3.1 LINK THIS AFTERWARDS ALSOOOOO]().
+
+Of course, the number of pictures you need to sufficiently train a model depends on:
+
+1) the quality and resolution of your picture, a model can pick up patterns in the image pixels better if there are more pixels.
+
+2) how complex your object looks. Learning the characteristics of something simple, like for eg: a sunflower, which do not vary in shape or design, is relatively simple. 
+
+    Cars on the other hand are more difficult, with varying numbers of doors, colours, designs, etc. The model needs to generalise its object detection pattern and not overfit on irrelevant attributes unique only to certain cars.
+    
+    This means learning general characteristics of cars, such as '4 wheels', and not fixating on things like '2 doors' or 'spherical headlights', as not all cars have those features.
+
+Unfortunately, our data ticks none of those boxes. The image quality isn't the worst, but having the cars so far away means that the image pixels making up the cars are fewer. It also does not help that the image quality becomes even grainier on rainy days.
+
+insert rainy day pic here
+
+Fig 2.3: Picture of the bridge on a rainy day, looks like it was taken in the 1800s.
+
+Furthermore, the headlights of cars at night make it difficult to see the outline of the car bodies (Fig 2.4)
+
+insert nightime pic here
+
+Fig 2.4: Picture of the bridge at night, the headlights are so glaring.
+
+With all these problems, its a 50/50 whether or not the YOLO model will ever be able to detect the cars if I annotate enough training images. However, YOLO has been able to detect objects of only about 16x16 pixels in an image. Also, to detect such small and grainy objects like in our case, we probably need around one to two thousand training images minimum.
+
+Right now the success of the YOLO model is still uncertain, but I won't quit until I at least hit 2000 manually annotated training images. If the performance still does not improve at a satisfactory rate, then I may have to admit defeat. 
+
+However, at that point we would have a large enough training dataset of 2000 hours of data for decent data analysis with Tensorflow or SKlearn machine learning such that the insights gathered are more reliable and accurate👌.
+
+#### CVAT
+
+CVAT is a website that allows you to manually draw bounding boxes around objects of interest in your training images. If you have an object that is unique or niche that nobody else has trained an object detection model for, this website can help you. 
+
+However, if the object you are trying to detect is quite well known (eg: dogs, people, etc), you are better off looking for a pre-trained model that already had someone else do the dirty work, rather than spending time drawing bounding boxes yourself.
+
+I annotated about 14 images worth of cars to start and trained my first ever YOLO model with them. I set the number of epochs to 40, which is the number of times the object detection model goes over the training data, kind of like how you revise your textbooks repeatedly to better solidify the knowledge into your brain. 
+
+However, unlike us humans, going over the training data too many times can result in the model learning unnecessary details and characteristics, causing it to overfit to the training data, hence I set the epoch number at low 40 to test the waters
+
+At this time, I had just started my object detection journey and had seen people train successful models with just 50 to 100 high resolution training images, so poor me had no idea that low resolution images meant I had to annotate **a lot** more.
+
+insert picc here
+
+Fig 2.5: First time using CVAT
+
+Obviously, the model did not do well, detecting no cars whatsoever. I also received some metrics of the object detection process.
+
+insert first metrics here
+
+Fig 2.6: Metrics of object detection model's first training attempt
+
+I'm not super knowledgable on the math and nitty gritty of object detection ML/DL, but I do know that loss = errors. And as you can see at the bottom left, the validation loss is actually **increasing** as the number of epochs increases. 
+
+By right, the more times a machine learning model goes over the training data, the more it should be refining its weights and improving its performance. So obviously, this training session was a failure.
+
+After a few weeks of monotonous manual annotating, I managed to get 184 training images. I trained the model again and kept the epoch parameter the same as before.
+
+insert result 184 here
+
+Fig 2.7: metrics from training with 184 training images
+
+The numbers are still far from ideal, but at least the loss is decreasing now instead of increasing with epoch number.
+
+
+CARRY ON FROM HERE
 
 
 
