@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-
+coords_path_template = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\coords_"
 coords_1_path = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\coords_1"
 coords_2_path = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\coords_2"
 coords_3_path = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\coords_3"
@@ -21,7 +21,8 @@ for day in days:
 # creating pandas df with the days as columns and times for the row index
 table = pd.DataFrame(columns=days, index=times)
 
-for path in coordpaths:
+for num in range(1, 4):
+    path = coords_path_template + str(num)
     for file_name in os.listdir(path):
         parts = file_name.split('_')
         date = parts[0]

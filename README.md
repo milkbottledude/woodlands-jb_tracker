@@ -632,6 +632,8 @@ We will be splitting the x and y coordinate values further, they will be appende
 13         x_coords_wdlands.append(x)
 14         y_coords_wdlands.append(actual_y)
 ```
+
+
 In line 1, I iterate through the indexes in the 'x-coords' list, since it has the same number of values in the list 'y-coords'. Then I get the pair of centre coordinates in Lines 2 and 3.
 
 Line 4 defines the inverted sigmoid formula we came up with earlier, the **numpy** package comes in handy here to get Euler's number, '*e*'.
@@ -640,16 +642,228 @@ The x-coordinate value is subbed into the formula, and Line 5 checks if the actu
 
 If the actual centre coordinate lies below the curve, that means it belongs to the road going to Johor, otherwise it belongs to the road headed to Woodlands. Lines 6 to 10 append the coordinates to the correct lists mentioned above in Lines 1 to 4.
 
-With all the coordinates properly preprocessed and classified according to their road, we can now do some data analysis
+To make sure all the points were classified properly, I made a simple coloured scatterplot using Matplotlib
+
+```
+1   plt.xlim(0, 1)
+2   plt.ylim(0, 1)
+3   plt.grid()
+4   x = np.linspace(0, 1, 100)
+5   y = 1 / (1 + np.exp(4 * (x - 0.73)))
+6   plt.plot(x, y)
+```
+Lines 1 and 2 set the limits of the axes so neither axis has a tick of value greater than 1.
+
+Line 3 enables gridlines on the plot, while Lines 4 and 5 create the coordinates of the sigmoid curve, which is then plotted by the code in Line 6. 
+
+```
+7   plt.scatter(x_coords_johor, y_coords_johor, c='blue')
+8   plt.scatter(x_coords_wdlands, y_coords_wdlands, c='red')
+9   plt.xlabel('x value')
+10  plt.ylabel('y value')
+11  plt.show()
+```
+Line 7 plots the box coordinates that lie on the road to Johor and colours them blue, while Line 8 does the same for the road to Woodlands, except the coordinates are coloured red instead. Lines 9 and 10 label the axes, and Line 11 showcases the graph.
+
+insert many redblue w line
+
+Fig 3.6: Plotted the sigmoid curve and coloured coordinates
+
+If you are wondering why there seems to be even more points than in Fig VII, thats because I've annotated a few more batches since then, so theres more coordinates now.
+
+With all the coordinates properly preprocessed and classified according to their road, we can now do some data analysis.
 
 ### 3.2: Exploratory Data Analysis (EDA)
 
+The code in this chapter can all be found in [data_analysis.py LINK HEREEEEEEE]()
+
+First, I imported the packages I would need:
+
+```
+import os
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+```
+The packages are the same as in chapter 3.1 except for pandas 🐼, as I will need the Dataframes 𝄜 that come with the pandas library to showcase the data in a neat table.
+
+Then I defined a list of all the days in a week, and a list of all the times of a day. This is needed for later when organising the congestion values in a pd dataframe according to day and time.
+
+```
+days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+times = ['00-00', '01-00', '02-00', '03-00', '04-00', '05-00', '06-00', '07-00', '08-00', '09-00', '10-00', '11-00', '12-00', '13-00', '14-00', '15-00', '16-00', '17-00', '18-00', '19-00', '20-00', '21-00', '22-00', '23-00']
+```
+
+Theres probably a more automated way around doing this, but its not worth the brain power compared to just listing them out like this compared to the file paths scenario.
+
+```
+1   area_dict = {}
+2   for day in days:
+3       area_dict[day] = {}
+4       for time in times:
+5           area_dict[day][time] = [0, 0]
+
+6   table = pd.DataFrame(columns=days, index=times)
+```
+I then created a dictionary (day, Line 3) within another dictionary (area_dict, Line 1) to store 2 values (Line 5): 
+1) the total area of bounding boxes for each day and time
+2) the number of instances of that particular day and time
+
+This is so that I can calculate the average amount of congestion that occurs at that time and day by dividing total area (1st value) by total number of instances (2nd value).
+
+In Line 6 I create a pd Dataframe defined as 'table' to store the average congestion area values at every time and day.
+
+This next part of the code is quite complicated, so ill break it up into smaller chunks
+
+```
+1   for num in range(1, 4):
+2       path = coords_path_template + str(num)
+3       for file_name in os.listdir(path):
+4           parts = file_name.split('_')
+5           date = parts[0]
+6           time = parts[1]
+7           day = parts[2][:3]
+8           area_dict[day][time][1] += 1
+9           file_path = os.path.join(path, file_name)
+```
+First I iterate over the numbers 1 to 3 (last number, 4, is not inclusive when using range()) to go over all coords folders. I then extract each file from each folder (Line 3) and split their filenames into parts (Line 4-7).
+
+This is the reason why I named the jpeg files like so in my GCloud web scraping code. Since the bounding box files returned by CVAT will also be of the same name as the jpeg files, I could simply sort the files into dictionaries by simply using parts of the filename as dictionary keys (Line 8). I then construct the file path in Line 9.
+
+
+```
+1        with open(file_path, 'r') as file:
+2            total_box_area = 0
+3            for line in file:
+4                numbers = line.split()
+5                x = float(numbers[1])
+6                actual_y = float(numbers[2])
+7                y = 1 / (1 + np.exp(4 * (x - 0.73)))
+8                if actual_y < y:
+9                    box_area = float(numbers[3]) * float(numbers[4])
+10                   total_box_area += box_area
+```
+
+I do the same thing as in Chapter 3.1, checking whether the centre coordinates lie below or above the curve (Lines 1-7). However, unlike in [splittingroad_&_preprocessing.py LINK HEREEEEEEEEEEE](), I don't classify the coordinates on the road to Woodlands. 
+
+Thats because I'm only analysing data of congestion going into Johor as of now. So in this case, if the coordinate lies above the curve, I ignore it. You can see this in Line 8, where I only process the data if actual_y < y.
+
+In Line 9, I calculate the area of the bounding box by multiplying the width of the box (numbers[3]) by its height (numbers[4]). Then I add the area to the total_box_area variable. This will represent how much congestion is present in that image. Greater area = Greater congestion
+
+```
+11           area_dict[day][time][0] += total_box_area
+12           total_area = area_dict[day][time][0]
+13           instance_no = area_dict[day][time][1]
+14           table.loc[time, day] = total_area/instance_no
+```
+With the file still open and in 'read' mode, I add the total_box_area to the 1st value of the list in the nested dictionary (Line 11). 
+
+Then I define the sum of areas and sum of instances, before calculating the average congestion area and adding it to the table (Line 14). Here is how the table looks.
+
+insert first look at table
+
+Fig 3.7: First look at table of congestion values
+
+Not pretty. The values are oddly scaled, nobody would really understand what they mean, and they have more decimal places than I care to count.
+
+Let's try to fix it, can't have my dataframe lowkey looking like ASCII art of a fish or something. 
+
+```
+1   max_value = table.max().max()
+2   table = table.astype(float)
+3   table = table/max_value * 5
+5   table = table.apply(lambda x: x.round(2))
+6   print(table)
+7   table.to_csv('sorted_data.csv', index=False)
+```
+
+My plan is to make the congestion area values scale from 1 to 5, with 1 being no/little congestion, and 5 being very congested. But before that I min-max scaled, so I got the max value (Line 1) and multiplied all the values in the table by 5/max_value (Line 3). 
+
+Line 2 is just to ensure all the values are floats so that we can round them off to 2dp (Line 5). Line 7 saves the table as a csv file, which you can see [here LINKKKKKKK](), and Line 6 prints out the table.
+
+insert scaled and 2dp here
+
+Fig 3.8: Same table, now scaled and rounded to 2dp
+
+An improvement for sure, but still not much insight can be gained from a glance. Also its a bit too bland for my liking. But not to worry, we will be exploring other ways of data visualization in this chapter, starting off with a simple line graph.
+
+```
+1   d = 0
+2   color = ['red', 'blue', 'green', 'yellow', 'black', 'purple', 'pink']
+3   for col in table.columns:
+4       y = list(table[col])
+5       plt.plot(times, y, label=days[d], color=color[d])
+6       d += 1
+7   plt.legend()
+8   plt.show()
+```
+First I created a list of 7 colors (Line 2), one for each day of the week. The columns in the table are the days of the week, so I iterate over them using a 'for' loop in Line 3.
+
+Line 1 and 6 work together to select a different line colour for different days, with Line 6 increasing 'd' by 1 after every column value (day) is iterated over.
+
+In Line 5, the average congestion area (y axis) is plotted against the 24 hour times of a day (x-axis). The label and line color is changed accordingly with days[d] and color[d] as 'd' increments. 
+
+Finally, Line 7 adds a legend to tell the line graphs apart as you can see in the top right of the figure above, and Line 8 outputs the final product.
+
+insert many colorful lines jpeg here
+
+Fig 3.9: Coloured line graphs of congestion area against time of day
+
+, but it gives a general idea of how congestion varies against time for the different days.
+
+The graph aligns with some common knowledge of the causeway, such as:
+
+- presence of jam from 1900 to 2300 for only Fridays, as that is the period after work when people want to spend the weekend in Johor
+- large spike in jam on Saturday mornings for people that are not willing to go to Johor immediately after work on Friday, but still want to spend some weekend time in Johor
+
+However, its interesting to note that there is not much jam on Sundays. My assumption was that both days of the week would have the roads to Johor jammed up, but I guess people aren't as willing to go to Johor on Sunday compared to Saturday. 
+
+On the contrary, the road to Woodlands may be congested due to people coming back to SG after going to Johor on Saturday/Friday.
+
+Let's try bar graphs next. The plot containing line graphs for every day of the week is a little too cramped for my liking, so for the bar graphs I'll be plotting on separate axes.
 
 
 
+```
+1   fig, axes = plt.subplots(2, 4)
+2   axesrows = [0, 0, 0, 0, 1, 1, 1]
+3   axescols = [0, 1, 2, 3, 0, 1, 2]
+4   for col in table.columns:
+5       y = list(table[col])
+6       axes[axesrows[d], axescols[d]].bar(range(24), y)
+7       axes[axesrows[d], axescols[d]].set_xticks(range(24))
+8       axes[axesrows[d], axescols[d]].set_xticklabels(times, rotation=66, fontsize=7)
+9       axes[axesrows[d], axescols[d]].set_title(days[d])
+10      axes[axesrows[d], axescols[d]].set_ylim(0, 5)
+11      d += 1
+12  axes[1, 3].axis('off')
+13  plt.show()
+```
+Line 1 plots 8 subplots (2 rows by 4 columns), and Lines 2 and 3 represent the subplot coordinates. For example, [0, 1] is the 1st row 2nd col subplot, which represents Tuesday in Fig 3.10 below. 
 
+Line 6 and 7 sets 24 bars across the x-axis in each subplot, with 'y' being the value for the bar height. Line 8 rotates the x-axis time labels and sets the fontsize to a smaller 7 to prevent them from overlapping. 
 
+Line 9 sets the title according to days[d] which gives the right day as 'd' increases (Line 11), and Line 10 sets the max bar height at 5 units. Line 12 removes the bottom right subplot, since theres space for 8 subplots but we only need 7, and finally Line 13 outputs all bar graphs.
 
+> Or are they histograms? Cuz even though they aren't connected, they represent continuous values over time, not categorical... I don't know man I'm rambling. 
+
+Hope you haven't fallen asleep while reading. I've done that a couple times already while writing this.
+
+insert bar graphs to johor
+
+Fig 3.10: Separate bar graphs of congestion against time of day, 1 for each day of the week
+
+This is slightly easier to understand than Fig 3.9, which may have been too colorful and messy. Let's do this for the congestion values going into Woodlands as well. Not much change in code needed,  just gotta change the '<' in `if actual_y < y:` to '>'.
+
+insert histogram to wdlands
+
+Fig 3.11: Separate bar graphs (or histograms?🤔) for congestion coming into Woodlands
+
+These graphs may not present ground-breaking discoveries, but they do show some trends and patterns that we did not know before, and they definitely gave us some food for thought going into the next Chapter of the project: Machine Learning
+
+## Chapter 4: Machine Learning
+
+Talk more about what insights u got from the 2 subplot bar graphs above first before moving on to talk about machine learning!!!!!!!!!!!!!!!!!
 
 
 
@@ -691,7 +905,7 @@ As you can see above (Fig orange line), there are some coordinates that belong t
 I might try experimenting further later to get a better line with a curved top that better separates the lanes, but for now we will simply ignore all points with x values smaller than that of the orange line, which has the formula 'x = 0.28'. 
 
 P.S: The reason why the jam coords may not line up as you can see below (Fig side by side), thats because the coordinates from YOLO are in normalized format, where (0, 0) is at the top left of the image while (1, 1) is at the bottom right. 
-Contrary to that, matplotlib plots their graph in a format more easy on the eye for you and I, with (0, 0) being at the bottom left and (1, 1) at the top right.
+Contrary to that, matplotlib plots their graph in a format more familiar to you and I, with (0, 0) being at the bottom left and (1, 1) at the top right.
 
 After messing around with desmos for a bit, i managed to get a curved line that better separates the 2 groups of coordinates, a modified sigmoid graph formula that is reflected in the y-axis. (Fig sigmoid reflected) Feels nostalgic doing Graphs and Transformations again 2 years later after JC.
 
@@ -722,7 +936,7 @@ Here are the metrics of the 2 models side by side so its easier to compare (Fig 
 Now with an increased number of labelled images, ill be finding the average congestion at each hour of each day and putting it into a pandas dataframe for readability. Similar to the first data analysis we did but this time the road to Johor and Woodlands are separated. The sample size is also larger for more reliable results. For now we will ignore dates and proximity to public holidays. 
 First i will collate the total area at that time and day in a dictionary, then calculate the average congestion area and put it into the pandas df. Here is how the table looks currently (Fig table looks currently)
 
-Not so easy on the eyes, with weird numbers with many decimal places all over the place. Lets apply some form of min-max scaling to the values to make it more decipherable, where the values are scaled from 0-5, with 5 being very congested and 0 being no jam at all. (Fig scaled & 2dp)
+Not so easy on the eyes, with weird numbers and many decimal places all over the place. Lets apply some form of min-max scaling to the values to make it more decipherable, where the values are scaled from 0-5, with 5 being very congested and 0 being no jam at all. (Fig scaled & 2dp)
 
 Slightly better, people should be able to visualise these 2dp numbers as congestion on the road to a greater degree. But the table and its information can definitely still be improved, aesthetics wise too.
 The values here not just show the amount of congestion, but it also kind of represents the probability of congestion at that time of day. For example, if 10am on a Saturday has heavy congestion almost every time the scraper captures the image of the road at that moment, then the total area would be greater, so quotient would be greater.
