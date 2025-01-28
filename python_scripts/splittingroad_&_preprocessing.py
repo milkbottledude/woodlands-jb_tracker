@@ -2,18 +2,19 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-# file_path = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\coords_1\Sat_11-09_08-00.txt"
-folder_path = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\coords_2"
+folder_path_template = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\coords_"
 
 x_coords = []
 y_coords = []
-for file_name in os.listdir(folder_path):
-    file_path = os.path.join(folder_path, file_name)
-    with open(file_path, 'r') as file:
-        for line in file:
-            numbers = line.split()
-            x_coords.append(float(numbers[1][:4]))
-            y_coords.append(float(numbers[2][:4]))
+for i in range(1, 4):
+    folder_path = folder_path_template + str(i)
+    for file_name in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file_name)
+        with open(file_path, 'r') as file:
+            for line in file:
+                numbers = line.split()
+                x_coords.append(float(numbers[1][:4]))
+                y_coords.append(float(numbers[2][:4]))
 
 # x = np.linspace(0, 1, 100)
 # y = -0.94 * x + 1.18
