@@ -24,7 +24,7 @@ def download_folder(bucket_name, folder_name, local_destination):
 
 # Example usage
 bucket_name = "frickubucket"
-folder_name = "snapshots/"  # Ensure it ends with a slash
-local_destination = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\snaps"  # Path to folder
+folder_name = "towardsbkesnapshot/"  # Ensure it ends with a slash
+local_destination = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\bkesnaps"  # Path to folder
 
 download_folder(bucket_name, folder_name, local_destination)

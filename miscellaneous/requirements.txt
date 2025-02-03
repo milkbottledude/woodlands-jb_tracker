@@ -4,3 +4,5 @@ opencv-python
 google-cloud-storage
 ultralytics
 pandas
+tensorflow
+scikit-learn
