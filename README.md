@@ -297,7 +297,7 @@ As the web scraping code will be running from the cloud without a platform like 
 
 ![Fig 1.6](progress_pics/Fig-1.6-Dockerfile_screenshot_from_gcloudrun.jpg)
 
-Fig 1.6: Dockerfile code
+Fig 1.6: Dockerfile code screenshot from Cloud Run Functions
 
 Line 8 gets the latest version of Google Chrome and Line 9 installs it 📥. Line 4 ensures that all the packages installed is the most updated version there is 🔄, while Line 5 installs all the packages are needed for chrome to run in the docker environment, but not part of google chrome and so are not installed by the code in Line 9.
 
