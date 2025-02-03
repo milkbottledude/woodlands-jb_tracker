@@ -4,10 +4,12 @@
 
 - 🗪 Feel free to telegram me [@milkbottledude](https://t.me/milkbottledude) if you have any questions, or just want to chat :)
 
+> TLDR: A website that uses machine learning and Google Cloud to predict the amount of traffic on the Johor-Singapore Causeway at a date and time of your choosing.
+
 ## Overview 🔍
 Welcome to Project: Woodlands-JB Tracker!
 
-This project aims to predict the congestion level of the bridge at the Singapore Woodlands Checkpoint Causeway based on variables like:
+This project aims to predict the congestion level of the bridge at the Singapore Woodlands Checkpoint Causeway at any date and time in the future, based on variables like:
 - Time of day 🕑 
 - Day of the week 🌞 (i think generally wkends are more congested but we'll see what the data tells us)
 - Presence of holidays (public hol & sch hol) 🏖️
@@ -297,7 +299,7 @@ As the web scraping code will be running from the cloud without a platform like 
 
 Fig 1.6: Dockerfile code
 
-Line 8 gets the latest version of Google Chrome and Line 9 installs it 📥. Line 4 ensures that all the packages installed is the most updated version  🔄 there is, while Line 5 installs all Chrome libraries that could not be installed from the code in Line 9.
+Line 8 gets the latest version of Google Chrome and Line 9 installs it 📥. Line 4 ensures that all the packages installed is the most updated version  🔄 there is, while Line 5 installs all the packages that 
 
 Take note that due to Line 4, the container's google chrome version will always stay updated, but the chromedriver version won't. Be sure to monitor the logs of the GCloud function 👀 and update the chromedriver binary version in requirements.txt when necessary.
 
