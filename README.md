@@ -295,7 +295,7 @@ That's the main python script for Google Cloud, but theres more to automating co
 
 As the web scraping code will be running from the cloud without a platform like VS Code or PyCharm to execute it, we need to create whats called a "container" for the code instead with our very own [Dockerfile](GCloud/Dockerfile).
 
-![Fig 1.6](progress_pics/Fig-1.6-Dockerfile_screenshot.jpg)
+![Fig 1.6](progress_pics/Fig-1.6-Dockerfile_screenshot_from_gcloudrun.jpg)
 
 Fig 1.6: Dockerfile code
 
