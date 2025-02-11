@@ -377,7 +377,9 @@ I found OpenCV and YOLO from a nice chap who goes by the name of [Pysource](http
 
 In this particular [video](https://www.youtube.com/watch?v=O3b8lVF93jU&t=46s&ab_channel=Pysource), he shares the weights of a yoloV4 object detection model that was already pre-trained 🏋️‍♀️ on tens of thousands of cars, which saves us the hassle of manually drawing the car objects' bounding boxes ✍️ and feeding the training images to the model. 
 
-The object detection model consists of 2 files. One is[vehicle_detector.py](link to python file), which defines the object classes and retrieves the pre-trained weights ⚖️ using OpenCV. The other is [yoloimage](link to python file), where you define the image you want to carry out object detection on and feed it to the model. The results are quite accurate, as you can see in the figure below 🎯.
+The object detection model consists of 2 files. One is [vehicle_detector.py](python_scripts/vehicle_detector.py), which defines the object classes and retrieves the pre-trained weights ⚖️ using OpenCV.
+
+The other is [yoloimage.py](python_scripts/yoloimage.py), where you define the image you want to carry out object detection on and feed it to the model. The results are quite accurate, as you can see in the figure below 🎯.
 
 ![](progress_pics/Fig-2.1-Pysource-video-YOLOv4.jpg)
 
@@ -398,25 +400,27 @@ This model may work if the camera pictures were of higher quality, but the data 
 ---
 
 #### How object detection works
-To train an object detection model, you need to tell it what kind of object you want it to detect. This means force-feeding it pictures of said object highlighted in a bounding box until it learns what the object 'looks like'. 
+To train an object detection model, you need to tell it what kind of object you want it to detect 🔍. This means force-feeding it pictures of said object highlighted in a bounding box, until it learns what the object 'looks like' 🚗. 
 
-A bounding box is the box that surrounds the object in the image, you can see a couple in [Figure IV LINK THIS AFTERWARDS OKKK]() above in the Overview🔎. 
+A bounding box is the box that surrounds the object in the image, you can see a couple in [Figure IV](progress_pics/Fig-IV-yolo_beachscreenshot.jpg) above in the Overview🔎. 
 
-Each bounding box has a centre coordinate value, a width and length value, and a class value, which tells the YOLO model what object class it is (ill explain more later). The centre coordinate value will come in handy later on in [Chapter 3.1 LINK THIS AFTERWARDS ALSOOOOO]().
+Each bounding box has a centre coordinate value, a width and length value, and a class value, which tells the YOLO model what object class it is (ill explain more on classes later). The centre coordinate value will come in handy later on in [Chapter 3.1](#31-data-preprocessing).
 
 Of course, the number of pictures you need to sufficiently train a model depends on:
 
-1) the quality and resolution of your picture, a model can pick up patterns in the image pixels better if there are more pixels.
+1) the quality and resolution of your picture 🖼️. a model can pick up patterns in the image pixels better if there are more pixels.
 
-2) how complex your object looks. Learning the characteristics of something simple, like for eg: a sunflower, which do not vary in shape or design, is relatively simple. 
+2) how complex your object looks. Learning the characteristics of something simple, like for eg: a sunflower 🌻, which do not vary in shape or design, is relatively simple. 
 
-    Cars on the other hand are more difficult, with varying numbers of doors, colours, designs, etc. The model needs to generalise its object detection pattern and not overfit on irrelevant attributes unique only to certain cars.
+Cars on the other hand are more difficult, with varying numbers of doors, colours, designs, etc 🚗 🚙 🚕 🚓.
+
+The model needs to generalise its object detection pattern and not overfit on irrelevant attributes unique only to certain cars.
     
-    This means learning general characteristics of cars, such as '4 wheels', and not fixating on things like '2 doors' or 'spherical headlights', as not all cars have those features.
+This means learning general characteristics of cars, such as '4 wheels', and not fixating on things like '2 doors' or 'spherical headlights', as not all cars have those features.
 
-Unfortunately, our data ticks none of those boxes. The image quality isn't the worst, but having the cars so far away means that the image pixels making up the cars are fewer. It also does not help that the image quality becomes even grainier on rainy days.
+Unfortunately, our data ticks neither box. The image quality isn't the worst, but having the cars so far away means that the image pixels making up the cars are fewer. It also does not help that the image quality becomes even grainier on rainy days 🌧️.
 
-[insert rainy day pic here OIIIIIIIIIIIII]()
+[insert rainy day pic here LINKKKKKKKKKK]()
 
 Fig 2.3: Picture of the bridge on a rainy day, looks like it was taken in the 1800s.
 
