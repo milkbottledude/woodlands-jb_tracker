@@ -422,7 +422,7 @@ Unfortunately, our data ticks neither box. The image quality isn't the worst, bu
 
 [insert rainy day pic here LINKKKKKKKKKK]()
 
-Fig 2.3: Picture of the bridge on a rainy day, looks like it was taken in the 1800s.
+Fig 2.3: Picture of the bridge on a rainy day, looks like it was taken in 12 b.c
 
 Furthermore, the headlights of cars at night make it difficult to see the outline of the car bodies (Fig 2.4)
 
@@ -432,21 +432,21 @@ Fig 2.4: Picture of the bridge at night, the headlights are so glaring.
 
 With all these problems, its a 50/50 whether or not the YOLO model will ever be able to detect the cars if I annotate enough training images. However, YOLO has been able to detect objects of only about 16x16 pixels in an image. Also, to detect such small and grainy objects like in our case, we probably need around one to two thousand training images minimum.
 
-Right now the success of the YOLO model is still uncertain, but I won't quit until I at least hit 2000 manually annotated training images. If the performance still does not improve at a satisfactory rate, then I may have to admit defeat. 
+Right now the success of the YOLO model is still uncertain 🤔, but I won't quit until I at least hit 2000 manually annotated training images. If the performance still does not improve at a satisfactory rate, then I may have to admit defeat. 
 
-However, at that point we would have a large enough training dataset of 2000 hours of data for decent data analysis with Tensorflow or SKlearn machine learning such that the insights gathered are more reliable and accurate👌.
+However, at that point we would have a large enough training dataset of 2000 hours of data for decent data analysis with Tensorflow or SKlearn machine learning, enough for the insights gathered to be more reliable and accurate👌.
 
 #### CVAT
 
-CVAT is a website that allows you to manually draw bounding boxes around objects of interest in your training images. If you have an object that is unique or niche that nobody else has trained an object detection model for, this website can help you. 
+CVAT is a website that allows you to manually draw bounding boxes ☐ around objects of interest 🚘 in your training images. If you have an object that is unique or niche that nobody else has trained an object detection model for, this website can help you. 
 
-However, if the object you are trying to detect is quite well known (eg: dogs, people, etc), you are better off looking for a pre-trained model that already had someone else do the dirty work, rather than spending time drawing bounding boxes yourself.
+However, if the object you are trying to detect is quite well known (eg: dogs, people, etc), you are better off looking for a pre-trained model that already had someone else do the dirty work, rather than spending time drawing bounding boxes yourself 🐶.
 
-I annotated about 14 images worth of cars to start and trained my first ever YOLO model with them. I set the number of epochs to 40, which is the number of times the object detection model goes over the training data, kind of like how you revise your textbooks repeatedly to better solidify the knowledge into your brain. 
+I annotated about 14 images worth of cars to start ✏️ and trained my first ever YOLO model with them. I set the number of epochs to 40, which is the number of times the object detection model goes over the training data, kind of like how you revise your textbooks repeatedly to better solidify the knowledge into your brain 🔄. 
 
-However, unlike us humans, going over the training data too many times can result in the model learning unnecessary details and characteristics, causing it to overfit to the training data, hence I set the epoch number at low 40 to test the waters
+However, unlike us humans, going over the training data too many times 🌀 can result in the model learning unnecessary details and characteristics, causing it to overfit to the training data, hence I set the epoch number at low 40 to test the waters.
 
-At this time, I had just started my object detection journey and had seen people train successful models with just 50 to 100 high resolution training images, so poor me had no idea that low resolution images meant I had to annotate **a lot** more.
+At this time, I had just started my object detection journey after seeing people train successful models with just 50 to 100 high resolution training images, so poor me had no idea that low resolution images meant I had to annotate **a lot** more ✏️
 
 insert picc here
 
@@ -458,19 +458,21 @@ insert first metrics here
 
 Fig 2.6: Metrics of object detection model's first training attempt
 
-I'm not super knowledgable on the math and nitty gritty of object detection ML/DL, but I do know that loss = errors. And as you can see at the bottom left, the validation loss is actually **increasing** as the number of epochs increases. 
+I'm not super knowledgable on the math and nitty gritty of object detection ML/DL, but I do know that loss = errors = 👎. And as you can see at the bottom left, the validation loss is actually **increasing** as the number of epochs increases. 
 
-By right, the more times a machine learning model goes over the training data, the more it should be refining its weights and improving its performance. So obviously, this training session was a failure.
+By right, the more times a machine learning model goes over the training data, the more it should be refining its weights and improving its performance 🔧. So obviously, this training session was a failure.
 
-I tried to find loopholes around the picture quality, such as detecting traffic congestion areas as a whole:
+I tried to find loopholes around the picture quality to train the YOLO model, such as detecting traffic congestion areas as a whole:
 
 insert weird ahh shaped box here
 
 Fig 2.7: Hexagon bounding box
 
-However, this did not work as YOLO relies on axis-aligned 4-sided bounding boxes, as they need the centre of the box to be clearly defined to accurately identify the centre of mass of the object and generalise characteristics. Also, YOLO breaks up the box into a grid of pixels to detect patterns, and its not programmed to do that for odd shaped boxes. The way they calculate the loss values is also programmed in a way that it only supports 4-sided, axis-aligned bounding boxes. I'm not educated enough on the subject to know the exact details behind the way the YOLO model is set up, so I cannot explain specifics, for that I apologise.
+However, this did not work. This is because they need the centre of the box to be clearly defined to accurately identify the centre of mass of the object and generalise characteristics, and YOLO is not able to do so for odd shapes 🛑.
 
-In the end, I settled for identifying **areas** of congestion. It somewhat solved the low-pixel problem by making the bounding box area bigger, while at the same time still keeping the majority of the bounding box around an area of cars. It was also feasible with 4-sided-boxes aligned to the axes.
+YOLO breaks up the box into a grid of pixels to detect patterns and calculate loss. This process is programmed in a way that it only supports 4-sided, axis-aligned 📐 bounding boxes. I'm not educated enough on the subject to know the exact details behind the way the YOLO model is set up 📚, so I cannot explain specifics. For that I apologise.
+
+In the end, I settled for identifying **areas** of congestion on the causeway 🛣️. It somewhat solved the low-pixel problem by making the bounding box area bigger, while at the same time still keeping the majority of the bounding box around an area of cars. It was also feasible with 4-sided-boxes aligned to the axes.
 
 insert axis aligned here
 
@@ -486,17 +488,17 @@ insert result 184 here
 
 Fig 2.9: metrics from training with 184 training images
 
-The numbers are still far from ideal, but at least the loss is decreasing now instead of increasing with epoch number.
+The numbers are still far from ideal, but at least the loss is decreasing now 📉 instead of increasing with epoch number.
 
-Afterwards, there was just a bunch more annotation. I split the total images I had at the time (about 1000) into 7 batches in the GCloud folder. I hit 334 training images after annotating the 2nd batch and trained the model again:
+Afterwards, there was just a bunch more annotation ✏️. I split the total images I had at the time (about 1000) into 7 batches in the GCloud folder 📦. I hit 334 training images after annotating the 2nd batch and trained the model again:
 
 insert results 334 here
 
 Fig 2.10: metrics from training with 334 training images
 
-The results did not show any major improvement in model performance. The training loss and validation loss only improved very slightly from when i trained the model with 184 images, almost half the number of images. Same for the recall and precision, only marginally better, and they were not smooth curves meaning the model is not performing very consistently. Not good news.
+The results did show improvement 📈 in model performance, but not much. The training loss and validation loss only improved very slightly from when i trained the model with 184 images, almost half the number of images. Same for the recall and precision, only marginally better, and they were not smooth curves meaning the model is not performing very consistently. Not good news.
 
-A few late nights later, I hit 514 images after completing the 3rd batch of image annotations:
+A few late nights later, I hit 514 images after completing the 3rd batch 📦 of image annotations:
 
 insert results 514 here
 
@@ -504,7 +506,7 @@ Fig 2.11: metrics from training with 514 images
 
 Slight improvement, the metrics mAP50 and 50-95 which, to my limited understanding, basically sees if there is a certain amount of overlap between the actual bounding box and that placed by the model, have increased from when the model was trained with 334 images, from around 0.3 to 0.4. 
 
-The mAP50-95 (basically the same thing except the amount of overlap varies) also increased from around 0.100 to slighly below 0.15. It also looks like validation dfl loss (rough explanation: measures loss for the corners of the bounding box placed by the model) decreased slighly. However, it looks like the box loss gradient may be stagnating, which is bad news.
+The mAP50-95 (basically the same thing except the amount of overlap varies) also increased from around 0.100 to slighly below 0.15. It also looks like validation dfl loss (rough explanation: measures loss for the corners of the bounding box placed by the model) decreased slighly. However, it looks like the box loss gradient may be stagnating 〰️ which does not look good.
 
 Here are the metrics of the 2 model metrics side by side so its easier to compare:
 
@@ -512,28 +514,30 @@ insert fig sie by side
 
 Fig 2.12: Fig 2.11 on the right, Fig 2.10 on the left
 
-Furthermore, when I used the weights of the model after this training session on a random image at night, it managed to detect a small fraction of the congestion in the picture. Granted, it doesn't look very impressive, but it was my first visible progress after a long period of work and no results, so I was quite thrilled.
+On a brighter note, when I used the weights of the model after this training session ⚖️ on a random image of the bridge taken at night 🌙, it managed to detect a small fraction of the congestion in the picture. 
+
+Granted, it doesn't look very impressive, but it was my first visible progress after a long period of work and no results, so I was quite thrilled.
 
 insert 0.3 confi here
 
 Fig 2.13: First annotation by model
 
-As I annotate more images, I will continue to update you guys on the results for future models. We have about 1300 currently, and so far only about 500 have been annotated (batch 3 out of 7), so I feel there is still potential for the YOLO model. Or maybe im just being delusional. Either way, I'm not stopping until I reach 2000.
+As I annotate more images, I will continue to update you guys on the results for future models. We have about 1300 currently, and so far only about 500 have been annotated (batch 3 out of 7 📦), so I feel there is still potential for the YOLO model. Or maybe im just being delusional. Either way, I'm not stopping until I reach 2000.
 
-Now that we have a decent amount of raw data on the causeway congestion, we can preprocess the data and use graphs and tables to contextualize it for better readability and understanding.
+Now that we have a decent amount of raw data on the causeway congestion, we can preprocess the data and use tables/graphs 📊 to contextualize it for better readability and understanding.
 
 ## Chapter 3 - Processing and Visualizing Data
 ### 3.1: Data Preprocessing
 
-The source code for this subchapter can be found in [splittingroad_&_preprocessing.py LINK THISSSSS]()
+The source code for this subchapter can be found in [splittingroad_&_preprocessing.py](python_scripts/splittingroad_&_preprocessing.py)
 
 #### Differentiating the roads
 
-Its all well and good if we can identify areas of congestion on the causeway, but the causeway goes both ways. While theres a jam on the road towards Woodlands, the road to Johor could be empty.
+Its all well and good if we can identify areas of congestion on the causeway, but the causeway goes both ways 🛣️. While theres a jam on the road towards Woodlands, the road to Johor could be empty.
 
-Us humans can tell which road goes to which country, but the object detection model only cares about detecting areas of congestion on both roads, not which road is congested. We need a way to tell our code which road is congested to conduct any meaningful data analysis.
+Us humans can tell which road goes to which country 🇸🇬/🇲🇾, but the object detection model only cares about detecting areas of congestion on both roads, not which road is congested. We need a way to tell our code which road is congested to conduct any meaningful data analysis 📊.
 
-This problem puzzled me for quite a while and I researched some possible ways to get around this, such as incorporating image cropping into the code such that it separated the 2 lanes into separate pictures, or using shapes to define the regions of the road. None of those really appealed to me though, and eventually I settled on using the centre coordinates of the bounding boxes to determine which lane the congestion belonged to.
+This problem puzzled me for quite a while and I researched some possible ways to get around this, such as incorporating image cropping into the code such that it separated the 2 lanes ✂️ into separate pictures, or using shapes to define the regions of the road. None of those really appealed to me though, and eventually I settled on using the centre coordinates 📍 of the bounding boxes to determine which lane the congestion belonged to.
 
 First, I gathered the centre coordinates of all bounding boxes in every single image of the causeway I annotated, then I plotted them all into a graph using Matplotlib.
 
@@ -541,17 +545,17 @@ insert coords of pics here
 
 Fig 3.1: Plotted coordinates of all bounding box centres
 
-Notice something? There is a clear separation between what appears to be 2 groups of coordinates, obviously the 2 groups are the lanes of the coordinates.
+Notice something? There is a clear separation ✂️ between what appears to be 2 groups of coordinates, obviously the 2 groups are the lanes of the coordinates.
 
-The plan now was to plot a line that perfectly separated the 2 groups, so that in the future, the code knows how to differentiate coordinates and their lanes by simply looking at which side of the separating line they lie on.
+The plan now is to plot a line that perfectly separated the 2 groups, so that in the future, the code knows how to differentiate coordinates and their lanes by simply looking at which side of the separating line they lie on.
 
-At first, I tried to separate them with a normal straight line. I did some trial and error, and the straight line graph formula I came up with was y = -0.94x + 1.18
+At first, I tried to separate them with a normal straight line. I did some trial and error and came up with was a formula of: y = -0.94x + 1.18
 
 insert straight line graph separating lanes
 
 Fig 3.2: Straight line graph plotted together with bounding box coordinates
 
-Its not bad, but you can see at the top left of the graph that some coordinates belonging to the top group managed to sneak below the line. Incorrect data leads to incorrect predictions and flawed data analysis, which is unacceptable.
+Its not bad, but you look carefully at the top left of the graph, there's a tiny problem. Some coordinates belonging to the top group managed to sneak below the line. Incorrect data leads to incorrect predictions and flawed data analysis, which is unacceptable.
 
 After tinkering with Matplotlib and Desmos, the online math graphing app, for a bit, I managed to get a curve that perfectly separated the coordinates.
 
@@ -561,19 +565,21 @@ Fig 3.3: Curved line separates all the coordinates, including the ones at the to
 
 This curve actually originated from a sigmoid. I was looking at different types of curve lines and their formulas, and the sigmoid caught my eye. Thanks to Graphs and Transformations from JC maths, I managed to invert the sigmoid about the y-axis and adjust its y-intercept, as well as its gradient (x coefficient), finally getting the formula of the perfect line: y = 1/1+e^^4(x-0.73)
 
-Using this formula, I coded splittingroad.py, which goes through every single bounding box's centre coordinate and subs it's x-coordinate into the formula. If the y value from the formula > the actual y-coordinate, that means the coordinate is below the line and belongs to the lane below the curve. I separated the coordinates into 2 different lists, then coloured the coordinates differently in Matplotlib (Fig 3.5).
+Using this formula, I coded splittingroad.py, which goes through every single bounding box's centre coordinate 📍 and subs it's x-coordinate into the formula 🧪. If the y value from the formula > the actual y-coordinate, that means the coordinate is below the line and belongs to the lane below the curve. 
 
-Thats the TLDR of the first part of code in splittingroad.py, now I will explain how the whole thing works in detail part by part.
+I separated the coordinates into 2 different lists, then coloured the coordinates differently in Matplotlib (Fig 3.5, which is further down below).
+
+Thats the TLDR of the first part of code in splittingroad.py, now I will explain how the whole thing works in detail part by part 🔍
 
 ```
 import os
 import matplotlib.pyplot as plt
 import numpy as np
 ```
-First I got imported the required packages: 
-- **os** for extracting and working with local files. 
-- **matplotlib** to plot the coordinates in a graph
-- **numpy** for its math functions, which we use to plot our sigmoid curve
+First I imported the required packages: 
+- **os** for extracting and working with local files 🗂️
+- **matplotlib** to plot the coordinates in a graph 📊
+- **numpy** for its math functions 🔢 which we use to plot our sigmoid curve
 
 ```
 1   folder_path_template = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\coords_"
@@ -587,13 +593,15 @@ First I got imported the required packages:
 ```
 Lets start simple with Lines 2 and 3. As you can probably tell from their names, they are just lists to store the x and y coordinate values of the bounding box centres. 
 
-In Line 1, I define 'folder_path_template'. If you look carefully at my coord files (which contain the bounding box details and coordinates) in the [GCloud LINK THIS LATER]() folder, you will see that they have names like 'coords_1', 'coords_2', etc. But the path ends in just 'coords_'.
+In Line 1, I define 'folder_path_template'. If you look carefully at my coord files 🗂️ (which contain the bounding box details and coordinates) in the [GCloud](GCloud) folder, you will see that they have names like 'coords_1', 'coords_2', etc. But the path ends in just 'coords_', hence its called a "template".
 
-This leads us on to lines 4 and 5. Line 4 iterates through the numbers 1 to 3, and Line 5 attaches the string number to the end of the template to form the actual 'folder path'. So in the future, when we have many 'coord' files, we don't have to keep adding file paths, we can just edit the latter number in range(). 
+This leads us to lines 4 and 5. Line 4 iterates through the numbers 1 to 3, and Line 5 attaches the string number to the end of the template to form the actual 'folder path'🗂️. 
+
+I went through the trouble of making a template so that in the future, when we have many 'coord' files, we don't have to keep adding file paths, we can just edit the latter number argument in range(). 
 
 Was pretty chuffed with myself for coming up with this 😤
 
-Lastly, Lines 6 and 7 attach the names of the actual files in the coord folder to the end of the 'folder path' to form the 'file path'. Here, I utilize the 'listdir' and 'path.join' capabilities of **os**.
+Lastly, Lines 6 and 7 attach the names of the actual files 🗂️ in the coord folder ➰ to the end of the 'folder path' to form the 'file path'. Here, I utilize the 'listdir' and 'path.join' capabilities of **os**.
 
 Moving on with the rest of the 'for' loop:
 ```
@@ -611,7 +619,7 @@ insert typical box file here
 
 Fig 3.4: contents of one of the thousand bounding box files
 
-This particular [file LINK PROPERLYYYY](11-15_13-00_Fri) has 4 bounding boxes, hence there are 4 lines of data.
+This particular [file](GCloud/coords_2/11-15_13-00_Fri.txt) has 4 bounding boxes, hence there are 4 lines of data.
 
 The first value is the object class, underlined in white ⚪. As we only have 1 object class 'traffic jam', hence they are all the same number '0'.
 
@@ -623,7 +631,7 @@ In Line 9, I go through the lines of data one by one. In each line of data, I sp
 
 I converted the string values to float (using float()) for math calculations later on, and also only added the numbers up to 2dp (using string slicing - [:4]) for simplicity.
 
-Now that we have acquired all the coordinate values neatly into x and y lists, its time to classify them into their respective roads, which is what the code in the 2nd part of splittingroad_&_preprocessing.py is about.
+Now that we have acquired all the coordinate values neatly into x and y lists, its time to classify them into their respective roads on the causeway 🛣️, which is what the code in the 2nd part of splittingroad_&_preprocessing.py is about.
 
 #### Segmenting the centre coordinates
 
@@ -633,7 +641,7 @@ Now that we have acquired all the coordinate values neatly into x and y lists, i
 3   x_coords_wdlands = []
 4   y_coords_wdlands = []
 ```
-We will be splitting the x and y coordinate values further, they will be appended to their respective lists depending on which side of the causeway they are on.
+We will be splitting the x and y coordinate values further, then they will be appended to their respective lists depending on which side of the causeway they are on.
 
 ```
 5   for i in range(len(x_coords)):
@@ -649,15 +657,15 @@ We will be splitting the x and y coordinate values further, they will be appende
 ```
 
 
-In line 1, I iterate through the indexes in the 'x-coords' list, since it has the same number of values in the list 'y-coords'. Then I get the pair of centre coordinates in Lines 2 and 3.
+In line 1, I iterate through 🔁 the indexes in the 'x-coords' list, since it has the same number of values in the list 'y-coords'. Then I get the pair of centre coordinates in Lines 2 and 3.
 
-Line 4 defines the inverted sigmoid formula we came up with earlier, the **numpy** package comes in handy here to get Euler's number, '*e*'.
+Line 4 defines the inverted sigmoid formula we came up with earlier. The **numpy** package comes in handy here to get Euler's number, '*e*'.
 
 The x-coordinate value is subbed into the formula, and Line 5 checks if the actual y-coordinate value is greater or smaller than the y value from the formula.
 
-If the actual centre coordinate lies below the curve, that means it belongs to the road going to Johor, otherwise it belongs to the road headed to Woodlands. Lines 6 to 10 append the coordinates to the correct lists mentioned above in Lines 1 to 4.
+If the actual centre coordinate lies below the curve ⬇️, that means it belongs to the road going to Johor, otherwise it belongs to the road headed to Woodlands. Lines 6 to 10 append the coordinates to the correct lists mentioned above in Lines 1 to 4.
 
-To make sure all the points were classified properly, I made a simple coloured scatterplot using Matplotlib
+To make sure all the points were classified properly, I made a simple coloured scatterplot using Matplotlib 🔴🔵📈
 
 ```
 1   plt.xlim(0, 1)
@@ -669,7 +677,7 @@ To make sure all the points were classified properly, I made a simple coloured s
 ```
 Lines 1 and 2 set the limits of the axes so neither axis has a tick of value greater than 1.
 
-Line 3 enables gridlines on the plot, while Lines 4 and 5 create the coordinates of the sigmoid curve, which is then plotted by the code in Line 6. 
+Line 3 enables gridlines ⊞ on the plot, while Lines 4 and 5 create the coordinates of the sigmoid curve, which is then plotted by the code in Line 6. 
 
 ```
 7   plt.scatter(x_coords_johor, y_coords_johor, c='blue')
@@ -678,7 +686,7 @@ Line 3 enables gridlines on the plot, while Lines 4 and 5 create the coordinates
 10  plt.ylabel('y value')
 11  plt.show()
 ```
-Line 7 plots the box coordinates that lie on the road to Johor and colours them blue, while Line 8 does the same for the road to Woodlands, except the coordinates are coloured red instead. Lines 9 and 10 label the axes, and Line 11 showcases the graph.
+Line 7 plots the box coordinates 📌 that lie on the road to Johor and colours them blue 🔵, while Line 8 does the same for the road to Woodlands, except the coordinates are coloured red instead 🔴. Lines 9 and 10 label the axes, and Line 11 showcases the graph 📈
 
 insert many redblue w line
 
@@ -686,11 +694,11 @@ Fig 3.5: Plotted the sigmoid curve and coloured coordinates
 
 If you are wondering why there seems to be even more points than in Fig VII, thats because I've annotated a few more batches since then, so theres more coordinates now.
 
-With all the coordinates properly preprocessed and classified according to their road, we can now do some data analysis.
+With all the coordinates properly preprocessed and classified according to their road, we can now do some data analysis 📊
 
 ### 3.2: Exploratory Data Analysis (EDA)
 
-The code in this chapter can all be found in [data_analysis.py LINK HEREEEEEEE]()
+The code in this chapter can all be found in [data_analysis.py](python_scripts/data_analysis.py)
 
 First, I imported the packages I would need:
 
@@ -700,9 +708,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 ```
-The packages are the same as in chapter 3.1 except for pandas 🐼, as I will need the Dataframes 𝄜 that come with the pandas library to showcase the data in a neat table.
+The packages are the same as in chapter 3.1 except for pandas 🐼, as I will need the Dataframes𝄜that come with the pandas library to showcase the data in a neat table.
 
-Then I defined a list of all the days in a week, and a list of all the times of a day. This is needed for later when organising the congestion values in a pd dataframe according to day and time.
+Then I defined a list of all the days in a week 🗓️, and a list of all the times of a day 🕒. This is needed for later when organising the congestion values in a pd dataframe according to day and time 🗃️
 
 ```
 days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -721,14 +729,14 @@ Theres probably a more automated way around doing this, but its not worth the br
 6   table = pd.DataFrame(columns=days, index=times)
 ```
 I then created a dictionary (day, Line 3) within another dictionary (area_dict, Line 1) to store 2 values (Line 5): 
-1) the total area of bounding boxes for each day and time
-2) the number of instances of that particular day and time
+1) the total area of bounding boxes for each day and time 📐
+2) the number of instances of that particular day and time 🔢
 
 This is so that I can calculate the average amount of congestion that occurs at that time and day by dividing total area (1st value) by total number of instances (2nd value).
 
 In Line 6 I create a pd Dataframe defined as 'table' to store the average congestion area values at every time and day.
 
-This next part of the code is quite complicated, so ill break it up into smaller chunks
+This next part of the code is quite complicated, so ill break it up into smaller chunks 😉
 
 ```
 1   for num in range(1, 4):
@@ -741,9 +749,9 @@ This next part of the code is quite complicated, so ill break it up into smaller
 8           area_dict[day][time][1] += 1
 9           file_path = os.path.join(path, file_name)
 ```
-First I iterate over the numbers 1 to 3 (last number, 4, is not inclusive when using range()) to go over all coords folders. I then extract each file from each folder (Line 3) and split their filenames into parts (Line 4-7).
+First I iterate over the numbers 1 to 3 🔄 (last number, 4, is not inclusive when using range()) to go over all coords folders 🗂️. I then extract each file from each folder (Line 3) and split their filenames into parts (Line 4-7).
 
-This is the reason why I named the jpeg files like so in my GCloud web scraping code. Since the bounding box files returned by CVAT will also be of the same name as the jpeg files, I could simply sort the files into dictionaries by simply using parts of the filename as dictionary keys (Line 8). I then construct the file path in Line 9.
+This is the reason why I named the jpeg files like so in my GCloud web scraping code. Since the bounding box files returned by CVAT will also be of the same name as the jpeg files 📂, I could simply sort the files into dictionaries by using parts of the filename as dictionary keys 🔑(Line 8). I then construct the file path in Line 9.
 
 
 ```
@@ -759,11 +767,11 @@ This is the reason why I named the jpeg files like so in my GCloud web scraping 
 10                   total_box_area += box_area
 ```
 
-I do the same thing as in Chapter 3.1, checking whether the centre coordinates lie below or above the curve (Lines 1-7). However, unlike in [splittingroad_&_preprocessing.py LINK HEREEEEEEEEEEE](), I don't classify the coordinates on the road to Woodlands. 
+I do the same thing as in Chapter 3.1, checking whether the centre coordinates lie below ⬇️ or above ⬆ the curve (Lines 1-7). However, unlike in [splittingroad_&_preprocessing.py](python_scripts/splittingroad_&_preprocessing.py), I don't classify the coordinates on the road to Woodlands. 
 
-Thats because I'm only analysing data of congestion going into Johor as of now. So in this case, if the coordinate lies above the curve, I ignore it. You can see this in Line 8, where I only process the data if actual_y < y.
+Thats because I'm only analysing data of congestion going into Johor as of now. So in this case, if the coordinate lies above the curve, I ignore it 🙈. You can see this in Line 8, where I only process the data if actual_y < y.
 
-In Line 9, I calculate the area of the bounding box by multiplying the width of the box (numbers[3]) by its height (numbers[4]). Then I add the area to the total_box_area variable. This will represent how much congestion is present in that image. Greater area = Greater congestion
+In Line 9, I calculate the area of the bounding box by multiplying the width ↔️ of the box(numbers[3]) by its height ↕️ (numbers[4]). Then I add the area to the total_box_area variable. This will represent how much congestion is present in that image. Greater area = Greater congestion.
 
 ```
 11           area_dict[day][time][0] += total_box_area
@@ -773,15 +781,15 @@ In Line 9, I calculate the area of the bounding box by multiplying the width of 
 ```
 With the file still open and in 'read' mode, I add the total_box_area to the 1st value of the list in the nested dictionary (Line 11). 
 
-Then I define the sum of areas and sum of instances, before calculating the average congestion area and adding it to the table (Line 14). Here is how the table looks.
+Then I define the sum of areas and sum of instances, before calculating the average congestion area and adding it to the table 📝(Line 14). Here is how the table looks.
 
 insert first look at table
 
 Fig 3.6: First look at table of congestion values
 
-Not pretty. The values are oddly scaled, nobody would really understand what they mean, and they have more decimal places than I care to count.
+Not pretty. The values are oddly scaled, nobody would really understand what they mean, and they have more decimal places than I care to count 😵‍💫
 
-Let's try to fix it, can't have my dataframe lowkey looking like ASCII art of a fish or something. 
+Let's try to fix this, can't have my dataframe looking like ASCII art of a fish or something ( ◡̀_◡́)ᕤ
 
 ```
 1   max_value = table.max().max()
@@ -792,15 +800,15 @@ Let's try to fix it, can't have my dataframe lowkey looking like ASCII art of a 
 7   table.to_csv('sorted_data.csv', index=False)
 ```
 
-My plan is to make the congestion area values scale from 1 to 5, with 1 being no/little congestion, and 5 being very congested. But before that I min-max scaled, so I got the max value (Line 1) and multiplied all the values in the table by 5/max_value (Line 3). 
+My plan is to make the congestion area values scale from 1 to 5, with 1 being no/little congestion 😌, and 5 being very congested 😖. But before that I min-max scaled the values by getting the max value (Line 1) and multiplying all the values in the table by 5/max_value (Line 3). 
 
-Line 2 is just to ensure all the values are floats so that we can round them off to 2dp (Line 5). Line 7 saves the table as a csv file, which you can see [here LINKKKKKKK](), and Line 6 prints out the table.
+Line 2 is just to ensure all the values are floats so that we can round them off to 2dp (Line 5). Line 7 saves the table as a csv file, which you can see [here](python_scripts/sorted_data.csv), and Line 6 prints out the table.
 
 insert scaled and 2dp here
 
 Fig 3.7: Same table, now scaled and rounded to 2dp
 
-An improvement for sure, but still not much insight can be gained from a glance. Also its a bit too bland for my liking. But not to worry, we will be exploring other ways of data visualization in this chapter, starting off with a simple line graph.
+An improvement for sure, but still not much insight can be gained from a glance (👁ˋ _ ˊ 👁). Also its a bit too bland for my liking. But not to worry, we will be exploring other ways of data visualization in this chapter, starting off with a simple line graph 📈
 
 ```
 1   d = 0
