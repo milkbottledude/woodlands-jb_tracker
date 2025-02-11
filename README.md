@@ -1271,13 +1271,158 @@ We have already been able to extract the time of day and day of the week in our 
 ### 4.4: Model Tuning (tbc)
 
 ## Chapter 5: Automation and Website Making
-### 5.1: Creating Flask (FASTAPI TOO COMPLICATED TO IMPLEMENT) website from local device
+### 5.1: Making website HTML & CSS
+Quite excited for this, I have a couple ideas for an aesthetic looking website. However, I only have very minimal knowledge of HTML from scraping websites, and no experience whatsover with CSS. However, a friend of mine said its quite easy to pick up, so I'll be drafting up some website design prototypes on Canva while learning HTML & CSS at the same time.
+
+Here is what I came up with:
+
+insert canva ting here
+
+Fig 5.1: Canva website draft
+
+Ideally, this is what I want the user to see as soon as he enters the website. No fluff and straight to the point, with a pretty background of the causeway in the afternoon on the left and night on the right.  I did this to try and push the idea of "same causeway, different time".
+
+I'm no artist, but I think it looks nice.
+
+You can see the orange boxes with the rounded edges with date, time and AM/PM. In the actual HTML website, those would be the buttons where u can select the date and time.
+
+I also intend to add a 'How to Use' guide below as you scroll down (with the background not moving as you scroll cuz damn that looks cool), but for now this will do. Now its time to churn this out in HTML for our actual website frontend.
+
+Update: The first version of the HTML for the website is done! Let me take you through it, starting with the <head> tag.
+
+code squigly here
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mine</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <style>
+            body {
+                background-image: url("website_bg2.jpg");
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                color: aliceblue;
+                font-family: 'Poppins', sans-serif;
+                text-align: center;
+            }
+
+            .top {
+                padding: 120px 0px 120px 0px;
+            }
+
+            .title {
+                font-weight: bold;
+                color:aliceblue;
+                font-size: 90px;
+            }
+
+            .sub-title {
+                font-size: 19px;
+                font-weight: 400;
+            }
+
+            .datetime-container {
+                margin-top: 30x;
+            }
+
+            .column {
+            display: inline-block;
+            margin: 10px;
+            font-size: 18px;
+            }
+
+            .column input {
+                font-size: 16px;
+                padding: 5px;
+                width: 70px;
+            }
+
+            .column select {
+                font-size: 16px;
+                padding: 5px;
+                width: 70px;
+            }
+            .where-u-click {
+            font-size: 18px;
+            padding: 5px 10px;
+            border: 3px solid #ccc; /* border */
+            border-radius: 15px; /* Rounded corners */
+            background-color: transparent; /* background 1f3ca3 blue, f3570f orange */
+            color: #ffffff; /* text color */
+        }
+
+            option {
+                color: black;
+                text-align: center;
+            }
+
+        </style>
+    </head>
+SQUIGG HERE
+
+The head tag contains the 
+
+
+
+    
+    <body>
+        <div class="top">
+            <div class="title">Johorscrape</div>
+            <div class="sub-title">Tell us when, and we'll handle the rest :)</div>
+        </div>
+        <div class="datetime-container">
+            <div class="column">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" class="where-u-click"> 
+            </div>
+            <div class="column">
+                <label for="hour">Time</label>
+                <select id="hour" class="where-u-click">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+            </div>
+            <div class="column">
+                <select id="AM/PM" class="where-u-click">
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
+            </div>
+        </div>
+    </body>
+</html>
+
+
+All this gives us this output:
+
+insert HTML first vers here
+
+Fig 5.2: First prototype of website's HTML.
+
+The HTML file for our website can be found [here LINKKKKKKK](), although it may be changed throughout the project as I learn more HTML & CSS and make improvements.
+
+
+
+### 5.2: Creating Flask (FASTAPI TOO COMPLICATED TO IMPLEMENT) website from local device
 
 
 ESGEDDDDITTTTTTTTTTTTTT ALSO DONT FORGET U ND TO ADD EMOJIS N SHI TO I THINK CHAPTS 3 N 4
 
 
-#### 5.2: Moving Flask (FASTAPI TOO COMPLICATED TO IMPLEMENT) code to GCloud and creating Dockerfile FMLLLLLLL
+#### 5.3: Moving Flask code to GCloud GAE (Google App Engine)
 
 
 
