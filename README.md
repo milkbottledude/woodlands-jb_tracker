@@ -506,7 +506,7 @@ Fig 2.11: metrics from training with 514 images
 
 Slight improvement, the metrics mAP50 and 50-95 which, to my limited understanding, basically sees if there is a certain amount of overlap between the actual bounding box and that placed by the model, have increased from when the model was trained with 334 images, from around 0.3 to 0.4. 
 
-The mAP50-95 (basically the same thing except the amount of overlap varies) also increased from around 0.100 to slighly below 0.15. It also looks like validation dfl loss (rough explanation: measures loss for the corners of the bounding box placed by the model) decreased slighly. However, it looks like the box loss gradient may be stagnating 〰️ which does not look good.
+The mAP50-95 (basically the same thing except the amount of overlap varies) also increased ⬆️ from around 0.100 to slighly below 0.15. It also looks like validation dfl loss decreased slightly ⬇️ (rough explanation: measures loss for the corners of the bounding box placed by the model). However, it looks like the box loss gradient may be stagnating 〰️ which does not look good.
 
 Here are the metrics of the 2 model metrics side by side so its easier to compare:
 
@@ -820,28 +820,29 @@ An improvement for sure, but still not much insight can be gained from a glance 
 7   plt.legend()
 8   plt.show()
 ```
-First I created a list of 7 colors (Line 2), one for each day of the week. The columns in the table are the days of the week, so I iterate over them using a 'for' loop in Line 3.
+First I created a list of 7 colors (Line 2), one for each day of the week 🗓️. The columns in the table are the days of the week, so I iterate over them using a 'for' loop 🔁 (Line 3).
 
 Line 1 and 6 work together to select a different line colour for different days, with Line 6 increasing 'd' by 1 after every column value (day) is iterated over.
 
 In Line 5, the average congestion area (y axis) is plotted against the 24 hour times of a day (x-axis). The label and line color is changed accordingly with days[d] and color[d] as 'd' increments. 
 
-Finally, Line 7 adds a legend to tell the line graphs apart as you can see in the top right of the figure above, and Line 8 outputs the final product.
+Finally, Line 7 adds a legend to tell the line graphs apart 📈📉 as you can see in the top right of the figure above, and Line 8 outputs the final product.
 
 insert many colorful lines jpeg here
 
 Fig 3.8: Coloured line graphs of congestion area against time of day
 
-, but it gives a general idea of how congestion varies against time for the different days.
+Pretty messy, but it gives a general idea of how congestion varies against time 🕒 for the different days.
 
 The graph aligns with some common knowledge of the causeway, such as:
 
-- presence of jam from 1900 to 2300 for only Fridays, as that is the period after work when people want to spend the weekend in Johor
-- large spike in jam on Saturday mornings for people that are not willing to go to Johor immediately after work on Friday, but still want to spend some weekend time in Johor
+- presence of jam from 1900 to 2300 for only Fridays, as that is the period after work when people want to spend the weekend in Johor 🥳
+- large spike in jam 📈 on Saturday mornings for people that are not willing to go to Johor immediately after work on Friday, but still want to spend some weekend time in Johor
+  (Update: Afterwards, I found out that some muslims practice a Fri-Sat weekend instead of the traditional Sat-Sun, which could also explain the large influx of people going into Johor on Sat - probably Malaysian citizens who spent their weekend in SG returning home)
 
 However, its interesting to note that there is not much jam on Sundays. My assumption was that both days of the week would have the roads to Johor jammed up, but I guess people aren't as willing to go to Johor on Sunday compared to Saturday. 
 
-On the contrary, the road to Woodlands may be congested due to people coming back to SG after going to Johor on Saturday/Friday.
+On the contrary, the road to Woodlands may be congested due to people coming back to SG after going to Johor on Saturday/Friday 🚗💨
 
 Let's try bar graphs next. The plot containing line graphs for every day of the week is a little too cramped for my liking, so for the bar graphs I'll be plotting on separate axes.
 
@@ -864,48 +865,54 @@ Let's try bar graphs next. The plot containing line graphs for every day of the 
 ```
 Line 1 plots 8 subplots (2 rows by 4 columns), and Lines 2 and 3 represent the subplot coordinates. For example, [0, 1] is the 1st row 2nd col subplot, which represents Tuesday in Fig 3.10 below. 
 
-Line 6 and 7 sets 24 bars across the x-axis in each subplot, with 'y' being the value for the bar height. Line 8 rotates the x-axis time labels and sets the fontsize to a smaller 7 to prevent them from overlapping. 
+Line 6 and 7 sets 24 bars 📊 across the x-axis in each subplot, with 'y' being the value for the bar height. Line 8 rotates the x-axis time labels 🔄 and sets the fontsize to a smaller 7 to prevent them from overlapping 🙂⃤
 
-Line 9 sets the title according to days[d] which gives the right day as 'd' increases (Line 11), and Line 10 sets the max bar height at 5 units. Line 12 removes the bottom right subplot, since theres space for 8 subplots but we only need 7, and finally Line 13 outputs all bar graphs.
+Line 9 sets the title according to days[d] which gives the correct day 📆 as 'd' increases (Line 11), and Line 10 sets the max bar height at 5 units. Line 12 removes the bottom right subplot, since theres space for 8 subplots but we only need 7, and finally Line 13 outputs all bar graphs.
 
-> Or are they histograms? Cuz even though they aren't connected, they represent continuous values over time, not categorical... I don't know man I'm rambling. 
+> Or are they histograms? Cuz even though they aren't connected, they represent continuous values over time, not categorical... I don't know man I'm rambling >ᴗ<
 
-Hope you haven't fallen asleep while reading. I've done that a couple times already while writing this.
+Hope you haven't fallen asleep while reading. I've done that a couple times already while writing this 💤
 
-insert bar graphs to johor
+![](progress_pics/Fig-3.9-to_jb_separate_histos.jpg)
 
 Fig 3.9: Separate bar graphs of congestion against time of day, 1 for each day of the week
 
-This is slightly easier to understand than Fig 3.9, which may have been too colorful and messy. We can see that the day with the lowest congestion levels overall is actually Tuesday, followed by Monday. If you could not already tell from the line graph, the subplot bar graphs make it very clear that if you go to Johor on Friday or Saturday, you would most likely be met with an unpleasant jam.
+This is slightly easier to understand than Fig 3.9, which may have been too colorful and messy 🌈𖡎. We can see that the day with the lowest congestion levels overall is actually Tuesday, followed by Monday.
+
+If you could not already tell from the line graph, the subplot bar graphs make it very clear that if you go to Johor on Friday or Saturday, you would most likely be met with an unpleasant jam 🚗🚙😫🚌
 
 Let's do this for the congestion values going into Woodlands as well. Not much change in code needed, just gotta swap the '<' in `if actual_y < y:` to '>'.
 
-insert histogram to wdlands
+![](progress_pics/Fig-3.10-to_wdlnads_separate_histos.jpg)
 
 Fig 3.10: Separate bar graphs (or histograms?🤔) for congestion coming into Woodlands
 
-As expected, there's a large influx of fellas coming into Singapore on Monday mornings from 00-00 to 01-00 for work etc, and some from 06-00 to 09-00 for school (I assume for school). There is also plenty of congestion on Fridays for most of the day, from people who want to spend their weekend in Singapore perhaps?
+As expected, there's a large influx of fellas coming into Singapore on Monday mornings from 00-00 to 01-00 for work etc 💼💻, and some from 06-00 to 09-00 for what I assume is school 📚🎒. There is also plenty of congestion on Fridays for most of the day, from people who want to spend their weekend in Singapore perhaps?
 
-One strange thing I noticed was the unusually high congestion rate on Thurday afternoons, not sure why there so many people coming in on a workday in the middle of the week. 
+One strange thing I noticed was the unusually high congestion rate on Thurday afternoons 🚙🚗💨, not sure why there so many people coming in on a workday in the middle of the week. 
 
 Edit: Afterwards I found out that some states of Malaysia starts their weekends on Fridays, so our 'Thursday' is like their 'Friday'. 
 
-> This means their 2 day weekend consists of Friday and Saturday. Apparently it is a common practice for some muslim-predominant states such as Afghanistan, Saudi Arabia, and Dubai, although Dubai phased out this practice in 2022. That's cool, I learnt something new today. 
+> This means their 2 day weekend consists of Friday and Saturday. Apparently it is a common practice for some muslim-predominant states such as Afghanistan 🇦🇫, Saudi Arabia 🇸🇦, and Dubai 🇦🇪, although Dubai phased out this practice in 2022. That's cool, I learnt something new today. 
 
-As for other days such as Tuesday and Wednesday occasionally having periods of high congestion coming into SG, I'm not quite sure what is the reasoning behind it. My best guess is transport of company and business goods, but I could be wrong.
+As for other days such as Tuesday and Wednesday occasionally having periods of high congestion coming into SG, I'm not quite sure what is the reasoning behind it. My best guess is transport of company and business goods, but I could be wrong 🚚🚛📦.
 
 These graphs may not present ground-breaking discoveries, but they do show some trends and patterns that we did not know before, and they definitely gave us some food for thought going into the next Chapter of the project: Machine Learning
+
+🥗🍗😋🍽️ --> 🧠 ദ്ദി(˵ •̀ ᴗ - ˵ ) ✧
 
 ## Chapter 4: Machine Learning
 ### 4.1: One-hot encoding, sin-cos encoding, and Linear Regression model
 
-The code in this chapter can all be found in [Predicting_with_LinReg.py LINK HEREEEEEEE]()
+The code in this chapter can all be found in [Predicting_with_LinReg.py](python_scripts/Predicting_with_LinReg.py)
 
 We don't have many variables at the moment, just day and time, but its enough for a neural network model to work with after one-hot encoding all the values. 
 
-One-hot encoding is basically splitting up a categorical column like 'day' into other columns, each column representing a particular value of 'day'. Since there are 7 days, there would be 7 'day' columns (Mon, Tues, etc).
+One-hot encoding is basically splitting up a categorical column like 'day' into other columns 📆, each column representing a particular value of 'day'. Since there are 7 days, there would be 7 'day' columns (Mon, Tues, etc).
 
-However, I will be getting rid of 1 column to make it 6 'day' columns. This is to prevent multicollinearity. I'm not an expert, but I'll try my best to explain it in simple terms. If you want an expert's article on it, you can go [here](https://www.analyticsvidhya.com/blog/2020/03/what-is-multicollinearity/), it explains it pretty well.
+However, I will be getting rid of 1 column to make it 6 'day' columns. This is to prevent multicollinearity, something we want to steer clear of in ML 🙅‍♂️.
+
+I'm not an expert, but I'll try my best to explain it in simple terms. If you do want an expert's article on it, you can go [here](https://www.analyticsvidhya.com/blog/2020/03/what-is-multicollinearity/), it explains it pretty well.
 
 Taking the 'day' variable as an example. If a particular row's day was Tuesday, the 'Tues' column would be 'True' while the rest would be 
 'False'. 
