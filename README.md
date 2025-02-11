@@ -61,6 +61,11 @@ Tools and libraries used in this project:
 
 - **Scikit-learn** for machine learning models 🤖
 
+- Google App Engine (GAE)
+  insert GAE screenshot hereeeeeeeeeeEEEE
+
+  Fig VIII: Preview of Google App Engine
+
 The full list of libraries I imported to use in this project can be found in the [requirements.txt](miscellaneous/requirements.txt) file, but do check their versions in case they are outdated.
 
 This project will be divided into 5 chapters✋:
@@ -1290,139 +1295,44 @@ I also intend to add a 'How to Use' guide below as you scroll down (with the bac
 
 Update: The first version of the HTML for the website is done! Let me take you through it, starting with the <head> tag.
 
-code squigly here
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Mine</title>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-        <style>
-            body {
-                background-image: url("website_bg2.jpg");
-                background-size: cover;
-                background-position: center;
-                background-attachment: fixed;
-                color: aliceblue;
-                font-family: 'Poppins', sans-serif;
-                text-align: center;
-            }
+insert part 1 of HTML vers 1
 
-            .top {
-                padding: 120px 0px 120px 0px;
-            }
+Fig 5.2: Styling portion of HTML version 1
 
-            .title {
-                font-weight: bold;
-                color:aliceblue;
-                font-size: 90px;
-            }
+The head tag contains the CSS for the website, although I'll probably be moving this to a separate CSS file moving forward to make the HTML file easier to read. This is very beginner CSS, nothing too fancy, so I wont go into everything in detail. 
 
-            .sub-title {
-                font-size: 19px;
-                font-weight: 400;
-            }
+Starting off with the CSS in the <head> tag, I defined the background for the body (basically the entire website) in Line 10. Then I made the <body> element have all its elements inside align to the centre (Line 16). For the font colour I chose 'Alice Blue', but its really just white basically (Line 14).
 
-            .datetime-container {
-                margin-top: 30x;
-            }
+For the top class (Line 19), it contains all the text in the website, so the title as well as the little slogan right below it. I wanted them to be well separated from the top of the screen as well as the buttons to select the date and time, hence it has a top and bottom padding of 120px. The <bodyy> is already aligned to the center, so theres no need for side padding.
 
-            .column {
-            display: inline-block;
-            margin: 10px;
-            font-size: 18px;
-            }
+For the column class (Line 38), i wanted the date and time buttons to be side by side like in the Canva draft, so I added the display: inline block in Line 39. This makes the elements with class be side by side instead of having a new row for every element. The column class is nested in <body>, so the buttons are aligned to the center.
 
-            .column input {
-                font-size: 16px;
-                padding: 5px;
-                width: 70px;
-            }
+The "where-you-click" class is exactly that, its the class for the elements which you click on, the date and time buttons. I added a slightly grey border (Line 58) to the transparent button (Line 60). I rounded the button corners (Line 59) for a more aesthetic look and made the text colour white, although thats probably not necessary since I already defined a whitish text colour in <body>.
 
-            .column select {
-                font-size: 16px;
-                padding: 5px;
-                width: 70px;
-            }
-            .where-u-click {
-            font-size: 18px;
-            padding: 5px 10px;
-            border: 3px solid #ccc; /* border */
-            border-radius: 15px; /* Rounded corners */
-            background-color: transparent; /* background 1f3ca3 blue, f3570f orange */
-            color: #ffffff; /* text color */
-        }
+insert ss of body tag hereeeeee
 
-            option {
-                color: black;
-                text-align: center;
-            }
+Fig 5.3: 2nd part of HTML version 1
 
-        </style>
-    </head>
-SQUIGG HERE
+Moving on from CSS to the actual HTML, I created the first of the 3 input buttons, 'Date', in Lines 77-80. The input type "date" makes it such that when clicked, it produces a calendar where you can pick a date. 
 
-The head tag contains the 
+The time button is made in Lines 81-97. The <select> tag gives the dropdown rows when the button is clicked to reveal the possible time values you can pick, which are defined in the <option> tags. The AM/PM button is similar, except with only 2 options. Also I did not give it a label for aesthetic purposes, also its kinda self explanatory.
 
-
-
-    
-    <body>
-        <div class="top">
-            <div class="title">Johorscrape</div>
-            <div class="sub-title">Tell us when, and we'll handle the rest :)</div>
-        </div>
-        <div class="datetime-container">
-            <div class="column">
-                <label for="date">Date</label>
-                <input type="date" id="date" name="date" class="where-u-click"> 
-            </div>
-            <div class="column">
-                <label for="hour">Time</label>
-                <select id="hour" class="where-u-click">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                    <option value="11">11</option>
-                    <option value="12">12</option>
-                </select>
-            </div>
-            <div class="column">
-                <select id="AM/PM" class="where-u-click">
-                    <option value="AM">AM</option>
-                    <option value="PM">PM</option>
-                </select>
-            </div>
-        </div>
-    </body>
-</html>
-
-
-All this gives us this output:
+All this gives us this frontend output:
 
 insert HTML first vers here
 
 Fig 5.2: First prototype of website's HTML.
 
-The HTML file for our website can be found [here LINKKKKKKK](), although it may be changed throughout the project as I learn more HTML & CSS and make improvements.
+The HTML file for our website can be found [here LINKKKKKKK](), although it may be changed throughout the project as I learn more HTML & CSS and make improvements. I'll also be making a [CSS file LINKKKKKKKK]() to separate the styling content from the actual HTML.
 
 
-
-### 5.2: Creating Flask (FASTAPI TOO COMPLICATED TO IMPLEMENT) website from local device
+### 5.2: Creating Backend with Flask, yaml and main.py
 
 
 ESGEDDDDITTTTTTTTTTTTTT ALSO DONT FORGET U ND TO ADD EMOJIS N SHI TO I THINK CHAPTS 3 N 4
 
 
-#### 5.3: Moving Flask code to GCloud GAE (Google App Engine)
+#### 5.3: Linking Backend with improved HTML in Google App Engine (GAE)
 
 
 
