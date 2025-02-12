@@ -912,20 +912,22 @@ One-hot encoding is basically splitting up a categorical column like 'day' into 
 
 However, I will be getting rid of 1 column to make it 6 'day' columns. This is to prevent multicollinearity, something we want to steer clear of in ML 🙅‍♂️.
 
-I'm not an expert, but I'll try my best to explain it in simple terms. If you do want an expert's article on it, you can go [here](https://www.analyticsvidhya.com/blog/2020/03/what-is-multicollinearity/), it explains it pretty well.
+I'm not an expert, but I'll try my best to explain it in simple terms. If you do want an expert's article on it, you can go [here](https://www.analyticsvidhya.com/blog/2020/03/what-is-multicollinearity/), it explains it pretty well ✍️.
 
 Taking the 'day' variable as an example. If a particular row's day was Tuesday, the 'Tues' column would be 'True' while the rest would be 
-'False'. 
+'False'.
 
-However, what if I told you that for another row, the binary value for the columns 'Mon, Tues, Thurs, Fri, Sat, Sun' were False. By elimination, you would know that the value for 'Wed', the only column not mentioned, was 'True' without me telling you. This essentially means you can predict the state/value of an independent variable (x value in a 'y against many x' relationship) through other independent variables.
+However, what if I told you that for another row, the binary value for the columns 'Mon, Tues, Thurs, Fri, Sat, Sun' were False ❌. By elimination, you would know that the value for 'Wed', the only column not mentioned, was 'True' ✅ without me telling you. This essentially means you can predict the state/value of an independent variable (x value in a 'y against many x' relationship) through other independent variables.
 
 This is bad for machine learning models including NN's because, in simple terms, it makes it more difficult to detect the relationships between each individual independent variable (x) and the dependent variable (y).
 
-Another example which I learned from a book on Linear Regression models revolves around a regular corporate job. Someone who works longer hours is likely to be a hardworking person, and hardworking people tend to produce higher quality work. In the end, he or she would probably get a pay raise. But is the pay raise a result of A) working longer hours? or B) higher quality work? 
+Another example which I learned from a book on Linear Regression models uses a regular corporate job as an analogy. A hardworking person 👨‍💻 is likely to work longer hours than average ⏳, and hardworking people also tend to produce higher quality work 🌟. In the end, the hardworking person would probably get a pay raise 💰💰. But is the pay raise a result of A) working longer hours? or B) higher quality work? 
 
-As for the time values, I don't have to one-hot encode them since they are numerical. However, they are 'cyclical' in nature, such that 11pm is closer to 1am than 5am, even though 5 as a number is closer to 1 than 11. Basically the values loop around. There is a way to manage cyclical values, by using cos and sin on the values to preserve their cyclic nature, but it did not go well the last time I used it.
+As for the time values, I don't have to one-hot encode them since they are numerical. However, they are **cyclical** in nature 🔄. For instance, 11pm is closer to 1am than 5am, even though 5 as a number is closer to 1 than 11. Basically the values loop around. There is a way to manage cyclical values, by using cos and sin on the values to preserve their cyclic nature, but it did not go well the last time I used it.
 
-I tried this method of encoding in my previous Machine Learning project, a Kaggle competition, where I was trying to predict Insurance Premiums. One of the variables was 'Policy Start Date', the date the insurance was bought. I applied sin-cos encoding on the month values (since December loops back to January), but the model accuracy decreased for some reason when tested against the test data, I'm not sure why. So to start, I'll train the model with no encoding for the time variable, then afterwards I'll encode it and see how it performs.
+I tried this method of encoding in my previous Machine Learning project, a Kaggle competition, where I was trying to predict Insurance Premiums. One of the variables was 'Policy Start Date', the date the insurance was bought 🗓️. I applied sin-cos encoding on the month values (since December loops back to January), but the model accuracy decreased for some reason when tested against the test data, I'm not sure why. 
+
+So to start, I'll train the model with no encoding for the time variable, then afterwards I'll encode it and see how it performs.
 
 First I had to create a pd dataframe, such that each row represented an instance, so slightly different than the previous dfs we made.
 
@@ -937,7 +939,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 ```
-I'm sure by now you are already familiar with the first 3 packages. The 4th and last library, sklearn, has different subpackages such as 'tree' and 'ensemble', which provide us with different machine learning models to try out and test against each other.
+I'm sure by now you are already familiar with the first 3 packages. The 4th and last library, sklearn, has different subpackages 📦 such as 'tree' and 'ensemble', which provide us with different machine learning models to try out and test against each other 🤖.
 
 ```
 1   column_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Time of Day', 'congestion_area']
@@ -959,11 +961,11 @@ I'm sure by now you are already familiar with the first 3 packages. The 4th and 
 14                    index = i
 15                    break
 ```
-In Line 1 I define a list of column names, omitting one of the seven days ('Sun') to prevent multicollinearity. Also included in the list are 'time of day', another independent variable, and lastly the dependent variable 'congestion_area'.
+In Line 1 I define a list of column names, omitting one of the seven days ('Sun') to prevent multicollinearity. Also included in the list are 'time of day' 🕒, another independent variable, and lastly the dependent variable 'congestion_area'.
 
-You have already seen Line 2 and Line 4-10, where I extract the bounding box text files and split the file names into parts.
+You have already seen Line 2 and Line 4-10, where I extract the bounding box text files 📄 and split the file names into parts.
 
-Before that, I make a DataFrame using the list of columns (Line 3). After extracting the information from the file name, I check what is the index of the day in the 'column_names' list (Line 12-13). I then assign the value to 'index' (Line 14) and 'break' to save time. If the day from the file name is 'Sun' and is not present in column_names, 'index' will remain as 'None'.
+Before that, I make a DataFrame using the list of columns (Line 3). After extracting the information from the file name, I check what is the index 🔢 of the day in the 'column_names' list (Line 12-13). I then assign the value to 'index' (Line 14) and 'break' to save time. If the day from the file name is 'Sun' and is not present in column_names, 'index' will remain as 'None'.
 
 ```
 16          total_box_area = 0
@@ -989,11 +991,11 @@ Before that, I make a DataFrame using the list of columns (Line 3). After extrac
 35  df.to_csv('df', index=False)
 ```
 
-The code from Line 16-26 is the same as in [data_analysis.py LINKKKKKKKKK](), determining which side of the causeway the bounding box is on, then calculating the box area sum for that image and defining it as total_box_area.
+The code from Line 16-26 is the same as in [data_analysis.py](python_scripts/data_analysis.py), determining which side of the causeway the bounding box is on, then calculating the box area sum for that image and defining it as total_box_area.
 
-Line 27 creates the new row of data to be added to the df. Lines 28 and 29 check if 'index' has a valid number, then replaces the correct day column value with '1' to indicate 'True', or just leave everything as '0', meaning False, if the day was 'Sun'. Line 30 adds the new row to the last index of the df to finish.
+Line 27 creates the new row of data to be added to the df. Lines 28 and 29 check if 'index' has a valid number 🔢 then replaces the correct day column value with '1' to indicate 'True' ✅, otherwise leaving everything as '0' ❌ if the day was 'Sun'. Line 30 adds the new row to the last index of the df to finish.
 
-Line 31-33 applies min-max scaling to the congestion_area column's values. The code is basically copied from data_analysis.py, where I also applied min-max scaling except to an entire Dataframe not just a single column. Lastly, Line 35 converts the Dataframe into a csv file, so I don't have to keep making the table again and again.
+Line 31-33 applies min-max scaling to the congestion_area column's values. The code is basically copied from data_analysis.py, where I also applied min-max scaling except to an entire Dataframe not just a single column. Lastly, Line 35 converts the Dataframe into a csv file 📜, so I don't have to keep making the table again and again.
 
 Here are the first 4 rows of the dataframe.
 ```
@@ -1004,30 +1006,30 @@ Here are the first 4 rows of the dataframe.
 3    0.0  0.0  0.0  0.0  0.0  0.0          0.0             0.00
 4    0.0  0.0  0.0  0.0  0.0  0.0          6.0             0.00
 ```
-The '1's under the 'Sat' column indicate that the first 3 days are Saturdays, while the absence of '1' in any of the day columns indicate that the last 2 rows are Sundays. The hour of the day can be found in the 'Time of day' column, and the relative congestion value (scaled from 1 to 5), can be found under the last column.
+The '1's under the 'Sat' column indicate that the first 3 days are Saturdays, while the absence of '1' in any of the day columns indicate that the last 2 rows are Sundays. The hour of the day can be found in the 'Time of day' column 🕒, and the relative congestion value (scaled from 1 to 5), can be found under the last column 🚙🚗💨
 
 One thing I'm uncomfortable with though, is the lack of rows with congestion_area values > 0. After printing `len(df)` and `len(df[df['congestion_area'] > 0]), which output the total number of rows and the number of rows with a congestion value thats not '0', I got 143 and 517 respectively. The days with congestion are severly underrepresented, with the distribution of y values are imbalanced and skewed towards 0.
 
-This can lead to the ML model leaning towards the skew as congestion values of '0' are much more frequent in the training data. To get around this, I'll be removing some of the rows with congestion value '0' at random so that the rows with congestion_area > 0 are not so outnumbered. We all know getting rid of data is a waste, especially when we have so little of it here, but in this case I feel its gotta be done.
+This can lead to the ML model leaning towards the skew as congestion values of '0' are much more frequent in the training data. To get around this, I'll be removing some of the rows with congestion value '0' 🗑️ at random so that the rows with congestion_area > 0 are not so outnumbered. We all know getting rid of data is a waste, especially when we have so little of it here, but in this case I feel its gotta be done 😕.
 
 ```
 31  df.sort_values(by='congestion_area', ascending=False, inplace=True)
 32  df = df.iloc[:293]
 ```
 First I sort the rows by the 'congestion_area' column in ascending order, so all the rows with congestion values > 0 gather at the top of the df (Line 31).
-Since there are only 143 rows with a positive congestion value, I want the number of rows of 0 to be about the same, so I decided to keep 150 '0' rows. So total number of rows is now reduced from 517 rows to (143+150) = 293 rows.
+Since there are only 143 rows with a positive congestion value, I want the number of rows of 0 to be about the same, so I decided to keep 150 '0' rows. So total number of rows is now reduced ⬇️ from 517 rows to (143+150) = 293 rows.
 
-Now we can train our first machine learning model, starting off small with a simple linear regression model.
+Now we can train our first machine learning model, starting off small with a simple linear regression model 📈
  ```
 33  y_column = df.pop('congestion_area')
 34  model = LinearRegression()
 35  model.fit(df, y_column)
 ```
-In Line 33, I removed the y_variable column from the df and defined it as y_column. Next I defined the machine learning model we would be using (Line 34), then trained the model with the x and y variables by calling model.fit() (Line 35).
+In Line 33, I removed the y_variable column from the df and defined it as y_column. Next I defined the machine learning model we would be using (Line 34), then trained the model with the x and y variables 🏋 by calling model.fit() (Line 35).
 
-Making a default linear regression model is actually super simple, its the tuning of hyperparameters that requires expertise. For now I'll leave the hyperparameters as default.
+Making a default linear regression model is actually super simple, its the tuning of hyperparameters that requires expertise 🔧. For now I'll leave the hyperparameters as default.
 
-Since I don't have enough training data to further split it into train and test data, I'll be using a mix of pictures (21 images) I scrounged from the other unannotated snaps folders to form the [test_snaps LINKKKKKKKKKKKKKKK HERE]() folder. I hand picked the photos to ensure we had a good variety of pictures with varying degrees of congestion. Now to convert them into a test dataframe.
+Since I don't have enough training data to further split it into train and test data, I'll be using a mix of pictures 🖼️ (21 images) I scrounged from the other unannotated snaps folders to form the [test_snaps](GCloud/test_snaps) folder. I hand picked the photos to ensure we had a good variety of pictures with varying degrees of congestion, now we gotta convert them into a test dataframe.
 
 ```
 36  test_df = pd.DataFrame(columns=column_names[:-1])
@@ -1053,11 +1055,11 @@ Since I don't have enough training data to further split it into train and test 
 55  print(test_df)
 ```
 
-In Line 36, I created the test Dataframe, which is similar to the train data except I don't add the 'congestion_area' column, which is what the model will be predicting for us :) 
+In Line 36, I created the test Dataframe, which is similar to the train data except I don't add the 'congestion_area' column, which is what the model will be predicting for us 😎
 
-Line 37-47 were copied from the above code (getting pics from the coords folders), except this time the folder path (Line 37) is different. I define the row to add to the df in Line 48, with only 7 values instead of 8 in the training df. Line 49-51 is the same as above, except I add the row to the test_df, not df. 
+Line 37-47 were copied from the above code (getting pics from the coords folders), except this time the folder path (Line 37) is different. I define the row to add to the df 📝 in Line 48, with only 7 values instead of 8 in the training df. Line 49-51 is the same as above, except I add the row to the test_df, not df. 
 
-Finally, we generate the predictions on the test data (Line 52) and add it as the final column to the test Dataframe (Line 53). Let's print out the results (Line 54) and compare them with the images.
+Finally, we generate the predictions on the test data (Line 52) and append it to the end of test Dataframe as the final column (Line 53). Let's print out the results 📋 (Line 54) and compare them with the images 🔎🖼️
 
 Here are the first 5 rows of test_df:
 
@@ -1070,7 +1072,7 @@ Here are the first 5 rows of test_df:
 4     0    0    1    0    0    0           10               1.040674
 ```
 
-If you look at the first 5 pictures in [test_snaps LINKKKKKKKK HERE](), you will see they all have no jam or very little on the road to Johor. The linear regression model somewhat predicts this with congestion values ranging between 0 to 1, albeit a bit higher than I'd like since the correct value is 0.
+If you look at the first 5 pictures in [test_snaps](GCloud/test_snaps), you will see they all have very little 🤏 or no jam at all on the road to Johor. The linear regression model somewhat predicts this with congestion values ranging between 0 to 1, albeit a bit higher than I'd like since the correct value is 0.
 
 Now lets take a look at some other rows with different days and times.
 
@@ -1084,13 +1086,13 @@ Now lets take a look at some other rows with different days and times.
 17    0    0    0    0    0    1            7               2.181160
 18    0    0    0    0    0    1            8               2.249292
 ```
-For rows 7 and 8, you can see low congestion prediction, which is correct. Their corresponding [picture files LINKKKKKKK]() do not show any jam to Johor. However, rows 9 and 10, which the LinReg model also thinks has low congestion, are wrongly predicted. 
+For rows 7 and 8, you can see low congestion prediction 🔻, which is correct. Their corresponding [picture files](GCloud/test_snaps/11-21_08-00_Thu.jpg) do not show any jam to Johor. However, rows 9 and 10, which the LinReg model also thinks has low congestion, are wrongly predicted. 
 
-If you refer to the [image files LINKKKKK](), you will see that the road to Johor is actually as congested as it can be, so the congestion_prediction value should actually be somewhere between 4 and 5.
+If you refer to their [picture files](GCloud/test_snaps/11-21_10-00_Thu.jpg), you will see that the road to Johor is actually as congested as it can be, so the congestion_prediction value should actually be somewhere between 4 and 5.
 
-Furthermore, although rows 16-18 do indicate moderate congestion with values between 2 and 3, only row 17 is somewhat correct. That's because if you refer to their corresponding files, the [image for row 16 LINKKKKKK]() has no sign of congestion, while [row 17's image LINKKK]() has a little jam brewing up near the Johor customs at the top right. As for [row 18's image file LINKKKKK](), there's already a full blown traffic jam that spans along the entire road.
+Furthermore, although rows 16-18 do indicate moderate congestion with values between 2 and 3, only row 17 is somewhat correct. That's because if you refer to their corresponding files, the [image for row 16](GCloud/test_snaps/11-23_06-00_Sat.jpg) has no sign of congestion, while [row 17's image](GCloud/test_snaps/11-23_07-00_Sat.jpg) has a little jam brewing up near the Johor customs at the top right. As for [row 18's image file](GCloud/test_snaps/11-23_08-00_Sat.jpg), there's already a full blown traffic jam that spans along the entire road.
 
-Let's try again but applying sin-cos encoding to the time variable.
+Let's try again but this time we apply sin-cos encoding to the time variable.
 
 ```
 df['hour_sin'] = np.sin(2 * np.pi * df['Time of Day'] / 24)
@@ -1098,9 +1100,9 @@ df['hour_cos'] = np.cos(2 * np.pi * df['Time of Day'] / 24)
 df.drop('Time of Day')
 ```
 
-From what I learnt about sin-cos encoding (I like to call it cyclic encoding it sounds cooler, but no one calls it that) is to think of it like a circle on x and y axes, so the end of the line (12am) joins up with the start (1am). 
+From what I learnt about sin-cos encoding (I like to call it cyclic encoding, it sounds cooler but no one calls it that) is to think of it like a circle on x and y axes ⭕, so the end of the line (12am) joins up with the start (1am).
 
-The hour_sin column gives the vertical position (y-axis value), and the hour_cos column gives the horizontal position (x-axis value). At the end I get rid of the original 'Time of day' column so we can have a fair test to see if encoding helps the LinReg model perform better.
+The hour_sin column gives the vertical position (y-axis value), and the hour_cos column gives the horizontal position (x-axis value). At the end I get rid of the original 'Time of day' column, so we can have a fair test to see if encoding really helps the LinReg model perform better.
 
 Let's compare the congestion predictions for rows 7 to 18 now that we have encoded the time values. I'll also add the time of day and previous predictions as additional columns so we can better compare the results.
 
@@ -1116,35 +1118,41 @@ Let's compare the congestion predictions for rows 7 to 18 now that we have encod
 ```
 Don't be put off by the weird values in the sin and cos columns, thats just what happens when you run a number through the sin() or cos() function.
 
-For rows 7-8, it predicted a slightly greater level of congestion, which is not a major issue, but it is still wrong since there were no jams in the photos for [row 7 LINKKKKK]() and [8 LINKKKKKK](). The performance for row 18 is about the same, with both past and present predictions hovering around 2.2 when really the predicted value should be between 4 and 5.
+For rows 7-8, it predicted a slightly greater level of congestion, which is not a major issue, but it is still wrong since there were no jams in the photos for [row 7](GCloud/test_snaps/11-21_08-00_Thu.jpg) and [8](GCloud/test_snaps/11-21_09-00_Thu.jpg). The performance for row 18 is about the same, with both past and present predictions hovering around 2.2 when really the predicted value should be between 4 and 5.
 
-However, the new prediction for rows 9 and 10 more than doubled its previous one. Although the congestion level in the images corresponding to rows [9 LINKKK]() and [10 LINKKK]() should be closer to 4 or 5, its still a big improvement. It's a step in the right direction, which I'm very happy to see, so I'll use the encoded version of the time data for the rest of this project. Additionally, for rows [16] and [17], which by right should have a congestion prediction closer to 0 and 1 respectively, also has some small improvements. The new congestion predictions are lower than before, especially row 16. 
+However, the new prediction for rows 9 and 10 more than doubled its previous one 📈. Although the congestion level in the images corresponding to rows [9](GCloud/test_snaps/11-21_10-00_Thu.jpg) and [10 LINKKK](GCloud/test_snaps/11-21_11-00_Thu.jpg) should be closer to 4 or 5, its still a big improvement. It's a step in the right direction, which I'm very happy to see, so I'll use the encoded version of the time data for the rest of this project.
 
-That said, it is good to note that we are using one of the simpler machine learning models, Linear Regression. With no tuned hyperparameters, its unlikely that it would predict perfectly. 
+Additionally, for rows [16](GCloud/test_snaps/11-23_06-00_Sat.jpg) and [17](GCloud/test_snaps/11-23_07-00_Sat.jpg), which by right should have a congestion prediction closer to 0 and 1 respectively, also has some small improvements. The new congestion predictions are lower than before, especially row 16. 
 
-In fact I expected less, but it was able to predict about half of the test data correctly, for the most part. One big flaw of using this model in our case is that Linear Regression assumes a linear relationship between the independent and dependent variable, in our case being the congestion value and time/day of the week. That is obviously not the case, as heavy congestion can happen early in the morning as well as late at night. My assumption is that the model overfitted to the 'time' variable and was slightly biased towards the thinking that 'higher hour_sin/hour_cos' value --> greater congestion, or something along those lines
+Although the predictions are not spot on 🎯, it is good to note that we are using one of the simpler machine learning models, Linear Regression. With no tuned hyperparameters, its unlikely that it would predict perfectly. 
 
-This should be a starter model, where we are just dipping our toes into ML. Next lets try a Random Forest Regressor model, which does not assume a linear relationship and should handle non-linear patterns better than our LinReg model.
+In fact I expected less, but it was able to predict about half of the test data correctly, for the most part anyway ✅. One big flaw of using this model in our case is that Linear Regression assumes a linear relationship between the independent and dependent variable, in our case being the congestion value and time/day of the week.
+
+That is obviously not the case, as heavy congestion can happen early in the morning ☀️ as well as late at night 🌙. My assumption is that the model overfitted to the 'time' variable and was slightly biased towards the thinking that higher 'hour_sin/hour_cos' value 🔺 --> greater congestion 📈, or something along those lines.
+
+This should be a starter model, where we are just dipping our toes into ML. Next lets try a Random Forest Regressor model 🌲, which does not assume a linear relationship and should handle non-linear patterns better than our LinReg model.
 
 ### 4.2: Random Forest (and Decision Tree) Regression
 
-The code in this chapter can be found in [Predicting_with_RFR.py LINKKKKKKK]().
+The code in this chapter can be found in [Predicting_with_RFR.py](python_scripts/Predicting_with_RFR.py).
 
 #### Random Forest Regression
 There are 2 types of random forest models as far as I know, Random Forest **Classifier** and Random Forest **Regressor**. Since we are predicting continuous values and not classes/categories, we will be using the latter.
 
-The thing I like about random forest models is that they consist of multiple decision trees, and their individual decision tree models only use a fraction of the total variables each. This means that for example a tree would get the columns 'Mon, Wed, Sat', while another might get the columns 'Mon, Thur, hour_sin'. This allows the first model to find meaningful relationships between the 'day' variables and congestion instead of overfitting to the 'time' variables. Meanwhile, the latter model is still finding patterns between hour_sin and congestion, not just completely ignoring the column and letting its information go to waste.
+The thing I like about random forest models 🌲 is that they consist of multiple decision trees, and their individual decision tree models only use a fraction of the total variables each. This means that for example, a tree would get the columns 'Mon, Wed, Sat', while another might get the columns 'Mon, Thur, hour_sin'. This allows the first model to find meaningful relationships between the 'day' variables and congestion instead of overfitting to the 'time' variables. 
 
-Random forest models also have other unique features specifically to prevent overfitting and find relationships between every feature and the output This [article](https://www.geeksforgeeks.org/random-forest-algorithm-in-machine-learning/) gives a simple introduction to random forest models, should you be unfamiliar with them. Its super easy to understand, and its the same website I learnt about and took notes on random forest models from when I first started on machine learning.
+Meanwhile, the latter model is still finding patterns between hour_sin and congestion, not just completely ignoring the column and letting its information go to waste 💩
 
-Since we converted the training and test data into csv files earlier in Chapter 4.1, we don't need the code for constructing the Dataframes, we can just pull the df from the csv files. Hence, our python script for this chapter [predicting_with_RFR.py LINKKKKKKKKKK]() has much less code and is simpler to navigate.
+Random forest models also have other unique features specifically to prevent overfitting and find relationships between every feature and the output. This [article](https://www.geeksforgeeks.org/random-forest-algorithm-in-machine-learning/) gives a simple introduction to random forest models, should you be unfamiliar with them. Its super easy to understand, and its the same website I learnt about and took notes on random forest models when I first started on machine learning 📚
+
+Since we converted the training and test data into csv files earlier in Chapter 4.1, we don't need the code for constructing the Dataframes, we can just pull the df from the csv files 📄. Hence, our python script for this chapter [predicting_with_RFR.py](python_scripts/Predicting_with_RFR.py) has much less code and is simpler to navigate.
 
 ```
 import pandas as pd
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 ```
-Starting off with the libraries imported, we need pandas for storing the data we will be pulling from the csv files. Scikit-learn (sklearn for short) is a machine learning library with numerous machine learning models as well as tools for prepping your data and evaluating outputs. However, in this chapter we will just be using the Decision Tree Regressor model and its big brother, the Random Forest Regressor model, starting off with the latter.
+Starting off with the libraries imported, we need 🐼 pandas 🐼 for storing the data we will be pulling from the csv files 📝. Scikit-learn (sklearn for short) is a machine learning library with numerous machine learning models 🤖  as well as tools for prepping your data and evaluating outputs. However, in this chapter we will just be using the Decision Tree Regressor model and its big brother, the Random Forest Regressor model, starting off with the latter.
 
 ```
 1   train_df = pd.read_csv('train_df.csv')
@@ -1159,9 +1167,9 @@ Starting off with the libraries imported, we need pandas for storing the data we
 8   print(test_df.head(20))
 ```
 
-First off, we need to get the data. Lines 1 and 2 read the csv files with the data and convert them into training and testing pandas dfs. Line 3 separates the congestion area column from the original df, Line 4 defines the ML model being used, and Line 5 trains the model by calling the 'fit' method.
+First off, we need to get the data. Lines 1 and 2 read the csv files with the data 🗂️ and convert them into training and testing pandas dfs. Line 3 separates the congestion area column ✂️ from the original df, Line 4 defines the ML model being used, and Line 5 trains the model by calling the 'fit' method 🏋️‍♂️
 
-Line 6 feeds the test data to the trained RFR model for it to begin its predictions, while Line 7 attaches the predictions column to the end of test_df. Lastly, Line 8 prints the first 20 rows of test_df, although I'll only show the relevant rows here. I'll also manually add the 'Time of day' and LinReg model results as the last 2 columns.
+Line 6 feeds the test data to the trained RFR model for it to begin its predictions, while Line 7 attaches the predictions column to the end of test_df. Lastly, Line 8 prints the first 20 rows of test_df, although I'll only show the relevant rows here. I'll also manually add the 'Time of day' and LinReg model results as the last 2 columns 📝
 
 ```
     Mon  Tue  Wed  Thu  Fri  Sat      hour_sin      hour_cos  congestion_prediction     LinReg_results (with sin-cos encoding)  Time of Day
@@ -1173,18 +1181,20 @@ Line 6 feeds the test data to the trained RFR model for it to begin its predicti
 17    0    0    0    0  0    1    9.659258e-01 -2.588190e-01               1.477880     1.977073                                    7
 18    0    0    0    0  0    1    8.660254e-01 -5.000000e-01               3.377438     2.247915                                    8
 ```
-Immediately we can see some improvements. If you remember, the images for rows [7 LINKKKK]() and [8 LINKKKKKKK]() are devoid of cars on the road to Johor, so the congestion value should be closer to 0. We can see that the RFR model has predicted a smaller value for both rows, especially row 7 with only 0.09.
+Immediately we can see some improvements. If you remember, the images for rows [7](GCloud/test_snaps/11-21_08-00_Thu.jpg) and [8](GCloud/test_snaps/11-21_09-00_Thu.jpg) are devoid of cars on the road to Johor, so the congestion value should be closer to 0. We can see that the RFR model has predicted a smaller value for both rows 📉, especially row 7 with only 0.09 👍
 
-Furthermore, take a look at rows 9 and 10. They both have increased, but row 9 has a congestion value of 2.89, really high! And lo and behold, the image for row 9 has a traffic jam spanning along the entire length of road, same for row10.
+Furthermore, take a look at rows 9 and 10. They both have increased 🔺, but row 9 has a congestion value of 2.89, really high! And true enough, the image for [row 9](GCloud/test_snaps/11-21_10-00_Thu.jpg) has a traffic jam spanning along the entire length of road, same for [row 10](GCloud/test_snaps/11-21_11-00_Thu.jpg).
 
-But heres where it gets **really** good. Line 16 shows a prediction value of 0.6, which is true if you look at the corresponding [image LINKKKKKK](), no jam. Look at Line 17, which indicates the startings of a traffic jam with a not too high but not too low congestion value of 1.47. What do you see in the [image LINKKK]()? At the top right, you can see some cars starting to pile up and form a small jam, near the entrance to the Johor customs. 
+But heres where it gets **really** good. Line 16 shows a prediction value of 0.6, which is true if you look at the corresponding [image](GCloud/test_snaps/11-23_06-00_Sat.jpg), no jam. Look at Line 17, which indicates the startings of a traffic jam with a not too high but not too low congestion value of 1.47. What do you see in the [image](GCloud/test_snaps/11-23_07-00_Sat.jpg)? At the top right, you can see some cars starting to pile up and form a small jam 🚗🚙, near the entrance to the Johor customs!
 
-Now for the grand finale, Line 18, coming in with the highest value we have seen yet at 3.37 arbitrary units. A near perfect prediction, as the jam in the corresponding [image LINKKKKKK] has fully taken form and now snakes the entire stretch of road between the customs of the two countries.
+Now for the grand finale, Line 18, coming in with the highest value we have seen yet at 3.37 arbitrary units 📈. A near perfect prediction, as the jam in the corresponding [image](GCloud/test_snaps/11-23_08-00_Sat.jpg) has fully taken form and now snakes the entire stretch of road between the customs of the two countries.
 
-I would have liked for some of the rows congestion values, especially row 10's, to be higher, considering the magnitude of the jams in their corresponding images look like 4s or 5s. However, thats my fault for drawing the bounding boxes to varying sizes, causing their areas to defer greatly. I should have know that bounding boxes are for identifying objects and not meant to be used in the way I am using them now. I think from now on I will just rate the congestion situation on a scale from 1 to 5 without drawing bounding boxes, just using my eyes. It won't be as cool as using CVAT bounding boxes and object detection model YOLO, but I think this is the right choice. It will lead to more consistent congestion values and take up less time. Sometimes the simple option is the best
+I would have liked for some of the rows congestion values, especially row 10's, to be higher 🔺, since the magnitude of the jams in their corresponding images look like 4s or 5s. However, thats my fault for drawing the bounding boxes of varying sizes, causing their areas to defer greatly. I should have known that bounding boxes are for identifying objects and not meant to be used in the way I am using them now.
+
+I think from now on, I will just rate the congestion situation on a scale from 1 to 5 without drawing bounding boxes, based on how many fifths of the causeway the cars take up. It won't be as cool as using CVAT bounding boxes and the object detection model YOLO 🤖, but I think this is the right choice. It will lead to more consistent congestion values and take up less time ⏳. Sometimes the simplest option is best.
 
 #### Decision Tree Regression
-Unless I was trying to create a model that I could easily understand its regression process, or save a miniscule amount of computational space, I probably would not pick a decision tree regressor model over a random forest regressor model. However, I do want to see how the Decision Tree Regressor model fares against its more robust counterpart, the Random Forest Regressor model, and see how large the difference in predictions are, if any.
+Unless I was trying to create a model that I could easily understand its regression process, or save a miniscule amount of computational space 💻, I probably would not pick a decision tree regressor model 🌲 over a random forest regressor model 🌲🌲🌲. However, I do want to see how the Decision Tree Regressor model fares against its more robust counterpart, the Random Forest Regressor model, and see how large the difference in predictions are, if any.
 
 ```
 19  test_df = pd.read_csv('test_df.csv')
