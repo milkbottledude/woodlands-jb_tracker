@@ -1204,7 +1204,7 @@ Unless I was trying to create a model that I could easily understand its regress
 23  test_df['congestion_prediction'] = pd.Series(dtr_predictions)
 24  print(test_df.head(20))
 ```
-In Line 19 we re-define a new test_df since the previous test_df already has the prediction column appended to it. Line 20-24 are the same as Line 4-8 above, except with a DTR model this time. The code in this chapter is very similar to that in Chapter 4.1, its just much simpler to understand now that we don't need to code the data preparation. Same as before, I'll add the RFR's results column and 'Time of Dayy' column to the new test_df.
+In Line 19 we re-define a new test_df since the previous test_df already has the prediction column appended to it. Line 20-24 are the same as Line 4-8 above, except with a DTR model 🌲 this time. The code in this chapter is very similar to that in Chapter 4.1, its just much simpler to understand now that we don't need to code the data preparation 📝. Same as before, I'll add the RFR's results column and 'Time of Day' column to the new test_df.
 
 ```
     Mon  Tue  Wed  Thu  Fri  Sat      hour_sin      hour_cos  congestion_prediction     RFR_prediction      Time of Day
@@ -1216,65 +1216,69 @@ In Line 19 we re-define a new test_df since the previous test_df already has the
 17    0    0    0    0    0    1  9.659258e-01 -2.588190e-01               1.160000           1.477880          7
 18    0    0    0    0    0    1  8.660254e-01 -5.000000e-01               3.675000           3.377438          8
 ```
-Now this is interesting. The single decision tree regressor model correctly predicts that there is no jam for row 7, predicts a lower value than the RFR model for row 8, and predicts a higher value for row 9, all of which are improvements. Not sure why all the models think there is a decrease in congestion at 11am, but both models predict a value around 1.9, so thats a draw between the two models.
+Now this is interesting. The single decision tree regressor model correctly predicts that there is no jam for row 7, predicts a lower value than the RFR model for row 8 ⬇ and predicts a higher value for row 9 ⬆️, all of which are improvements 🥳. Not sure why all the models think there is a decrease in congestion at 11am, but both models predict a value around 1.9, so thats a draw between the two models.
 
-For the Saturday rows, it again correctly predicts no jam at 6am for row 16, predicts a small build up of congestion similar to RFR model in row 17, but the DTR prediction is less which I feel is more accurate if you refer to the [row 17 image LINKKK](). Lastly, it predicts a higher congestion value for row 18, which is also an improvement since the full blown congestion in [row 18's image LINKKKKK]() should have a value between 4 and 5. 
+For the Saturday rows, it again correctly predicts no jam at 6am for row 16, predicts a small build up of congestion similar to RFR model in row 17, but the DTR prediction is less which I feel is more accurate 🎯 refer to the [row 17 image](GCloud/test_snaps/11-23_07-00_Sat.jpg) and see if you agree. Lastly, it predicts a higher congestion value for row 18, which is also an improvement since the full blown congestion in [row 18's image](GCloud/test_snaps/11-23_08-00_Sat.jpg) should have a value between 4 and 5. 
 
-That makes it 6 rows in favour of the decision tree regressor model and 1 row which ended in a draw, a clear win for the DTR model, but why? Isn't the RFR model, which averages the output from multiple decision trees generally considered as 'superior' to the single DTR model, which only consists of a single decision tree?
+That makes it 6 rows in favour of the decision tree regressor model and 1 row which ended in a draw, a clear win for the DTR model 🥇.
 
-What I think has happened is that the DTR model has overfitted more to the data, hence the values it outputs is closer to zero when there is no jam, and closer to 5 when there is jam. While the DTR model performs better when trained on our tiny training dataset of 293 training rows, it might perform worse as the dataset increases and overfitting becomes a larger problem. 
+But why? Isn't the RFR model, which averages the output from multiple decision trees 🌳🌳🌳 generally considered 'superior' to the single DTR model, which only consists of a single 🌳 decision tree?
 
-We only have the data for 2 months, so overfitting to the congestion patterns in these 2 months may not pose a problem for now, on the contrary even producing more accurate results as we have just seen. But as we gather data from other months and people using the causeway start to change their behaviour, overfitting to unique details instead of generalising to the large dataset will be detrimental to the output. 
+What I think has happened is that the DTR model has overfitted more to the data, hence the values it outputs are more 'extreme', closer to zero when there is no jam and closer to 5 when there is jam. While the DTR model performs better when trained on our tiny training dataset of 293 training rows, it might perform worse as the dataset increases into different periods of the year 🗓️ and overfitting becomes a larger problem 🚩.
+
+We only have the data for 2 months, so overfitting to the congestion patterns in these 2 months may not pose a problem for now, on the contrary even producing more accurate results as we have just seen. But as we gather data from other months and people using the causeway start to change their behaviour, overfitting to unique details instead of generalising to the large dataset will be detrimental to the output ⚠️. 
 
 Put it this way, right now the overfitted model will have more accurate output. But for a larger dataset, although the model that generalizes (in this case the RFR model) will not have output that perfectly matches the actual outcome, it will definitely be closer to the right answer than whatever the overfitted model outputs.
 
-I like the way the model is performing so far, but every good machine learning engineer knows that their ML model is only as good as the data its fed, no matter how well the model is configured and tuned. So before we go into the nitty gritty tuning, lets work on feature engineering in the next chapter, Chapter 4.3.
+I like the way the model is performing so far. However, every good machine learning engineer knows that an ML model is only as good as the data its fed, no matter how well the model is configured and tuned ⚙️. So before we get into the nitty gritty tuning, lets work on feature engineering 🔧.
 
 ### 4.3: Feature Engineering (in progress, tbc!)
 
-I'd like more variables for Machine Learning than just day and time, so in this subchapter I'll be trying to come up with more. Variables are kind of like clues for a ML model; the more you have, the more accurate the output prediction.
+I'd like more variables for Machine Learning than just day 📅 and time 🕓, so in this subchapter I'll be trying to come up with more. Variables are kind of like clues for an ML model; the more you have, the more accurate the output prediction.
 
-We could add month, but we barely have 2 months worth of processed data, so I'll hold off on that until we have more data. Another variable I'm considering is public holiday/presence of public holiday. I say presence because people tend to travel a few days before or after the actual holiday, not just on the day itself. Our processed data happens to fall on the school holiday/Christmas period, so lets start with this variable.
+We could add month, but we barely have 2 months worth of processed data, so I'll hold off on that until we have data from more months. Another variable I'm considering is public holiday/presence of public holiday 🎄🧧🍊. I say presence because people tend to travel a few days before or after the actual holiday, not just on the day itself. Our processed data happens to fall on the school holiday/Christmas period 🎅🏻🎁, so lets start with this variable.
 
-First I'll identify the school holiday periods for schools in Singapore in 2024.
+First I'll identify the school holiday periods for schools in Singapore in 2024 📚🏫
 
-insert non poly hols table here
+![nonpolyhols](progress_pics/Fig-4.1-sch_hols.jpg)
 
 Fig 4.1: School holiday periods for JCs, as well as primary and secondary schools
 
 Looks like aside from 16th-23rd November, the holiday period of all 3 types of education institutions perfectly align, so I'll set the generic year end 'sch hols' period to be from 23rd November to 31st December. Let's take a look at the holiday periods for the polytechnics of Singapore that overlap with the dates of our web-scraped image data.
 
-insert temasek poly
+![tpoly](progress_pics/Fig-4.2-temasek_poly_hols.jpg)
 
 Fig 4.2: Temasek Polytechnic's holiday schedule 
 
-insert sg poly 
+![sgp](progress_pics/Fig-4.2-temasek_poly_hols.jpg)
 
 Fig 4.3: Singapore Polytechnic's holiday schedule 
 
-insert nyp
+![nyp](progress_pics/Fig-4.4-nanyang_poly_hols.jpg)
 
 Fig 4.4: Nanyang Polytechnic's holiday schedule 
 
-insert ngee ann poly
+![ngeeann](progress_pics/Fig-4.5-ngee_ann_hols.jpg)
 
 Fig 4.5: Ngee Ann Polytechnic's holiday schedule 
 
-insert republic poly hols
+![reppoly](progress_pics/Fig-4.6-republic_poly_hols.jpg)
 
 Fig 4.6: Republic Polytechnic's holiday schedule
 
-As we can see, the holiday periods of polytechnics mostly overlap between early/mid December 2024 to early Jan 2025, so i will set a general polytechnic holiday period from 12 Dec - 1 Jan.
+As we can see, the holiday periods of polytechnics mostly overlap between early/mid December 2024 to early Jan 2025, so i will set a general polytechnic holiday period from 12 Dec - 1 Jan 🗓
 
-We can feed this information to our machine learning model as binary columns, 
+We can feed this information to our machine learning model as binary columns ✅❌, 
 
 for example: `column name: 'within sch hols period'` , `values: True/False.`
 
-As for public holidays, the only public holidays we should be concerned with given our current data are 25th Dec 2024, which is Christmas on a wednesday and 1st Jan 2025, New Years which is also on a Wednesday. 
+As for public holidays, the only public holidays we should be concerned with given our current data are 25th Dec 2024 🎅🏻🎄, which is Christmas on a wednesday, and 1st Jan 2025 🎇🥳, New Year's which is also on a Wednesday. 
 
-My plan is to have a 'proximity to Christmas' and 'proximity to New Years' column (or make them both into a 'public hols' column, not a bad idea too), which shows the number of days between the date of the image and the public holiday. To make things simpler, I'll cap the number at '7' days away, so if the date is more than 7 days away, the value in that column would still be 7.
+My plan is to have a 'proximity to Christmas' and 'proximity to New Years' column (or make them both into a 'public hols' column, not a bad idea too), which shows the number of days between the date of the image 📆 and the public holiday 🎉. To make things simpler, I'll cap the number at '7' days away, so if the date is more than 7 days away, the value in that column would still be 7.
 
-Another idea i have for a column is 'the amount of jam in the previous hour' or previous few hours. An instance is likely to have a jam if there was already a build up of cars in the previous hour/hours. This is known as 'lagging', which we can implement using the 'shift' function from pandas. Below is a visual example with all the new columns I'm planning to add.
+Another idea i have for a column is 'amount of jam in the previous hour' or previous few hours. An instance is likely to have a jam if there was already a build up of cars in the previous hour/hours 🚙🚗💨. This is known as 'lagging', which we can implement using the 'shift' function from pandas. Below is a visual example with all the new columns I'm planning to add.
+
+(please view in landscape/horizontal screen, otherwise the table will look kinda funny)
 
 ```
     ...     Time of Day     sch hols period     poly hols period    days to X'mas               days to NY     congestion_value     previous_hour  
@@ -1283,76 +1287,81 @@ Another idea i have for a column is 'the amount of jam in the previous hour' or 
 2   ...     1               True                False               7                           7              3.0                  5.0  
 3   ...     2               True                False               7                           7              0.0                  3.0
 ```
-I know I suggested it, but the 'days to X'mas' and 'days to NY' column having continuous values does not really sit right with me. I'm worried that since the value '7' represents so many rows (out of 365 days, 351 days are **not** within 1 week of Christmas), the ML model may get confused by the large variance in congestion levels for a single value of 7.
+I know I suggested it, but the 'days to X'mas' and 'days to NY' column having continuous values does not really sit right with me. I'm worried that since the value '7' represents so many rows (out of 365 days, 351 days are **not** within 1 week of Christmas), the ML model may get confused by the large variance in congestion levels for a single value of 7 (๑﹏๑//)
 
-Another potential idea I have for those 2 columns is making them into binary columns. So when the date does fall within 1 week of the public holiday, the value would be True, and vice-versa.
+Another potential idea I have for those 2 columns is making them into binary columns ✅❌. So when the date does fall within 1 week of the public holiday, the value would be True, and vice-versa.
 
 I'll stick with this design for now. But after training and testing the ML model with it once, I will train it again with the 2nd design I just mentioned, and see which yields more accurate predictions.
 
 So far, the independent variables we have are:
-1) time of day
-2) day
-3) whether the date is within sch hols period
+1) time of day 🕒
+2) day 🗓️
+3) whether the date is within sch hols period 📚🎒
 4) variable 3 but for poly
-5) days to Christmas
-6) days to New Years
-7) previous hour's traffic
+5) days to Christmas 🎅🏻🎄🎁
+6) days to New Years 🎆🍾🥳
+7) previous hour's traffic 🚙🚗💨
 
-When fed to a machine learning model, hopefully it can identify meaningful patterns between them and the congestion level of the target road. Lets start prepping the data of the 6 columns into a training dataframe.
+When fed to a machine learning model, hopefully the model can identify meaningful patterns between them and the congestion level of the target road. Lets start prepping the data of the 6 columns into a training dataframe 📝
 
-We have already been able to extract the time of day and day of the week in our previous data analysis, now we need to extract the date and compare it with holiday dates to get the 3rd to 6th variable values.
+We have already been able to extract the 1)time of day and 2)day of the week in our previous data analysis, now we need to extract the date and compare it with holiday dates 🎉🗓 to get the 3rd to 6th variable values.
+
+chapt 4.3 TBCC!
 
 ### 4.4: Model Tuning (tbc)
 
 ## Chapter 5: Automation and Website Making
-### 5.1: Making website HTML & CSS
-Quite excited for this, I have a couple ideas for an aesthetic looking website. However, I only have very minimal knowledge of HTML from scraping websites, and no experience whatsover with CSS. However, a friend of mine said its quite easy to pick up, so I'll be drafting up some website design prototypes on Canva while learning HTML & CSS at the same time.
+### 5.1: Making HTML & CSS for Frontend
+Quite excited for this, I've always admired aesthetic looking websites and have a couple ideas for one in mind. That said, I only have very minimal knowledge of HTML from scraping websites, and no experience whatsover with CSS. However, a friend of mine said its quite easy to pick up, so I'll be drafting up some website design prototypes on Canva while learning HTML & CSS at the same time.
 
 Here is what I came up with:
 
-insert canva ting here
+![insert canva ting here](oi)
 
 Fig 5.1: Canva website draft
 
-Ideally, this is what I want the user to see as soon as he enters the website. No fluff and straight to the point, with a pretty background of the causeway in the afternoon on the left and night on the right.  I did this to try and push the idea of "same causeway, different time".
+Ideally, this is what I want the user to see as soon as he enters the website. No fluff and straight to the point, with a pretty background of the causeway, in the afternoon on the left 🌇 and night on the right 🌃.  I did this to try and push the idea of "same causeway, different time".
 
-I'm no artist, but I think it looks nice.
+I'm no artist, but I think it looks nice ദ്ദി ˉ͈̀꒳ˉ͈́ )✧
+ 
 
-You can see the orange boxes with the rounded edges with date, time and AM/PM. In the actual HTML website, those would be the buttons where u can select the date and time.
+You can see the orange rounded-edge boxes with date, time and AM/PM. In the actual HTML website, those would be the buttons where u can select the date and time 📲.
 
-I also intend to add a 'How to Use' guide below as you scroll down (with the background not moving as you scroll cuz damn that looks cool), but for now this will do. Now its time to churn this out in HTML for our actual website frontend.
+I also intend to add a 'How to Use' guide 📘 below as you scroll down (with the background not moving as you scroll cuz damn that looks cool), but for now this will do. Now its time to churn this out in HTML for our actual website frontend.
 
 Update: The first version of the HTML for the website is done! Let me take you through it, starting with the <head> tag.
 
-insert part 1 of HTML vers 1
+![insert part 1 of HTMLINKKK](oi)
 
 Fig 5.2: Styling portion of HTML version 1
 
-The head tag contains the CSS for the website, although I'll probably be moving this to a separate CSS file moving forward to make the HTML file easier to read. This is very beginner CSS, nothing too fancy, so I wont go into everything in detail. 
+The head tag contains the CSS for the website, although I'll probably be moving this to a separate CSS file moving forward 📁 to make the HTML file easier to read. This is very beginner CSS 👶🏻, nothing too fancy, so I wont go into everything in detail. 
 
-Starting off with the CSS in the <head> tag, I defined the background for the body (basically the entire website) in Line 10. Then I made the <body> element have all its elements inside align to the centre (Line 16). For the font colour I chose 'Alice Blue', but its really just white basically (Line 14).
+Starting off with the CSS in the <head> tag, I defined the [background](progress_pics/website_bg2.jpg) for the body (basically the entire website) in Line 10. Then I made the <body> element have all its elements inside align to the centre (Line 16). For the font colour I chose 'Alice Blue', but its really just white basically ⚪ (Line 14).
 
-For the top class (Line 19), it contains all the text in the website, so the title as well as the little slogan right below it. I wanted them to be well separated from the top of the screen as well as the buttons to select the date and time, hence it has a top and bottom padding of 120px. The <bodyy> is already aligned to the center, so theres no need for side padding.
+For the top class (Line 19), it contains all the text in the website, which is just the title as well as the little slogan right below it. I wanted them to be well separated ↕️ from the top of the screen as well as the buttons to select the date and time, hence it has a top and bottom padding of 120px. The <body> is already aligned to the center, so theres no need for side padding.
 
-For the column class (Line 38), i wanted the date and time buttons to be side by side like in the Canva draft, so I added the display: inline block in Line 39. This makes the elements with class be side by side instead of having a new row for every element. The column class is nested in <body>, so the buttons are aligned to the center.
+For the column class (Line 38), i wanted the date and time buttons to be side by side like in the Canva draft, so I added 'display: inline block' in Line 39. This makes the elements with class be side by side 📅🕒 instead of having a new row for every element. The column class is nested in <body>, so the buttons are aligned to the center.
 
-The "where-you-click" class is exactly that, its the class for the elements which you click on, the date and time buttons. I added a slightly grey border (Line 58) to the transparent button (Line 60). I rounded the button corners (Line 59) for a more aesthetic look and made the text colour white, although thats probably not necessary since I already defined a whitish text colour in <body>.
+The "where-you-click" class is exactly that, its the class for the elements which you click on 👉🔘, the date and time buttons. I added a slightly grey border (Line 58) to the transparent button (Line 60). I rounded the button corners (Line 59) for a more aesthetic look and made the text colour white, although thats probably not necessary since I already defined a whitish text colour in <body>.
 
-insert ss of body tag hereeeeee
+![insert ss of body tag HEREEEEEEEE](oi)
 
 Fig 5.3: 2nd part of HTML version 1
 
-Moving on from CSS to the actual HTML, I created the first of the 3 input buttons, 'Date', in Lines 77-80. The input type "date" makes it such that when clicked, it produces a calendar where you can pick a date. 
+Moving on from CSS to the actual HTML, I created the first of the 3 🔘🔘🔘 input buttons in Lines 77-80, 'Date'. The input type "date" makes it such that when clicked 👆, it produces a calendar 🗓 where you can pick a date. 
 
-The time button is made in Lines 81-97. The <select> tag gives the dropdown rows when the button is clicked to reveal the possible time values you can pick, which are defined in the <option> tags. The AM/PM button is similar, except with only 2 options. Also I did not give it a label for aesthetic purposes, also its kinda self explanatory.
+The time button is made in Lines 81-97 🕓. The <select> tag gives the dropdown rows when the button is clicked 👆 to reveal the possible time values you can pick, which are defined in the <option> tags. The AM/PM button is similar, except with only 2 options. 
+
+I did not give it a label for aesthetic purposes ✨, as you can see in Fig 5.2 below theres no AM/PM label next to the button. Also the AM/PM dropdown values after clicking make it kinda self explanatory.
 
 All this gives us this frontend output:
 
-insert HTML first vers here
+![insert HTML first vers HEREEEEEEEE](oi)
 
 Fig 5.2: First prototype of website's HTML.
 
-The HTML file for our website can be found [here LINKKKKKKK](), although it may be changed throughout the project as I learn more HTML & CSS and make improvements. I'll also be making a [CSS file LINKKKKKKKK]() to separate the styling content from the actual HTML.
+The HTML file for our website can be found [here LINKKKKKKK](oi) 📂, although its contents may be changed throughout the project as I learn more HTML & CSS and make improvements. I'll also be making a [CSS file LINKKKKKKKK](oi) to separate the styling content from the actual HTML.
 
 
 ### 5.2: Creating Backend with Flask, yaml and main.py
