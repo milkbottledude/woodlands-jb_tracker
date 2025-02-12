@@ -448,13 +448,13 @@ However, unlike us humans, going over the training data too many times 🌀 can 
 
 At this time, I had just started my object detection journey after seeing people train successful models with just 50 to 100 high resolution training images, so poor me had no idea that low resolution images meant I had to annotate **a lot** more ✏️
 
-insert picc here
+![0](progress_pics/Fig-2.5-first_time_annotating_with_cvat.jpg)
 
 Fig 2.5: First time using CVAT
 
 Obviously, the model did not do well, detecting no cars whatsoever. I also received some metrics of the object detection process.
 
-insert first metrics here
+![0](progress_pics/Fig-2.6-first_attempt_axis_aligned_results.jpg)
 
 Fig 2.6: Metrics of object detection model's first training attempt
 
@@ -464,7 +464,7 @@ By right, the more times a machine learning model goes over the training data, t
 
 I tried to find loopholes around the picture quality to train the YOLO model, such as detecting traffic congestion areas as a whole:
 
-insert weird ahh shaped box here
+![0](progress_pics/Fig-2.7-hexagon_bounding_box.jpg)
 
 Fig 2.7: Hexagon bounding box
 
@@ -474,7 +474,7 @@ YOLO breaks up the box into a grid of pixels to detect patterns and calculate lo
 
 In the end, I settled for identifying **areas** of congestion on the causeway 🛣️. It somewhat solved the low-pixel problem by making the bounding box area bigger, while at the same time still keeping the majority of the bounding box around an area of cars. It was also feasible with 4-sided-boxes aligned to the axes.
 
-insert axis aligned here
+![0](progress_pics/Fig-2.8-axis_aligned_cvat.jpg)
 
 Fig 2.8: Bounding boxes now surround areas of congestion rather than individual cars
 
@@ -484,7 +484,7 @@ Fig 2.8: Bounding boxes now surround areas of congestion rather than individual 
 
 After a few weeks of monotonous manual annotating, I managed to get 184 training images. I trained the model again and kept the epoch parameter the same as before.
 
-insert result 184 here
+![0](progress_pics/Fig-2.9-results_184train.jpg)
 
 Fig 2.9: metrics from training with 184 training images
 
@@ -492,7 +492,7 @@ The numbers are still far from ideal, but at least the loss is decreasing now �
 
 Afterwards, there was just a bunch more annotation ✏️. I split the total images I had at the time (about 1000) into 7 batches in the GCloud folder 📦. I hit 334 training images after annotating the 2nd batch and trained the model again:
 
-insert results 334 here
+![0](progress_pics/Fig-2.10-results_334train.jpg)
 
 Fig 2.10: metrics from training with 334 training images
 
@@ -500,7 +500,7 @@ The results did show improvement 📈 in model performance, but not much. The tr
 
 A few late nights later, I hit 514 images after completing the 3rd batch 📦 of image annotations:
 
-insert results 514 here
+![0](progress_pics/Fig-2.11-results_514train.jpg)
 
 Fig 2.11: metrics from training with 514 images
 
@@ -510,7 +510,7 @@ The mAP50-95 (basically the same thing except the amount of overlap varies) also
 
 Here are the metrics of the 2 model metrics side by side so its easier to compare:
 
-insert fig sie by side
+![0](progress_pics/Fig-2.12-side_by_side_334_&_514.jpg)
 
 Fig 2.12: Fig 2.11 on the right, Fig 2.10 on the left
 
@@ -518,7 +518,7 @@ On a brighter note, when I used the weights of the model after this training ses
 
 Granted, it doesn't look very impressive, but it was my first visible progress after a long period of work and no results, so I was quite thrilled.
 
-insert 0.3 confi here
+![0](progress_pics/Fig-2.13-first_annotation_by_model.jpg)
 
 Fig 2.13: First annotation by model
 
@@ -541,7 +541,7 @@ This problem puzzled me for quite a while and I researched some possible ways to
 
 First, I gathered the centre coordinates of all bounding boxes in every single image of the causeway I annotated, then I plotted them all into a graph using Matplotlib.
 
-insert coords of pics here
+![0](progress_pics/Fig-3.1-distinct_coord_grps.jpg)
 
 Fig 3.1: Plotted coordinates of all bounding box centres
 
@@ -551,7 +551,7 @@ The plan now is to plot a line that perfectly separated the 2 groups, so that in
 
 At first, I tried to separate them with a normal straight line. I did some trial and error and came up with was a formula of: y = -0.94x + 1.18
 
-insert straight line graph separating lanes
+![0](progress_pics/Fig-3.2-orange_line.jpg)
 
 Fig 3.2: Straight line graph plotted together with bounding box coordinates
 
@@ -559,7 +559,7 @@ Its not bad, but you look carefully at the top left of the graph, there's a tiny
 
 After tinkering with Matplotlib and Desmos, the online math graphing app, for a bit, I managed to get a curve that perfectly separated the coordinates.
 
-insert sigmoid pic here
+![0](progress_pics/Fig-3.3-sigmoid_reflected_in_y-axis.jpg)
 
 Fig 3.3: Curved line separates all the coordinates, including the ones at the top left which the straight line could not
 
@@ -615,7 +615,7 @@ After opening the file in read mode (Line 8), I iterate through each line in the
 
 Here is how the contents of a typical bounding box file looks like.
 
-insert typical box file here
+![0](progress_pics/Fig-3.4-typical_box_file.jpg)
 
 Fig 3.4: contents of one of the thousand bounding box files
 
@@ -688,7 +688,7 @@ Line 3 enables gridlines ⊞ on the plot, while Lines 4 and 5 create the coordin
 ```
 Line 7 plots the box coordinates 📌 that lie on the road to Johor and colours them blue 🔵, while Line 8 does the same for the road to Woodlands, except the coordinates are coloured red instead 🔴. Lines 9 and 10 label the axes, and Line 11 showcases the graph 📈
 
-insert many redblue w line
+![0](progress_pics/Fig-3.5-coloured_coords_with_curve.jpg)
 
 Fig 3.5: Plotted the sigmoid curve and coloured coordinates
 
@@ -783,7 +783,7 @@ With the file still open and in 'read' mode, I add the total_box_area to the 1st
 
 Then I define the sum of areas and sum of instances, before calculating the average congestion area and adding it to the table 📝(Line 14). Here is how the table looks.
 
-insert first look at table
+![0](progress_pics/Fig-3.6-first_look_at_table.jpg)
 
 Fig 3.6: First look at table of congestion values
 
@@ -804,7 +804,7 @@ My plan is to make the congestion area values scale from 1 to 5, with 1 being no
 
 Line 2 is just to ensure all the values are floats so that we can round them off to 2dp (Line 5). Line 7 saves the table as a csv file, which you can see [here](python_scripts/sorted_data.csv), and Line 6 prints out the table.
 
-insert scaled and 2dp here
+![0](progress_pics/Fig-3.7-scaled_&_2dp.jpg)
 
 Fig 3.7: Same table, now scaled and rounded to 2dp
 
@@ -828,7 +828,7 @@ In Line 5, the average congestion area (y axis) is plotted against the 24 hour t
 
 Finally, Line 7 adds a legend to tell the line graphs apart 📈📉 as you can see in the top right of the figure above, and Line 8 outputs the final product.
 
-insert many colorful lines jpeg here
+![0](progress_pics/Fig-3.8-colorful_line_graph.jpg)
 
 Fig 3.8: Coloured line graphs of congestion area against time of day
 
