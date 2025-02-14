@@ -1322,7 +1322,7 @@ Fig 5.1: Canva website draft
 
 Ideally, this is what I want the user to see as soon as he enters the website. No fluff and straight to the point, with a pretty background of the causeway, in the afternoon on the left 🌇 and night on the right 🌃.  I did this to try and push the idea of "same causeway, different time".
 
-I'm no artist, but I think it looks nice ദ്ദി ˉ͈̀꒳ˉ͈́ )✧
+I'm no artist, but I think it looks nice :)
  
 
 You can see the orange rounded-edge boxes with date, time and AM/PM. In the actual HTML website, those would be the buttons where u can select the date and time 📲.
@@ -1337,7 +1337,7 @@ Fig 5.2: Styling portion of HTML version 1
 
 The head tag contains the CSS for the website, although I'll probably be moving this to a separate CSS file moving forward 📁 to make the HTML file easier to read. This is very beginner CSS 👶🏻, nothing too fancy, so I wont go into everything in detail. 
 
-Starting off with the CSS in the <head> tag, I defined the [background](progress_pics/website_bg2.jpg) for the body (basically the entire website) in Line 10. Then I made the <body> element have all its elements inside align to the centre (Line 16). For the font colour I chose 'Alice Blue', but its really just white basically ⚪ (Line 14).
+I defined the [background](progress_pics/website_bg2.jpg) for the body (basically the entire website) in Line 10. Then I made the <body> element have all its elements inside align to the centre (Line 16). For the font colour I chose 'Alice Blue', but its really just white basically ⚪ (Line 14).
 
 For the top class (Line 19), it contains all the text in the website, which is just the title as well as the little slogan right below it. I wanted them to be well separated ↕️ from the top of the screen as well as the buttons to select the date and time, hence it has a top and bottom padding of 120px. The <body> is already aligned to the center, so theres no need for side padding.
 
@@ -1351,7 +1351,7 @@ Fig 5.3: 2nd part of HTML version 1
 
 Moving on from CSS to the actual HTML, I created the first of the 3 🔘🔘🔘 input buttons in Lines 77-80, 'Date'. The input type "date" makes it such that when clicked 👆, it produces a calendar 🗓 where you can pick a date. 
 
-The time button is made in Lines 81-97 🕓. The <select> tag gives the dropdown rows when the button is clicked 👆 to reveal the possible time values you can pick, which are defined in the <option> tags. The AM/PM button is similar, except with only 2 options. 
+The time button is made in Lines 81-97 🕓. The <select> tag gives the dropdown rows when the button is clicked to reveal the possible time values you can pick 👆, which are defined in the <option> tags. The AM/PM button is similar, except with only 2 options. 
 
 I did not give it a label for aesthetic purposes ✨, as you can see in Fig 5.2 below theres no AM/PM label next to the button. Also the AM/PM dropdown values after clicking make it kinda self explanatory.
 
