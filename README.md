@@ -1316,7 +1316,7 @@ Quite excited for this, I've always admired aesthetic looking websites and have 
 
 Here is what I came up with:
 
-![insert canva ting here](oi)
+![insert canva ting here](progress_pics/Fig-5.1-canva_ss.jpg)
 
 Fig 5.1: Canva website draft
 
@@ -1331,7 +1331,7 @@ I also intend to add a 'How to Use' guide 📘 below as you scroll down (with th
 
 Update: The first version of the HTML for the website is done! Let me take you through it, starting with the <head> tag.
 
-![insert part 1 of HTMLINKKK](oi)
+![insert part 1 of HTMLINKKK](progress_pics/Fig-5.2-HTML_style_ss_p1.jpg)
 
 Fig 5.2: Styling portion of HTML version 1
 
@@ -1345,7 +1345,7 @@ For the column class (Line 38), i wanted the date and time buttons to be side by
 
 The "where-you-click" class is exactly that, its the class for the elements which you click on 👉🔘, the date and time buttons. I added a slightly grey border (Line 58) to the transparent button (Line 60). I rounded the button corners (Line 59) for a more aesthetic look and made the text colour white, although thats probably not necessary since I already defined a whitish text colour in <body>.
 
-![insert ss of body tag HEREEEEEEEE](oi)
+![insert ss of body tag HEREEEEEEEE](progress_pics/Fig-5.3-HTML_body_ss_p2.jpg)
 
 Fig 5.3: 2nd part of HTML version 1
 
@@ -1357,7 +1357,7 @@ I did not give it a label for aesthetic purposes ✨, as you can see in Fig 5.2 
 
 All this gives us this frontend output:
 
-![insert HTML first vers HEREEEEEEEE](oi)
+![insert HTML first vers HEREEEEEEEE](progress_pics/Fig-5.4-html_state_1.jpg)
 
 Fig 5.2: First prototype of website's HTML.
 
