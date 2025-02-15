@@ -6,3 +6,4 @@ ultralytics
 pandas
 tensorflow
 scikit-learn
+joblib
