@@ -1,0 +1,65 @@
+html, body {
+    height: 100%; /* so that bg pic takes up full height of the screen */
+    margin: 0; /* Remove any default margin */
+}
+
+body {
+    background-image: url("website_bg2.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: aliceblue;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+}
+
+.top {
+    padding: 120px 0px 120px 0px;
+}
+
+.title {
+    font-weight: bold;
+    color:aliceblue;
+    font-size: 90px;
+}
+
+.sub-title {
+    font-size: 19px;
+    font-weight: 400;
+}
+
+.datetime-container {
+    margin-top: 30x;
+}
+
+.column {
+display: inline-block;
+margin: 10px;
+font-size: 18px;
+}
+
+.column input {
+    font-size: 16px;
+    padding: 5px;
+    width: 70px;
+}
+
+.column select {
+    font-size: 16px;
+    padding: 5px;
+    width: 70px;
+}
+.where-u-click {
+font-size: 18px;
+padding: 5px 10px;
+border: 3px solid #ccc; /* border */
+border-radius: 15px; /* Rounded corners */
+background-color: transparent; /* background 1f3ca3 blue, f3570f orange */
+color: #ffffff; /* text color */
+}
+
+option {
+    color: black;
+    text-align: center;
+}
+
