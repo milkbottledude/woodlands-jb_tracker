@@ -10,7 +10,7 @@ test_df = pd.read_csv('test_df.csv')
 # Random Forest Regressor model
 rfr_model = RandomForestRegressor()
 rfr_model.fit(train_df, y_column)
-joblib.dump(rfr_model, "rfr_model.pkl") # saving rfr weights for App Engine
+joblib.dump(rfr_model, "rfr_model.joblib") # saving rfr weights for App Engine
 
 rfr_predictions = rfr_model.predict(test_df)
 test_df['congestion_prediction'] = pd.Series(rfr_predictions)

@@ -5,82 +5,26 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Mine</title>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-        <style>
-            body {
-                background-image: url("website_bg2.jpg");
-                background-size: cover;
-                background-position: center;
-                background-attachment: fixed;
-                color: aliceblue;
-                font-family: 'Poppins', sans-serif;
-                text-align: center;
-            }
-
-            .top {
-                padding: 120px 0px 120px 0px;
-            }
-
-            .title {
-                font-weight: bold;
-                color:aliceblue;
-                font-size: 90px;
-            }
-
-            .sub-title {
-                font-size: 19px;
-                font-weight: 400;
-            }
-
-            .datetime-container {
-                margin-top: 30x;
-            }
-
-            .column {
-            display: inline-block;
-            margin: 10px;
-            font-size: 18px;
-            }
-
-            .column input {
-                font-size: 16px;
-                padding: 5px;
-                width: 70px;
-            }
-
-            .column select {
-                font-size: 16px;
-                padding: 5px;
-                width: 70px;
-            }
-            .where-u-click {
-            font-size: 18px;
-            padding: 5px 10px;
-            border: 3px solid #ccc; /* border */
-            border-radius: 15px; /* Rounded corners */
-            background-color: transparent; /* background 1f3ca3 blue, f3570f orange */
-            color: #ffffff; /* text color */
-        }
-
-            option {
-                color: black;
-                text-align: center;
-            }
-
-        </style>
+        <link href="../static/mobile.css" rel="stylesheet" media="screen and (max-width:600px)">
+        <link href="../static/styles.css" rel="stylesheet" media="screen and (min-width:600px)">
     </head>
     <body>
         <div class="top">
-            <div class="title">Johorscrape</div>
+            <div class="title">Johorscrape<sup style="font-size: 18px;">&copy;</sup></div>
             <div class="sub-title">Tell us when, and we'll handle the rest :)</div>
         </div>
-        <div class="datetime-container">
+            <p>Date: {{date}}</p> <p>Time: {{time}} {{ampm}}</p>
+            <p>Prediction: {{pred}} units</p>
+            <!-- src="static/{{pic_no}}.jpg" -->
+            <img src="../../GCloud/snaps_1/11-02_23-00_Sat.jpg" alt="Jam Image" class="output_jam">
+    <form action="/predict" method="POST" class="datetime-container">
             <div class="column">
                 <label for="date">Date</label>
                 <input type="date" id="date" name="date" class="where-u-click"> 
             </div>
             <div class="column">
                 <label for="hour">Time</label>
-                <select id="hour" class="where-u-click">
+                <select id="hour" class="where-u-click" name="hour">
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -96,11 +40,12 @@
                 </select>
             </div>
             <div class="column">
-                <select id="AM/PM" class="where-u-click">
+                <select id="ampm" class="where-u-click" name="ampm">
                     <option value="AM">AM</option>
                     <option value="PM">PM</option>
                 </select>
             </div>
-        </div>
+            <button type="submit">Submit</button>
+        </form>
     </body>
 </html>
