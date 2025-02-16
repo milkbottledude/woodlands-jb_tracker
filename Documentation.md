@@ -1233,22 +1233,7 @@ The time button is made in Lines 81-97 🕓. The <select> tag gives the dropdown
 
 I did not give it a label for aesthetic purposes ✨, as you can see in Fig 5.2 below theres no AM/PM label next to the button. Also the AM/PM dropdown values after clicking make it kinda self explanatory.
 
-All this gives us this frontend output:
 
-![insert HTML first vers HEREEEEEEEE](progress_pics/Fig-5.4-html_state_1.jpg)
-
-Fig 5.2: First prototype of website's HTML.
-
-The HTML file for our website can be found [here LINKKKKKKK](oi) 📂, although its contents may be changed throughout the project as I learn more HTML & CSS and make improvements. I'll also be making a [CSS file LINKKKKKKKK](oi) to separate the styling content from the actual HTML.
-
-
-### 5.2: Creating Backend with Flask, yaml and main.py
-
-
-ESGEDDDDITTTTTTTTTTTTTT ALSO DONT FORGET U ND TO ADD EMOJIS N SHI TO I THINK CHAPTS 3 N 4
-
-
-#### 5.3: Linking Backend with improved HTML in Google App Engine (GAE)
 
 
 
