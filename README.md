@@ -125,8 +125,3 @@ I also added screenshots and pictures 🖼️ of the processes in the documentat
 Hope to see you [there](Documentation.md)!. But I must warn you, its pretty dry 🏜️
 
 
-
-ESGEDDDDITTTTTTTTTTTTTT ALSO DONT FORGET U ND TO ADD EMOJIS N SHI TO I THINK CHAPTS 3 N 4
-
-
-#### 5.3: Linking Backend with improved HTML in Google App Engine (GAE)
