@@ -1394,48 +1394,73 @@ Fig 5.4: How the website looks like when viewed from an iPhone 12.
 
 As you can see, css that looks good for one device may not look as good for another. Rather, it can be pretty hideous.
 
-This is where mobile.css comes in. Its very similar to styles.css, except I changed the background image to something more potrait friendly.
+This is where mobile.css comes in. Its very similar to styles.css, except I changed the (background image)[GAE/static/website_bg.jpg] to something more potrait friendly. I also edited the text sizes to make the words fit the screen sizes of mobile phones.
 
+Anyway, after adding joblib to the project folder, we can now reference its weights in main.py and use it to properly output a prediction value. Lets see the changes in main.py.
+```
+...
+3    import joblib
+4    import pandas as pd
+5    import numpy as np
+...
+9    rfr_model = joblib.load('rfr_model.joblib')
+10   cols = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'hour_sin', 'hour_cos']
+...
+21          ampm = request.form.get('ampm')
+22          input_df = pd.DataFrame(np.zeros((1, 8)), columns=cols)
+23          date_obj = datetime.strptime(date_value, '%Y-%m-%d')
+24          day_abbr = date_obj.weekday()
+25          if day_abbr < 6:
+26              input_df.iloc[0, day_abbr] = 1
+27
+28
+27          input_df['hour_sin'] = np.sin(2 * np.pi * float(time_hour) / 24)
+28          input_df['hour_cos'] = np.cos(2 * np.pi * float(time_hour) / 24)
+29          prediction = rfr_model.predict(input_df)
+30          return render_template("index.html", date=date_value, time=time_hour, ampm=ampm, pred=round(prediction[0], 3), pic_no=round(prediction[0], 0))
+```
+First, I imported 3 additional packages (Lines 3-5). Joblib to load in the weights from rfr_model.joblib, pandas to create an input table for the rfr_model, since we need to feed the ML model data in table format, and numpy for the π value which we use in Lines 27-28.
 
+I load the weights (Line 9) and create a row of column names for the pandas dataframe (Line 10), after which I create the df with a single row of 8 zeros for each column (Line 22). I convert the date_value, which is the date input by the user, from a string to a datetime object (Line 23), before finding out what day of the week it is in index format (Line 24). 0 stands for Monday, 6 stands for Sunday, and I think you can figure out the rest.
 
+Once again, to avoid multicollinearity, I did not add a column for 'Sunday'. I check if the day index is < 6. If it is, that means its not a Sunday, so I proceed to change the corresponding column value from 0 (❌) to 1 (✅) in Line 26.
 
+i apply sin-cos encoding to the 'time_hour' value in Lines 27-28, then store the numpy array of predictions in the variable 'prediction' (Line 29).
+
+In Line 30, I render the template and pass all the relevant variables to the html file. Some new additions include 'pred' and 'pic_no'. I round the prediction off to 3dp for pred so that the output does not look to messy, and to nearest whole number for pic_no because the jam images in [static/](GAE/static) only represent whole numbers from 1-5. 
+
+Notice how I type 'prediction[0]' instead of just 'prediction', thats because 'prediction' itself is a numpy array. To extract the actual integer value, I have to iterate through the array.
+
+Now let's test run this and see how the output looks like, I'll run it with just the prediction value first (Fig 5.5), then if there are no issues I'll include the jam image in the output too (Fig 5.6). You can see how they turned out below.
+
+insert vid of with pred
+
+Fig 5.5: Test run with prediction value included
+
+And here it is with the image included 🖼️
+
+insert vid of with pred and image
+
+Fig 5.6: Test run with both prediction value and jam image included
+
+Looks like the structure of the website is complete. Now we can finally move on to deploying this thing for real on Google App Engine (GAE) so that everyone can use it. This does not mean that the development of the website HTML and CSS will be halted though, I will continue to improve the visual and overall performance of the website as inspiration strikes and my skills continue to improve.
+
+To run the website on GAE, we need an app.yaml file as mentioned before when showcasing the project folder structure. We already have an app.yaml file, but its contents are still empty, so let's change that.
+
+First, we need to 
 
 ```
-from flask import Flask, render_template, request
-from datetime import datetime
-import joblib
-import pandas as pd
-import numpy as np
+1  runtime: python312
 
-app = Flask(__name__)
+2  entrypoint: gunicorn -b :$PORT main:app
 
-rfr_model = joblib.load('rfr_model.joblib')
-cols = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'hour_sin', 'hour_cos']
-
-@app.route('/')
-def home():
-    return render_template('index.html')
-
-@app.route('/predict', methods=['POST'])
-def predict():
-    if request.form['date']:
-        date_value = request.form.get('date')
-        time_hour = request.form.get('hour')
-        ampm = request.form.get('ampm')
-        input_df = pd.DataFrame(np.zeros((1, 8)), columns=cols)
-        date_obj = datetime.strptime(date_value, '%Y-%m-%d')
-        day_abbr = date_obj.weekday()
-        if day_abbr < 6:
-            input_df.iloc[0, day_abbr] = 1
-        input_df['hour_sin'] = np.sin(2 * np.pi * float(time_hour) / 24)
-        input_df['hour_cos'] = np.cos(2 * np.pi * float(time_hour) / 24)
-        prediction = rfr_model.predict(input_df)
-        return render_template("index.html", date=date_value, time=time_hour, ampm=ampm, pred=round(prediction[0], 3), pic_no=round(prediction[0], 0))
-    else:
-        return render_template("index.html")
-
-if __name__ == "__main__":
-    app.run(debug=True)
+3  handlers:
+4    - url: /static
+5      static_dir: static/
+6    - url: /.*  
+7      script: auto
 ```
+In Line 1, I specify the python version I'm using, python 3.12, which is the latest version as of the time I'm doing this project. Then I guNICORN RESEARCH TS HELP (Line 2). Afterwards, I specify some handlers. I need to reference the static/ folder for images and css files in this website, so I make sure to let GAE know (Line 4-5). In Line 6, I tell GAE to route any request in my website, regardless of POST or GET, to the backend. script: auto (Line 7) tells it to auto detect the backend file, which in our case is main.py
+
 
 #### 5.3: Linking Backend with improved HTML in Google App Engine (GAE)
