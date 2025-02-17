@@ -1279,7 +1279,7 @@ In Line 6, the '/predict' means that when the html button, which is of type=subm
 
 The 'POST' method is specified in Line 6 so that only POST requests trigger the predict() function. It is one of 2 request methods and is meant for requests that include transferring of data 📲 to the backend. Thats why predict() is called when a button of type=submit is clicked, since it sends input data.
 
-I also changed the html file abit to accomodate the output of data, since before the html file only had to display the buttons and did not actually have any backend or output. I'll explain the parts which I changed, not the whole thing since I already explained the bulk in [Chapter 5.5]()
+I also changed the html file abit. Before, the html file only had to display the buttons 🔘, it did not actually have any backend or output. It was essentially a skeleton of the website 🦴. I'll explain the parts which were added, not the whole thing since I already explained the bulk in [Chapter 5.1 LINKKKKKKKK](0)
 
 ```
 1        <div class="top">
@@ -1306,9 +1306,9 @@ Lines 5-8 and Line 59 were added after creating main.py, for the output returned
 
 The {% if date %} is basically a python 'if' statement but in HTML and Flask syntax. This is so that the output is only shown 📰 if theres a valid 'date' input from the user. Why did I not include 'if time' and 'if AM/PM'? 🤔 Because they already have a default value, so its impossible to submit input without a valid 'time' and 'AM/PM' value.
 
-I actually learnt this {% if %} stuff from chatgpt, and not from a book or man-made resource, which might be frowned upon by some. But as long as it gets the job done and I understand exactly how it works, as well as how to use it, I don't see a problem. 
+I actually learnt this {% if %} stuff from chatgpt, not from a book or man-made resource, which might be frowned upon by some. But as long as it gets the job done and I understand exactly how it works, as well as how to use it, I don't see a problem. 
 
-Me personally, I draw the line when the code is completely AI made, or 90% and the other 10% is just changing of variable names and other minor knick-knacks. But who gives a toss what I think eh?
+Me personally, I draw the line when the code is completely AI made, or 90% and the other 10% is just changing of variable names and other minor knick-knacks. But who gives a toss what I think hmm?
 
 Anyway, here's the 1st website test run, I ran it using 'python main.py' on the Google shell terminal. This is just a test run on a local port to make sure everything runs fine, more refinements will be made over time. 
 
@@ -1324,13 +1324,77 @@ One thing I'm slightly annoyed with is that, after submitting your input, typica
 
 I tried using sessions.pop('date') after the output was returned, which is supposed to make the website 'forget' the previous input data, to no avail . I also tried {% if request.method == GET %}, because by right a page refresh is a GET method not a POST, but after checking the logs I realized: a refresh of a page which was loaded in via a 'POST' is still a 'POST' request, not 'GET'. 
 
-Its not a major flaw, but its still a little annoying. I hope to find a solution to this, but now I'll move on with the rest of the website build. Theres bigger fish to fry, now is not the time to fret over minnows.
+Its not a major flaw, but its still a little annoying. I hope to find a solution to this, but now I'll move on with the rest of the website build. Theres bigger fish to fry, now is not the time to fret over this small stuff.
 
+Now that we know the frontend is able to send input data to the backend, and the backend can send output back without any hiccups, we can focus more on what **kind** of output we want to be sent. Obviously, not just the date and time like before, but also the prediction value.
 
+And perhaps I'll add an image of what the congestion situation will likely look like, in case the prediction value is not enough to convey how severe the traffic jam will be to the user. Yea I think I'll add some annotated pictures to the [static/](GAE/static/) folder, stay tuned for this.
 
+arbitrary units alone wont be able to convey how congested the road will be
 
+However, we don't want to be training the ML model again and again every time a user sends in their input. That would waste a lot of time, is computationally expensive, and overall a very stupid way to set up the website. Furthermore, we would need to have the training data on hand all the time, which would take up a lot of space. So instead, we will train the model beforehand **once**, then store the trained model's weights for later use.
 
+This is where the joblib package comes in handy. With just one line of code, we can save the model's weights after training. The following code is from [Predicting_with_RFR.py](python_scripts/Predicting_with_RFR.py), the only change is the joblib line.
 
+```
+# Random Forest Regressor model
+rfr_model = RandomForestRegressor()
+rfr_model.fit(train_df, y_column)
+joblib.dump(rfr_model, "rfr_model.joblib") # NEW LINE, saving rfr weights for App Engine
+
+rfr_predictions = rfr_model.predict(test_df)
+```
+After saving the weights in a joblib file named rfr_model.joblib, I can move this file to the 'johorscrape_website' project folder in GCloud shell editor together with the rest of the files. Now we can reference it whenever we have to make a prediction, without having to train a fresh model every time.
+
+As of right now, this is how the project folder's file structure in the gcloud shell editor is looking:
+```
+/johorscrape_website
+    |── myenv/
+    |   └── packages, libraries, etc
+    |── app.yaml
+    |  
+    |── static/
+    |   └── website_bg2.jpg
+    |	└── 1_jam.jpg
+    |	└── 2_jam.jpg
+    |	└── 3_jam.jpg
+    |	└── 4_jam.jpg
+    |	└── 5_jam.jpg
+    |	└── styles.css
+    |	└── mobile.css
+    |	└── website_bg2.jpg
+    |	└── website_bg.jpg
+    |  
+    |── templates/
+    |  └── index.html
+    |  
+    |── main.py
+    |  
+    |── requirements.txt
+    |    
+    |── rfr_model.joblib
+```
+Starting off with `myenv`, thats the virtual environment (venv) that stores all the installed libraries listed in requirements.txt, the second last file near the bottom of the project folder. Its only necessary for test runs with `python main.py` though, GAE has its own environment to store the downloaded libraries for public website deployment.
+
+`app.yaml` contains code which configures how GAE deploys our website. Right now its still an empty file, but we will get to it once we need to deploy the website publicly.
+
+The `templates/` folder contains the main html file, index.html. I'm not too sure why i need a whole folder just for one file, but this is apparently how website files should be formatted, with css files inside static/ and html files inside templates/.
+
+`main.py` as you know contains the backend for our website, and `rfr_model.joblib` contains the weights of our pre-trained random forest regressor model.
+
+The `static/` folder contains all the css files, as well as image files which I intend to output in the website, such as background images. The {number}_jam.jpg files are pictures of the causeway at different levels of congestion, with 1 meaning 'no jam' to 5 meaning 'chock full of cars'. 
+
+You may notice that there is one more css file, mobile.css. Its basically the same as styles.css, but for if someone opens the website through their mobile phone, or a device of different dimensions to a laptop/desktop. Why is this necessary you may ask?
+
+So far, every time I have entered the website, it has been from my laptop, so the website is opened in landscape mode. It looks great, formatting and space between elements have been hand-tuned to perfection by yours truly. But enter the very same url in your iPhone or Samsung galaxy, and you get something that looks like this.
+
+insert chopped formatting for fone:
+
+Fig 5.4: How the website looks like when viewed from an iPhone 12.
+
+As you can see, css that looks good for one device may not look as good for another. Rather, it can be pretty hideous.
+
+This is where mobile.css comes in. Its very similar to styles.css, except I changed the background image to something more potrait friendly.
 
 
 
