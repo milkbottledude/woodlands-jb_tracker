@@ -1189,7 +1189,7 @@ chapt 4.3 TBCC!
 ### 4.4: Model Tuning (tbc)
 
 ## Chapter 5: Automation and Website Making
-### 5.1: Making HTML & CSS for Frontend
+### 5.1: Making HTML & CSS(styles.css) for Frontend
 Quite excited for this, I've always admired aesthetic looking websites and have a couple ideas for one in mind. That said, I only have very minimal knowledge of HTML from scraping websites, and no experience whatsover with CSS. However, a friend of mine said its quite easy to pick up, so I'll be drafting up some website design prototypes on Canva while learning HTML & CSS at the same time.
 
 Here is what I came up with:
@@ -1239,20 +1239,103 @@ All this gives us this frontend output:
 
 Fig 5.2: First prototype of website's HTML.
 
-The HTML file for our website can be found [here LINKKKKKKK](oi) 📂, although its contents may be changed throughout the project as I learn more HTML & CSS and make improvements. I'll also be making a [CSS file LINKKKKKKKK](oi) to separate the styling content from the actual HTML.
+The HTML file for our website can be found [here](GAE/templates/starter_html_mine.html) 📂, although its contents may be changed throughout the project as I learn more HTML & CSS and make improvements. I'll also be making a [CSS file](GAE/static/styles.css) to separate the styling content from the actual HTML. The CSS and other static files such as jpeg files will be stored in the [static folder](GAE/static).
 
-/project
-    |─ pics/
-    │   └── website_bg2.jpg
-    └── website/
-        └── static/
-            └── styles.css
+### 5.2: Creating Backend with Flask, main.py, and then app.yaml
+With a rough version of the html and css files ready, we can shift our focus to the backend of the website ⚙️.
+
+To start, lets make main.py 📝 which will set up Flask as well as control what will be outputted back to the user 📤. For now, we won't be outputting any ML predictions, just printing back out the input date 📆 and time 🕒 given by the user. 
+
+I want to make sure the actual html and main.py work together seamlessly to properly output data before I bring in joblib files and machine learning models.
+
+```
+1    from flask import Flask, render_template, request
+
+2    app = Flask(__name__)
+
+3    @app.route('/')
+4    def home():
+5        return render_template('index.html')
+```
+First, I import Flask, the foundation of our web application build 🌐 . It will provide the necessary tools we need to properly set up our website 🔧, such as render_template and request. 
+
+"render_template" is used to load in HTML files together with their css, as well as any variables you want to pass to it. "request" allows us to obtain any data inputted 📥 by the user on the website, such as date or time.
+
+In line 3, the '/' represents the root url. It means that the following function `home()` will define the "main page" of the website, basically what will greet a user the first time he/she enters the website.
+
+The main function itself is very simple, just a single line (Line 5). It displays the html page with its css 📰 without any variables (since the user just entered the website, they have not submitted any input).
+```
+6    @app.route('/predict', methods=['POST'])
+7    def predict():
+8        date_value = request.form.get('date')
+9        time_hour = request.form.get('hour')
+10       ampm = request.form.get('ampm')
+11       return render_template('index.html', date=date_value, hour=time_hour, ampm=ampm)
+
+12   if __name__ == "__main__":
+13       app.run(debug=True)
+```
+In Line 6, the '/predict' means that when the html button, which is of type=submit (i'll show the updated html later), is clicked 👆, '/predict' is appended to the end of the url 🔗 and the function in Line 7 is called. The user input is obtained (Lines 8-10) before the html file is rendered, but this time with the relevant variables 📅🕒 (Line 11).
+
+The 'POST' method is specified in Line 6 so that only POST requests trigger the predict() function. It is one of 2 request methods and is meant for requests that include transferring of data 📲 to the backend. Thats why predict() is called when a button of type=submit is clicked, since it sends input data.
+
+I also changed the html file abit to accomodate the output of data, since before the html file only had to display the buttons and did not actually have any backend or output. I'll explain the parts which I changed, not the whole thing since I already explained the bulk in [Chapter 5.5]()
+
+```
+1        <div class="top">
+2            <div class="title">Johorscrape<sup style="font-size: 18px;">&copy;</sup></div>
+3            <div class="sub-title">Tell us when, and we'll handle the rest :)</div>
+4        </div>
+5        {% if date %}
+6            <p>Date: {{date}}</p> <p>Time: {{time}} {{ampm}}</p>
+7            <p>Prediction: {{pred}} units</p>
+8        {% endif %}
+9    <form action="/predict" method="POST" class="datetime-container">
+10           <div class="column">
+11               <label for="date">Date</label>
+.
+.
+.
+56                   <option value="PM">PM</option>
+57               </select>
+58           </div>
+59           <button type="submit">Submit</button>
+60    </form>
+```
+Lines 5-8 and Line 59 were added after creating main.py, for the output returned by main.py as well as to pass input data to the backend respectively.
+
+The {% if date %} is basically a python 'if' statement but in HTML and Flask syntax. This is so that the output is only shown 📰 if theres a valid 'date' input from the user. Why did I not include 'if time' and 'if AM/PM'? 🤔 Because they already have a default value, so its impossible to submit input without a valid 'time' and 'AM/PM' value.
+
+I actually learnt this {% if %} stuff from chatgpt, and not from a book or man-made resource, which might be frowned upon by some. But as long as it gets the job done and I understand exactly how it works, as well as how to use it, I don't see a problem. 
+
+Me personally, I draw the line when the code is completely AI made, or 90% and the other 10% is just changing of variable names and other minor knick-knacks. But who gives a toss what I think eh?
+
+Anyway, here's the 1st website test run, I ran it using 'python main.py' on the Google shell terminal. This is just a test run on a local port to make sure everything runs fine, more refinements will be made over time. 
+
+insert vid here
+
+Fig 5.3: Website test run, output printed is the input date and time
+
+As you can see, the website mechanisms work just fine, no edge cases (so far) that cause the website to glitch out or crash. Its quite a simple website so far, so that ought to be the case. The data can be input by the user smoothly, the UI is easy to understand, and the output is printed out quickly after the submit button is pressed. The input and output aesthetics could do with some work though.
+
+This is not run on GAE yet, that requires the app.yaml file which we will create and go over later on. 
+
+One thing I'm slightly annoyed with is that, after submitting your input, typically you would refresh the page to submit another input, another date an time. However, when I refresh, the website stores the data from before and continues to output the previous output. To actually clear the previous input and start afresh, you have to click the submit button again.
+
+I tried using sessions.pop('date') after the output was returned, which is supposed to make the website 'forget' the previous input data, to no avail . I also tried {% if request.method == GET %}, because by right a page refresh is a GET method not a POST, but after checking the logs I realized: a refresh of a page which was loaded in via a 'POST' is still a 'POST' request, not 'GET'. 
+
+Its not a major flaw, but its still a little annoying. I hope to find a solution to this, but now I'll move on with the rest of the website build. Theres bigger fish to fry, now is not the time to fret over minnows.
 
 
-### 5.2: Creating Backend with Flask, yaml and main.py
 
 
-#### HERES main.py from GCloud shell editor, break it up and explain accordingly
+
+
+
+
+
+
+
 ```
 from flask import Flask, render_template, request
 from datetime import datetime
