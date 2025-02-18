@@ -1244,9 +1244,10 @@ The HTML file for our website can be found [here](GAE/templates/starter_html_min
 ### 5.2: Creating Backend with Flask, main.py, and then app.yaml
 With a rough version of the html and css files ready, we can shift our focus to the backend of the website ⚙️.
 
+#### main.py + changes to HTML to accomodate backend
 To start, lets make main.py 📝 which will set up Flask as well as control what will be outputted back to the user. For now, we won't be outputting any ML predictions, just printing back out the input date 📆 and time 🕒 given by the user. 
 
-Thats because I want to make sure the actual html and main.py work together seamlessly to properly output data 📤, before I start bringing in joblib files and machine learning models.
+This is because I want to make sure the actual html and main.py work together seamlessly to properly output data 📤 before I start bringing in joblib files and machine learning models.
 
 ```
 1    from flask import Flask, render_template, request
@@ -1257,7 +1258,7 @@ Thats because I want to make sure the actual html and main.py work together seam
 4    def home():
 5        return render_template('index.html')
 ```
-First, I import Flask, the foundation of our web application build 🌐 . It will provide the necessary tools we need to properly set up our website 🔧, such as render_template and request. 
+First, I import Flask, the foundation of our web application build 🌐. It will provide the necessary tools we need to properly set up our website 🔧, such as render_template and request. 
 
 "render_template" is used to load in HTML files together with their css, as well as any variables you want to pass to it. "request" allows us to obtain any data inputted 📥 by the user on the website, such as date or time.
 
@@ -1310,6 +1311,7 @@ I actually learnt this {% if %} stuff from chatgpt, not from a book or man-made 
 
 Me personally, I draw the line when the code is completely made by AI 🤖, or 90% made by AI and the other 10% is just changing of variable names and other minor knick-knacks. But who gives a toss what I think hmm?
 
+#### Test run + first thoughts
 Anyway, here's the 1st website test run, I ran it using 'python main.py' on the Google shell terminal 📟. This is just a test run on a local port to make sure everything runs fine, more refinements to the website visual will be made over time. 
 
 ![OIII](oo)
@@ -1330,7 +1332,7 @@ Now that we know the frontend is able to send input data to the backend, and the
 
 Perhaps I'll also add an image of what the congestion situation will likely look like, in case the prediction value is not enough to convey how severe the traffic jam will be 🚙🚗💨 to the user. Actually yea I think I'll add some annotated pictures to the [static/](GAE/static/) folder, stay tuned for this 🖼️.
 
-
+### 5.3: .joblib file and Project Folder structure
 #### Making ML weights portable with Joblib
 For our website backend, we don't want to be training the ML model again and again 🔁 every time a user sends in their input. Furthermore, we would need to have the training data on hand all the time, which would take up a lot of space 🗃️. All this wastes a lot of time ⌛, is computationally expensive, and overall a very stupid way to set up our website 🤡. 
 
@@ -1348,6 +1350,7 @@ rfr_predictions = rfr_model.predict(test_df)
 ```
 After saving the weights in a joblib file named rfr_model.joblib, I can move this file to the 'johorscrape_website' project folder 🗂️ in GCloud shell editor together with the rest of the files. Now we can reference it whenever we have to make a prediction, without having to train a fresh model every time 🏋.
 
+#### Project folder structure
 As of right now, this is how the project folder's file structure in the gcloud shell editor is looking:
 ```
 /johorscrape_website
@@ -1398,7 +1401,10 @@ As you can see, css that looks good for one device may not look as good for anot
 
 This is where mobile.css comes in. Its very similar to styles.css, except I changed the [background image](GAE/static/website_bg.jpg) to something more potrait friendly 🌃. I also edited the text sizes to make the words fit the screen sizes of mobile phones 📱.
 
-Anyway, after adding the joblib file to the project folder, we can now reference its weights ⚖️ in main.py and use it to properly output a prediction value 📲. Lets see the changes in main.py.
+
+### 5.4; Creating main.py v2 and app.yaml
+#### main.py v2
+After adding the joblib file to the project folder, we can now reference its weights ⚖️ in main.py and use it to properly output a prediction value 📲. Lets see the changes in main.py.
 ```
 ...
 3    import joblib
@@ -1447,6 +1453,7 @@ Fig 5.8: Test run with both prediction value and jam image included
 
 Looks like the base structure of the website is complete! Now we can finally move on to deploying this thing for real 🚀 on Google App Engine (GAE) so that everyone can use it. This does not mean that the development of the website HTML and CSS will be halted though, I will continue to improve the visuals ✨ and overall performance of the website as inspiration strikes and my skills continue to improve.
 
+#### app.yaml
 To run the website on GAE, we need an app.yaml file, as mentioned before when showcasing the project folder structure. We already one, but its still empty, so let's change that 😎.
 
 ```
@@ -1472,4 +1479,4 @@ Now, all we have to do is type `gcloud app deploy` in the terminal to get the we
 
 
 
-#### 5.3: Linking Backend with improved HTML in Google App Engine (GAE)
+#### 5.5:
