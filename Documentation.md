@@ -1,4 +1,4 @@
-![image](progress_pics/project_banner.jpg)
+![image](progress_pics/project_banner.jpg) 
 
 Once again, feel free to skip ⏭️ to any chapters or versions that interest you 😊.
 
