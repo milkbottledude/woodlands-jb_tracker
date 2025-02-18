@@ -1396,7 +1396,7 @@ Fig 5.6: How the website looks like when viewed from an iPhone 12.
 
 As you can see, css that looks good for one device may not look as good for another. Rather, it can be pretty hideous 🤮.
 
-This is where mobile.css comes in. Its very similar to styles.css, except I changed the (background image)[GAE/static/website_bg.jpg] to something more potrait friendly 🌃. I also edited the text sizes to make the words fit the screen sizes of mobile phones 📱.
+This is where mobile.css comes in. Its very similar to styles.css, except I changed the [background image](GAE/static/website_bg.jpg) to something more potrait friendly 🌃. I also edited the text sizes to make the words fit the screen sizes of mobile phones 📱.
 
 Anyway, after adding the joblib file to the project folder, we can now reference its weights ⚖️ in main.py and use it to properly output a prediction value 📲. Lets see the changes in main.py.
 ```
@@ -1414,20 +1414,20 @@ Anyway, after adding the joblib file to the project folder, we can now reference
 24          day_abbr = date_obj.weekday()
 25          if day_abbr < 6:
 26              input_df.iloc[0, day_abbr] = 1
-27
-28
-27          input_df['hour_sin'] = np.sin(2 * np.pi * float(time_hour) / 24)
-28          input_df['hour_cos'] = np.cos(2 * np.pi * float(time_hour) / 24)
-29          prediction = rfr_model.predict(input_df)
-30          return render_template("index.html", date=date_value, time=time_hour, ampm=ampm, pred=round(prediction[0], 3), pic_no=round(prediction[0], 0))
+27          if ampm == 'PM':
+28              time_hour = float(time_hour + 12)
+29          input_df['hour_sin'] = np.sin(2 * np.pi * float(time_hour) / 24)
+30          input_df['hour_cos'] = np.cos(2 * np.pi * float(time_hour) / 24)
+31          prediction = rfr_model.predict(input_df)
+32          return render_template("index.html", date=date_value, time=time_hour, ampm=ampm, pred=round(prediction[0], 3), pic_no=round(prediction[0], 0))
 ```
 First, I imported 3 additional packages (Lines 3-5). Joblib to load in the weights from rfr_model.joblib ⚖️, pandas 🐼 to create an input table for the rfr_model, since we need to feed the ML model data in table format, and numpy for the π value which we use in Lines 27-28.
 
 I load in the weights (Line 9) and create a row of column names for the pandas dataframe (Line 10). After that I create the df with a single row of 8 zeros, one for each of the 8 columns (Line 22). I convert the date_value 📅, which is the date input by the user, from a string to a datetime object (Line 23), before finding out what day of the week it is (Line 24) in index format. 0 stands for Monday, 6 stands for Sunday, and I think you can figure out the rest.
 
-Once again, to avoid multicollinearity, I did not add a column for 'Sunday'. I check if the day index is < 6. If it is, that means its not a Sunday, so I proceed to change the corresponding column value from 0 (❌) to 1 (✅) in Line 26.
+Once again, to avoid multicollinearity, I did not add a column for 'Sunday'. I check if the day index is < 6. If it is, that means its not a Sunday, so I proceed to change the corresponding column value from 0 (❌) to 1 (✅) in Line 26. I also make sure to add an extra 12 hours to the time_value if the time is in 'PM', since the RFR model was trained with 24 hour time 🕒.
 
-i apply sin-cos encoding to the 'time_hour' value 🕒 (Line 27-28), then store the numpy array of predictions in the variable 'prediction' (Line 29).
+i apply sin-cos encoding to the 'time_hour' value 🕒 (Line 29-30), then store the numpy array of predictions in the variable 'prediction' (Line 31).
 
 In Line 30, I render the HTML file 📂 and pass all the relevant variables to it. The new additions are the 'pred' and 'pic_no' arguments. I round the prediction off to 3dp for 'pred' so that the output does not look to messy, and to nearest whole number for 'pic_no' because the jam images in [static/](GAE/static) only represent whole number values from 1-5. 
 
