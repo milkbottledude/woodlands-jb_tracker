@@ -1190,7 +1190,7 @@ chapt 4.3 TBCC!
 
 ## Chapter 5: Automation and Website Making
 ### 5.1: Making HTML & CSS(styles.css) for Frontend
-Quite excited for this, I've always admired aesthetic looking websites and have a couple ideas for one in mind. That said, I only have very minimal knowledge of HTML from scraping websites, and no experience whatsover with CSS. However, a friend of mine said its quite easy to pick up, so I'll be drafting up some website design prototypes on Canva while learning HTML & CSS at the same time.
+Quite excited for this, I've always admired aesthetic looking websites ✨ and have a couple ideas for one in mind 💡. That said, I only have very minimal knowledge of HTML from scraping websites, and no experience whatsover with CSS. However, a friend of mine said its quite easy to pick up, so I'll be drafting up some website design prototypes on Canva 🖼️ while learning HTML & CSS at the same time 📚.
 
 Here is what I came up with:
 
@@ -1205,7 +1205,7 @@ I'm no artist, but I think it looks nice :)
 
 You can see the orange rounded-edge boxes with date, time and AM/PM. In the actual HTML website, those would be the buttons where u can select the date and time 📲.
 
-I also intend to add a 'How to Use' guide 📘 below as you scroll down (with the background not moving as you scroll cuz damn that looks cool), but for now this will do. Now its time to churn this out in HTML for our actual website frontend.
+I also intend to add a 'How to Use' guide below as you scroll down 📘 (with the background not moving as you scroll cuz damn that looks cool), but for now this will do. Now its time to churn this out in HTML for our actual website frontend.
 
 Update: The first version of the HTML for the website is done! Let me take you through it, starting with the <head> tag.
 
@@ -1215,11 +1215,11 @@ Fig 5.2: Styling portion of HTML version 1
 
 The head tag contains the CSS for the website, although I'll probably be moving this to a separate CSS file moving forward 📁 to make the HTML file easier to read. This is very beginner CSS 👶🏻, nothing too fancy, so I wont go into everything in detail. 
 
-I defined the [background](progress_pics/website_bg2.jpg) for the body (basically the entire website) in Line 10. Then I made the <body> element have all its elements inside align to the centre (Line 16). For the font colour I chose 'Alice Blue', but its really just white basically ⚪ (Line 14).
+I defined the [background](progress_pics/website_bg2.jpg) for the body (basically the entire website) in Line 10. Then I made the <body> element have all its elements inside align to the centre (Line 16). For the font colour I chose 'Alice Blue', although its less blue than it is white ◻️ (Line 14). Basically white with a slight tint of blue 💧.
 
-For the top class (Line 19), it contains all the text in the website, which is just the title as well as the little slogan right below it. I wanted them to be well separated ↕️ from the top of the screen as well as the buttons to select the date and time, hence it has a top and bottom padding of 120px. The <body> is already aligned to the center, so theres no need for side padding.
+For the top class (Line 19), it contains all the text in the website, which is just the title as well as the little slogan right below it. I wanted them to be well separated ↕️ from the top of the screen, as well as from the 'select date and time' buttons, hence it has a top and bottom padding of 120px. The <body> is already aligned to the center, so theres no need for side padding.
 
-For the column class (Line 38), i wanted the date and time buttons to be side by side like in the Canva draft, so I added 'display: inline block' in Line 39. This makes the elements with class be side by side 📅🕒 instead of having a new row for every element. The column class is nested in <body>, so the buttons are aligned to the center.
+For the column class (Line 38), i wanted the date and time buttons to be side by side 📅🕒 like in the Canva draft and not have a new row for every element, so I added 'display: inline block' in Line 39. The column class is nested in <body>, so the group of buttons are aligned to the center.
 
 The "where-you-click" class is exactly that, its the class for the elements which you click on 👉🔘, the date and time buttons. I added a slightly grey border (Line 58) to the transparent button (Line 60). I rounded the button corners (Line 59) for a more aesthetic look and made the text colour white, although thats probably not necessary since I already defined a whitish text colour in <body>.
 
@@ -1229,9 +1229,9 @@ Fig 5.3: 2nd part of HTML version 1
 
 Moving on from CSS to the actual HTML, I created the first of the 3 🔘🔘🔘 input buttons in Lines 77-80, 'Date'. The input type "date" makes it such that when clicked 👆, it produces a calendar 🗓 where you can pick a date. 
 
-The time button is made in Lines 81-97 🕓. The "select" tag gives the dropdown rows when the button is clicked to reveal the possible time values you can pick 👆, which are defined in the <option> tags. The AM/PM button is similar, except with only 2 options. 
+The time button is made in Lines 81-97 🕓. The "select" tag gives the dropdown ▼ rows when the button is clicked to reveal the possible time values you can pick 👆, which are defined in the <option> tags. The AM/PM button is similar, except with only 2 options. 
 
-I did not give it a label for aesthetic purposes ✨, as you can see in Fig 5.2 below theres no AM/PM label next to the button. Also the AM/PM dropdown values after clicking make it kinda self explanatory.
+I did not give the AM/PM button a label for aesthetic purposes ✨, as you can see in Fig 5.2 below theres no AM/PM label next to the button. Also the AM/PM dropdown values after clicking make it kinda self explanatory without the need for a label.
 
 All this gives us this frontend output:
 
@@ -1239,14 +1239,14 @@ All this gives us this frontend output:
 
 Fig 5.4: First prototype of website's HTML.
 
-The HTML file for our website can be found [here](GAE/templates/starter_html_mine.html) 📂, although its contents may be changed throughout the project as I learn more HTML & CSS and make improvements. I'll also be making a [CSS file](GAE/static/styles.css) to separate the styling content from the actual HTML. The CSS and other static files such as jpeg files will be stored in the [static folder](GAE/static).
+The HTML file for our website can be found [here](GAE/templates/starter_html_mine.html) 📂, although its contents may be changed throughout the project as I learn more HTML & CSS and make improvements 💫. I'll also be making a [CSS file](GAE/static/styles.css) to separate the styling content from the actual HTML. The CSS and other static files such as jpeg files 🏞️ will be stored in the [static](GAE/static) folder.
 
 ### 5.2: Creating Backend with Flask, main.py, and then app.yaml
 With a rough version of the html and css files ready, we can shift our focus to the backend of the website ⚙️.
 
-To start, lets make main.py 📝 which will set up Flask as well as control what will be outputted back to the user 📤. For now, we won't be outputting any ML predictions, just printing back out the input date 📆 and time 🕒 given by the user. 
+To start, lets make main.py 📝 which will set up Flask as well as control what will be outputted back to the user. For now, we won't be outputting any ML predictions, just printing back out the input date 📆 and time 🕒 given by the user. 
 
-I want to make sure the actual html and main.py work together seamlessly to properly output data before I bring in joblib files and machine learning models.
+Thats because I want to make sure the actual html and main.py work together seamlessly to properly output data 📤, before I start bringing in joblib files and machine learning models.
 
 ```
 1    from flask import Flask, render_template, request
@@ -1261,9 +1261,9 @@ First, I import Flask, the foundation of our web application build 🌐 . It wil
 
 "render_template" is used to load in HTML files together with their css, as well as any variables you want to pass to it. "request" allows us to obtain any data inputted 📥 by the user on the website, such as date or time.
 
-In line 3, the '/' represents the root url. It means that the following function `home()` will define the "main page" of the website, basically what will greet a user the first time he/she enters the website.
+In line 3, the '/' represents the root url. It means that the following function `home()` will define the "main page" of the website, basically what will greet the user the first time he/she enters the website.
 
-The main function itself is very simple, just a single line (Line 5). It displays the html page with its css 📰 without any variables (since the user just entered the website, they have not submitted any input).
+The main function itself is very simple, just a single line (Line 5). It displays the html page with its css 📰 without any additional variables (since the user just entered the website, they have not submitted any input).
 ```
 6    @app.route('/predict', methods=['POST'])
 7    def predict():
@@ -1302,17 +1302,17 @@ I also changed the html file abit. Before, the html file only had to display the
 59           <button type="submit">Submit</button>
 60    </form>
 ```
-Lines 5-8 and Line 59 were added after creating main.py, for the output returned by main.py as well as to pass input data to the backend respectively.
+Lines 5-8 and Line 59 were added after creating main.py, they are meant to handle the output returned by the backend, main.py, as well as to pass input data to the backend 📲 respectively.
 
 The {% if date %} is basically a python 'if' statement but in HTML and Flask syntax. This is so that the output is only shown 📰 if theres a valid 'date' input from the user. Why did I not include 'if time' and 'if AM/PM'? 🤔 Because they already have a default value, so its impossible to submit input without a valid 'time' and 'AM/PM' value.
 
 I actually learnt this {% if %} stuff from chatgpt, not from a book or man-made resource, which might be frowned upon by some. But as long as it gets the job done and I understand exactly how it works, as well as how to use it, I don't see a problem. 
 
-Me personally, I draw the line when the code is completely AI made, or 90% and the other 10% is just changing of variable names and other minor knick-knacks. But who gives a toss what I think hmm?
+Me personally, I draw the line when the code is completely made by AI 🤖, or 90% made by AI and the other 10% is just changing of variable names and other minor knick-knacks. But who gives a toss what I think hmm?
 
-Anyway, here's the 1st website test run, I ran it using 'python main.py' on the Google shell terminal. This is just a test run on a local port to make sure everything runs fine, more refinements will be made over time. 
+Anyway, here's the 1st website test run, I ran it using 'python main.py' on the Google shell terminal 📟. This is just a test run on a local port to make sure everything runs fine, more refinements to the website visual will be made over time. 
 
-insert vid here
+![OIII](oo)
 
 Fig 5.5: Website test run, output printed is the input date and time
 
