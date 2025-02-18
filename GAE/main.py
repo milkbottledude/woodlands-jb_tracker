@@ -70,6 +70,8 @@ def predict():
         day_abbr = date_obj.weekday()
         if day_abbr < 6:
             input_df.iloc[0, day_abbr] = 1
+        if ampm == 'PM':
+            time_hour = float(time_hour + 12)
         input_df['hour_sin'] = np.sin(2 * np.pi * float(time_hour) / 24)
         input_df['hour_cos'] = np.cos(2 * np.pi * float(time_hour) / 24)
         prediction = rfr_model.predict(input_df)
