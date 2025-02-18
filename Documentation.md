@@ -1316,25 +1316,27 @@ Anyway, here's the 1st website test run, I ran it using 'python main.py' on the 
 
 Fig 5.5: Website test run, output printed is the input date and time
 
-As you can see, the website mechanisms work just fine, no edge cases (so far) that cause the website to glitch out or crash. Its quite a simple website so far, so that ought to be the case. The data can be input by the user smoothly, the UI is easy to understand, and the output is printed out quickly after the submit button is pressed. The input and output aesthetics could do with some work though.
+As you can see, the website mechanisms work just fine, no edge cases (so far) that cause the website to glitch out or crash 👍. As it should be, its quite a simple website so far. The data can be input by the user smoothly 🤳, the UI is easy to understand 📱, and the output is printed out quickly after the submit button is pressed 📲. The input and output aesthetics could do with some work though.
 
-This is not run on GAE yet, that requires the app.yaml file which we will create and go over later on. 
+This is not run on GAE yet, that requires the app.yaml file 📂 which we will create and go over later on. 
 
-One thing I'm slightly annoyed with is that, after submitting your input, typically you would refresh the page to submit another input, another date an time. However, when I refresh, the website stores the data from before and continues to output the previous output. To actually clear the previous input and start afresh, you have to click the submit button again.
+One thing I'm slightly annoyed with is that, after submitting your input, typically you would refresh the page to submit another input, another date an time. However, when I refresh 🔄, the website stores the data from before and continues to output the previous output 💢. To actually clear the previous input and start afresh, you have to click the submit button again 👆.
 
-I tried using sessions.pop('date') after the output was returned, which is supposed to make the website 'forget' the previous input data, to no avail . I also tried {% if request.method == GET %}, because by right a page refresh is a GET method not a POST, but after checking the logs I realized: a refresh of a page which was loaded in via a 'POST' is still a 'POST' request, not 'GET'. 
+I tried using `sessions.pop('date')` after the output was returned, which is supposed to make the website 'forget' the previous input data, but that didn't work . I also tried `{% if request.method == GET %}`, because by right a page refresh is a GET method not a POST, but after checking the logs I realized: a refresh of a page which was loaded in via a 'POST' is still a 'POST' request, not 'GET'. 
 
-Its not a major flaw, but its still a little annoying. I hope to find a solution to this, but now I'll move on with the rest of the website build. Theres bigger fish to fry, now is not the time to fret over this small stuff.
+Its not a major flaw, but its still a little annoying 💢. I hope to find a solution to this, but for now I'll move on with the rest of the website build. There's bigger fish to fry 🐟, now is not the time to fret over this small stuff.
 
-Now that we know the frontend is able to send input data to the backend, and the backend can send output back without any hiccups, we can focus more on what **kind** of output we want to be sent. Obviously, not just the date and time like before, but also the prediction value.
+Now that we know the frontend is able to send input data to the backend, and the backend can send output back without any hiccups, we can focus more on what **kind** of output we want to be sent. Not just the date and time like before, but also the prediction value 📊.
 
-And perhaps I'll add an image of what the congestion situation will likely look like, in case the prediction value is not enough to convey how severe the traffic jam will be to the user. Yea I think I'll add some annotated pictures to the [static/](GAE/static/) folder, stay tuned for this.
+Perhaps I'll also add an image of what the congestion situation will likely look like, in case the prediction value is not enough to convey how severe the traffic jam will be 🚙🚗💨 to the user. Actually yea I think I'll add some annotated pictures to the [static/](GAE/static/) folder, stay tuned for this 🖼️.
 
-arbitrary units alone wont be able to convey how congested the road will be
 
-However, we don't want to be training the ML model again and again every time a user sends in their input. That would waste a lot of time, is computationally expensive, and overall a very stupid way to set up the website. Furthermore, we would need to have the training data on hand all the time, which would take up a lot of space. So instead, we will train the model beforehand **once**, then store the trained model's weights for later use.
+#### Making ML weights portable with Joblib
+For our website backend, we don't want to be training the ML model again and again 🔁 every time a user sends in their input. Furthermore, we would need to have the training data on hand all the time, which would take up a lot of space 🗃️. All this wastes a lot of time ⌛, is computationally expensive, and overall a very stupid way to set up our website 🤡. 
 
-This is where the joblib package comes in handy. With just one line of code, we can save the model's weights after training. The following code is from [Predicting_with_RFR.py](python_scripts/Predicting_with_RFR.py), the only change is the joblib line.
+So instead, we will train the model beforehand **once**, then store the trained model's weights for later use 📦.
+
+This is where the joblib package comes in handy. With just one line of code, we can save the model's weights after training ⚖️. The following code is from [Predicting_with_RFR.py](python_scripts/Predicting_with_RFR.py), the only change is the joblib line.
 
 ```
 # Random Forest Regressor model
@@ -1344,7 +1346,7 @@ joblib.dump(rfr_model, "rfr_model.joblib") # NEW LINE, saving rfr weights for Ap
 
 rfr_predictions = rfr_model.predict(test_df)
 ```
-After saving the weights in a joblib file named rfr_model.joblib, I can move this file to the 'johorscrape_website' project folder in GCloud shell editor together with the rest of the files. Now we can reference it whenever we have to make a prediction, without having to train a fresh model every time.
+After saving the weights in a joblib file named rfr_model.joblib, I can move this file to the 'johorscrape_website' project folder 🗂️ in GCloud shell editor together with the rest of the files. Now we can reference it whenever we have to make a prediction, without having to train a fresh model every time 🏋.
 
 As of right now, this is how the project folder's file structure in the gcloud shell editor is looking:
 ```
@@ -1374,11 +1376,11 @@ As of right now, this is how the project folder's file structure in the gcloud s
     |    
     |── rfr_model.joblib
 ```
-Starting off with `myenv`, thats the virtual environment (venv) that stores all the installed libraries listed in requirements.txt, the second last file near the bottom of the project folder. Its only necessary for test runs with `python main.py` though, GAE has its own environment to store the downloaded libraries for public website deployment.
+Starting off with `myenv`, thats the virtual environment (venv) that stores all the installed libraries 🗂️ listed in requirements.txt, the second last file near the bottom of the project folder. Its only necessary for test runs with `python main.py` though, GAE has its own environment to store the downloaded libraries.
 
-`app.yaml` contains code which configures how GAE deploys our website. Right now its still an empty file, but we will get to it once we need to deploy the website publicly.
+`app.yaml` contains code which configures how GAE deploys our website. Right now its still an empty file 📁, but we will get to it once we need to deploy the website publicly 🌐.
 
-The `templates/` folder contains the main html file, index.html. I'm not too sure why i need a whole folder just for one file, but this is apparently how website files should be formatted, with css files inside static/ and html files inside templates/.
+The `templates/` folder contains the main HTML file, index.html. I'm not too sure why a whole folder is needed for just for one file, but this is by default how website files should be organized, with css files inside static/ and html files inside templates/.
 
 `main.py` as you know contains the backend for our website, and `rfr_model.joblib` contains the weights of our pre-trained random forest regressor model.
 
