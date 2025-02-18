@@ -1447,20 +1447,23 @@ Looks like the structure of the website is complete. Now we can finally move on 
 
 To run the website on GAE, we need an app.yaml file as mentioned before when showcasing the project folder structure. We already have an app.yaml file, but its contents are still empty, so let's change that.
 
-First, we need to 
-
 ```
 1  runtime: python312
 
-2  entrypoint: gunicorn -b :$PORT main:app
-
-3  handlers:
-4    - url: /static
-5      static_dir: static/
-6    - url: /.*  
-7      script: auto
+2  handlers:
+3    - url: /static
+4      static_dir: static/
+5    - url: /.*  
+6      script: auto
 ```
-In Line 1, I specify the python version I'm using, python 3.12, which is the latest version as of the time I'm doing this project. Then I guNICORN RESEARCH TS HELP (Line 2). Afterwards, I specify some handlers. I need to reference the static/ folder for images and css files in this website, so I make sure to let GAE know (Line 4-5). In Line 6, I tell GAE to route any request in my website, regardless of POST or GET, to the backend. script: auto (Line 7) tells it to auto detect the backend file, which in our case is main.py
+In Line 1, I specify the python version I'm using, python 3.12, which is the latest version as of the time I'm doing this project.
+
+Afterwards, I specify some handlers. I need to reference the static/ folder for images and css files in this website, so I make sure to let GAE know (Line 3-4). In Line 6, I tell GAE to route any request in my website, regardless of POST or GET, to the backend. 'script: auto' (Line 6) tells it to auto detect the backend file, which in our case is main.py
+
+A very basic app.yaml file, but necessary for deploying the website publicly through GAE.
+
+Now, all I need to do is type `gcloud app deploy` in the terminal to get the website up and running. You can now access the website yourself [here!](https://sapient-metrics-436909-v6.appspot.com#1739003720204209127).
+
 
 
 #### 5.3: Linking Backend with improved HTML in Google App Engine (GAE)
