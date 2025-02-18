@@ -1421,19 +1421,19 @@ Anyway, after adding the joblib file to the project folder, we can now reference
 29          prediction = rfr_model.predict(input_df)
 30          return render_template("index.html", date=date_value, time=time_hour, ampm=ampm, pred=round(prediction[0], 3), pic_no=round(prediction[0], 0))
 ```
-First, I imported 3 additional packages (Lines 3-5). Joblib to load in the weights from rfr_model.joblib, pandas to create an input table for the rfr_model, since we need to feed the ML model data in table format, and numpy for the π value which we use in Lines 27-28.
+First, I imported 3 additional packages (Lines 3-5). Joblib to load in the weights from rfr_model.joblib ⚖️, pandas 🐼 to create an input table for the rfr_model, since we need to feed the ML model data in table format, and numpy for the π value which we use in Lines 27-28.
 
-I load the weights (Line 9) and create a row of column names for the pandas dataframe (Line 10), after which I create the df with a single row of 8 zeros for each column (Line 22). I convert the date_value, which is the date input by the user, from a string to a datetime object (Line 23), before finding out what day of the week it is in index format (Line 24). 0 stands for Monday, 6 stands for Sunday, and I think you can figure out the rest.
+I load in the weights (Line 9) and create a row of column names for the pandas dataframe (Line 10). After that I create the df with a single row of 8 zeros, one for each of the 8 columns (Line 22). I convert the date_value 📅, which is the date input by the user, from a string to a datetime object (Line 23), before finding out what day of the week it is (Line 24) in index format. 0 stands for Monday, 6 stands for Sunday, and I think you can figure out the rest.
 
 Once again, to avoid multicollinearity, I did not add a column for 'Sunday'. I check if the day index is < 6. If it is, that means its not a Sunday, so I proceed to change the corresponding column value from 0 (❌) to 1 (✅) in Line 26.
 
-i apply sin-cos encoding to the 'time_hour' value in Lines 27-28, then store the numpy array of predictions in the variable 'prediction' (Line 29).
+i apply sin-cos encoding to the 'time_hour' value 🕒 (Line 27-28), then store the numpy array of predictions in the variable 'prediction' (Line 29).
 
-In Line 30, I render the template and pass all the relevant variables to the html file. Some new additions include 'pred' and 'pic_no'. I round the prediction off to 3dp for pred so that the output does not look to messy, and to nearest whole number for pic_no because the jam images in [static/](GAE/static) only represent whole numbers from 1-5. 
+In Line 30, I render the HTML file 📂 and pass all the relevant variables to it. The new additions are the 'pred' and 'pic_no' arguments. I round the prediction off to 3dp for 'pred' so that the output does not look to messy, and to nearest whole number for 'pic_no' because the jam images in [static/](GAE/static) only represent whole number values from 1-5. 
 
-Notice how I type 'prediction[0]' instead of just 'prediction', thats because 'prediction' itself is a numpy array. To extract the actual integer value, I have to iterate through the array.
+Notice how I type 'prediction[0]' instead of just 'prediction', thats because the 'prediction' variable itself is a numpy array. To extract the actual integer value, I have to iterate through the array.
 
-Now let's test run this and see how the output looks like, I'll run it with just the prediction value first (Fig 5.5), then if there are no issues I'll include the jam image in the output too (Fig 5.6). You can see how they turned out below.
+Now let's test run this and see how the output looks like. I'll run it with just the prediction value first (Fig 5.5), then if there are no issues I'll include the jam image in the output too 🖼️ (Fig 5.6). You can see how they turned out below.
 
 insert vid of with pred
 
@@ -1445,9 +1445,9 @@ insert vid of with pred and image
 
 Fig 5.8: Test run with both prediction value and jam image included
 
-Looks like the structure of the website is complete. Now we can finally move on to deploying this thing for real on Google App Engine (GAE) so that everyone can use it. This does not mean that the development of the website HTML and CSS will be halted though, I will continue to improve the visual and overall performance of the website as inspiration strikes and my skills continue to improve.
+Looks like the base structure of the website is complete! Now we can finally move on to deploying this thing for real 🚀 on Google App Engine (GAE) so that everyone can use it. This does not mean that the development of the website HTML and CSS will be halted though, I will continue to improve the visuals ✨ and overall performance of the website as inspiration strikes and my skills continue to improve.
 
-To run the website on GAE, we need an app.yaml file as mentioned before when showcasing the project folder structure. We already have an app.yaml file, but its contents are still empty, so let's change that.
+To run the website on GAE, we need an app.yaml file, as mentioned before when showcasing the project folder structure. We already one, but its still empty, so let's change that 😎.
 
 ```
 1  runtime: python312
@@ -1458,13 +1458,17 @@ To run the website on GAE, we need an app.yaml file as mentioned before when sho
 5    - url: /.*  
 6      script: auto
 ```
-In Line 1, I specify the python version I'm using, python 3.12, which is the latest version as of the time I'm doing this project.
+In Line 1, I specify the Python version I'm using, Python 3.12, which is the latest version 🐍 at the time of doing this project.
 
-Afterwards, I specify some handlers. I need to reference the static/ folder for images and css files in this website, so I make sure to let GAE know (Line 3-4). In Line 6, I tell GAE to route any request in my website, regardless of POST or GET, to the backend. 'script: auto' (Line 6) tells it to auto detect the backend file, which in our case is main.py
+Afterwards, I specify some handlers. I reference the static/ folder for css files or images in [index.html](GAE/templates/index.html), like so:
+```
+        <link href="../static/styles.css" rel="stylesheet" media="screen and (min-width:600px)">
+```
+so I need to let GAE know that href links starting with `/static` are referring to the 'static/' folder 📂 (Line 3-4). In Line 6, I tell GAE to route any request in my website 📢, regardless of POST or GET, to the backend. 'script: auto' (Line 6) tells it to auto detect the backend file, which in our case is main.py 📌.
 
-A very basic app.yaml file, but necessary for deploying the website publicly through GAE.
+A very basic app.yaml file, but necessary for GAE to deploy the website publicly 🌐.
 
-Now, all I need to do is type `gcloud app deploy` in the terminal to get the website up and running. You can now access the website yourself [here!](https://sapient-metrics-436909-v6.appspot.com#1739003720204209127).
+Now, all we have to do is type `gcloud app deploy` in the terminal to get the website up and running. You can now use any device to access the website yourself [here!](https://sapient-metrics-436909-v6.appspot.com#1739003720204209127) 🎉.
 
 
 
