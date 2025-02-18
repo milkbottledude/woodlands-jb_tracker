@@ -1237,7 +1237,7 @@ All this gives us this frontend output:
 
 ![insert HTML first vers HEREEEEEEEE](progress_pics/Fig-5.4-html_state_1.jpg)
 
-Fig 5.2: First prototype of website's HTML.
+Fig 5.4: First prototype of website's HTML.
 
 The HTML file for our website can be found [here](GAE/templates/starter_html_mine.html) 📂, although its contents may be changed throughout the project as I learn more HTML & CSS and make improvements. I'll also be making a [CSS file](GAE/static/styles.css) to separate the styling content from the actual HTML. The CSS and other static files such as jpeg files will be stored in the [static folder](GAE/static).
 
@@ -1314,7 +1314,7 @@ Anyway, here's the 1st website test run, I ran it using 'python main.py' on the 
 
 insert vid here
 
-Fig 5.3: Website test run, output printed is the input date and time
+Fig 5.5: Website test run, output printed is the input date and time
 
 As you can see, the website mechanisms work just fine, no edge cases (so far) that cause the website to glitch out or crash. Its quite a simple website so far, so that ought to be the case. The data can be input by the user smoothly, the UI is easy to understand, and the output is printed out quickly after the submit button is pressed. The input and output aesthetics could do with some work though.
 
@@ -1390,7 +1390,7 @@ So far, every time I have entered the website, it has been from my laptop, so th
 
 insert chopped formatting for fone:
 
-Fig 5.4: How the website looks like when viewed from an iPhone 12.
+Fig 5.6: How the website looks like when viewed from an iPhone 12.
 
 As you can see, css that looks good for one device may not look as good for another. Rather, it can be pretty hideous.
 
@@ -1435,13 +1435,13 @@ Now let's test run this and see how the output looks like, I'll run it with just
 
 insert vid of with pred
 
-Fig 5.5: Test run with prediction value included
+Fig 5.7: Test run with prediction value included
 
 And here it is with the image included 🖼️
 
 insert vid of with pred and image
 
-Fig 5.6: Test run with both prediction value and jam image included
+Fig 5.8: Test run with both prediction value and jam image included
 
 Looks like the structure of the website is complete. Now we can finally move on to deploying this thing for real on Google App Engine (GAE) so that everyone can use it. This does not mean that the development of the website HTML and CSS will be halted though, I will continue to improve the visual and overall performance of the website as inspiration strikes and my skills continue to improve.
 
