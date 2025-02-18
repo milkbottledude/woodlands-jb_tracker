@@ -1380,25 +1380,25 @@ Starting off with `myenv`, thats the virtual environment (venv) that stores all 
 
 `app.yaml` contains code which configures how GAE deploys our website. Right now its still an empty file 📁, but we will get to it once we need to deploy the website publicly 🌐.
 
-The `templates/` folder contains the main HTML file, index.html. I'm not too sure why a whole folder is needed for just for one file, but this is by default how website files should be organized, with css files inside static/ and html files inside templates/.
+The `templates/` folder contains the main HTML file, index.html. I'm not too sure why a whole folder is needed for just for one file, but this is by default how website files should be organized 🗄, with css files inside static/ and html files inside templates/.
 
-`main.py` as you know contains the backend for our website, and `rfr_model.joblib` contains the weights of our pre-trained random forest regressor model.
+`main.py` as you know contains the backend for our website, and `rfr_model.joblib` contains the weights of our pre-trained random forest regressor model 🌲🌲🌲.
 
-The `static/` folder contains all the css files, as well as image files which I intend to output in the website, such as background images. The {number}_jam.jpg files are pictures of the causeway at different levels of congestion, with 1 meaning 'no jam' to 5 meaning 'chock full of cars'. 
+The `static/` folder contains all the css files, as well as image files which I intend to output in the website 🖼️. The {number}_jam.jpg files are pictures of the causeway 🛣️ at different levels of congestion, with 1 meaning 'no jam' to 5 meaning 'chock full of cars' 🚙🚗💨. 
 
-You may notice that there is one more css file, mobile.css. Its basically the same as styles.css, but for if someone opens the website through their mobile phone, or a device of different dimensions to a laptop/desktop. Why is this necessary you may ask?
+You may notice that there is one more css file, mobile.css. Its basically the same as styles.css, but for when someone opens the website through their mobile phone 🤳, or a device of different dimensions to a laptop/desktop. You may be wondering, why is this necessary 🤔?
 
-So far, every time I have entered the website, it has been from my laptop, so the website is opened in landscape mode. It looks great, formatting and space between elements have been hand-tuned to perfection by yours truly. But enter the very same url in your iPhone or Samsung galaxy, and you get something that looks like this.
+So far, every time I have entered the website, it has been from my laptop 👨‍💻, so the website is opened in landscape mode. It looks great, formatting and space between elements have been hand-tuned to perfection by yours truly 🔧. But enter the very same url in your iPhone or Samsung galaxy 📱, and you get something that looks like this...
 
 insert chopped formatting for fone:
 
 Fig 5.6: How the website looks like when viewed from an iPhone 12.
 
-As you can see, css that looks good for one device may not look as good for another. Rather, it can be pretty hideous.
+As you can see, css that looks good for one device may not look as good for another. Rather, it can be pretty hideous 🤮.
 
-This is where mobile.css comes in. Its very similar to styles.css, except I changed the (background image)[GAE/static/website_bg.jpg] to something more potrait friendly. I also edited the text sizes to make the words fit the screen sizes of mobile phones.
+This is where mobile.css comes in. Its very similar to styles.css, except I changed the (background image)[GAE/static/website_bg.jpg] to something more potrait friendly 🌃. I also edited the text sizes to make the words fit the screen sizes of mobile phones 📱.
 
-Anyway, after adding joblib to the project folder, we can now reference its weights in main.py and use it to properly output a prediction value. Lets see the changes in main.py.
+Anyway, after adding the joblib file to the project folder, we can now reference its weights ⚖️ in main.py and use it to properly output a prediction value 📲. Lets see the changes in main.py.
 ```
 ...
 3    import joblib
