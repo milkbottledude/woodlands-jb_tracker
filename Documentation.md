@@ -1192,7 +1192,7 @@ chapt 4.3 TBCC!
 ### 4.4: Model Tuning (tbc)
 
 ## Chapter 5: Automation and Website Making
-### 5.1: Making HTML & CSS for Frontend
+### 5.1: Making HTML and CSS for Frontend
 Quite excited for this, I've always admired aesthetic looking websites ✨ and have a couple ideas for one in mind 💡. That said, I only have very minimal knowledge of HTML from scraping websites, and no experience whatsover with CSS. However, a friend of mine said its quite easy to pick up, so I'll be drafting up some website design prototypes on Canva 🖼️ while learning HTML & CSS at the same time 📚.
 
 Here is what I came up with:
