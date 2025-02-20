@@ -26,8 +26,11 @@ Chapter 4: Machine Learning
 - 4.4: [Model Tuning (tbc)](#44-model-tuning-tbc) (delete when done)
 
 Chapter 5: Deploying Code to Website
-- 5.1: [Backend with GCloud and Flask](#tbc) (delete when done)
-- 5.2: [Dockerfile??](#)
+- 5.1: [Making HTML & CSS for Frontend](#51-making-html-and-css-frontend) (delete when done)
+- 5.2: [Creating Backend with Flask, main.py, and then app.yaml](#52-creating-backend-with-flask-mainpy-and-then-appyaml)
+- 5.3: [.joblib file & Project Folder structure](#52-joblib-file-and-project-folder-structure)
+- 5.4: [Creating main.py v2 & app.yaml](#53-creating-mainpy-v2-and-appyaml)
+- 5.5: [
 
 
 [Conclusion](#conclusion)
