@@ -1,3 +1,11 @@
+* {
+    --c5: #C1262C;
+    --c4: #DB5C23;
+    --c3: #f69220;
+    --c2: #8BA247;
+    --c1: #23B473;
+}
+
 html, body {
     margin: 0; /* Remove any default margin */
 }
@@ -13,7 +21,7 @@ body {
 }
 
 .top {
-    padding: 17% 0% 15% 0%;
+    padding: 17% 0% 5% 0%;
 }
 
 .title {
@@ -28,7 +36,7 @@ body {
 }
 
 .datetime-container {
-    margin-top: 15%;
+    margin-top: 5%;
 }
 
 .column {
@@ -59,4 +67,87 @@ color: #ffffff; /* text color */
 option {
     color: black;
     text-align: center;
+}
+
+
+.output_jam {
+    margin-top: 3%;
+    width: auto; /* Maintain aspect ratio */
+    max-width: 80%;
+}
+
+.youchose {
+    font-size: 119%
+}
+
+.yougot {
+    font-size: 135%
+}
+
+.boldasf {
+    font-weight: 650;
+}
+
+button {
+    padding: 5px 10px;
+    border: 3px solid #ccc; /* border */
+    border-radius: 15px; /* Rounded corners */
+    font-size: 18px;
+    color: #ffffff; /* text color */
+}
+
+.submit {
+    background-color: rgb(0, 255, 94);
+    color: #000000; /* text color */
+    }
+
+.reset {
+    background-color: rgb(255, 0, 0);
+}
+
+
+
+
+/* css for the gauge meter below */
+
+.meter_shi {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centers text inside vertically*/
+}
+
+.progress_bar {
+    position: relative;
+    background: black;
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    mask-image: radial-gradient(transparent 55%, blue 55%);
+    background: conic-gradient(var(--c3) 7%, var(--c4) 7% 21%, var(--c5) 21% 35%, rgb(255, 255, 255) 35% 35.5%, transparent 35.5% 64.5%, rgb(255, 255, 255) 64.5% 65%, var(--c1) 65% 79%, var(--c2) 79% 93%, var(--c3) 93%);
+}
+
+.inner_circle_needle {
+    position: absolute;
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center; /* Centers text inside horizontally */
+    align-items: center; /* Centers text inside vertically*/
+    z-index: 2;
+    background: 
+       conic-gradient(
+            from 400deg at 50% 50%, /* Rotating from this point 233deg to 477deg*/
+            skyblue 2deg, /* Light color */
+            white 3deg 8deg, /* Needle color */
+            skyblue 8deg 10deg, /* Light color after needle */
+            transparent 10deg /* Transparent portion */
+        )
+}
+
+.percentage {
+    position: absolute;
+    top: 480px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 200%;
 }
