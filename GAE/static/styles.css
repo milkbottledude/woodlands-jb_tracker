@@ -4,7 +4,7 @@ html, body {
 }
 
 body {
-    background-image: url("../../progress_pics/website_bg2.jpg");
+    background-image: url("website_bg2.jpg");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -14,7 +14,7 @@ body {
 }
 
 .top {
-    padding: 3% 0% 2% 0%;
+    padding: 3% 0% 5% 0%;
 }
 
 .title {
@@ -29,7 +29,8 @@ body {
 }
 
 .datetime-container {
-    margin-top: 5%;
+    margin-top: 4%;
+    margin-bottom: 5%;
 }
 
 .column {
@@ -67,3 +68,31 @@ option {
     width: auto; /* Maintain aspect ratio */
     max-width: 40%;
 }
+
+.youchose {
+    font-size: 119%
+}
+
+.yougot {
+    font-size: 135%
+}
+
+.boldasf {
+    font-weight: 650;
+}
+
+button {
+    padding: 5px 10px;
+    border: 3px solid #ccc; /* border */
+    border-radius: 15px; /* Rounded corners */
+    font-size: 100%;
+}
+
+.submit {
+    background-color: rgb(0, 255, 94);
+    }
+
+.clear {
+    background-color: rgb(255, 0, 0);
+}
+

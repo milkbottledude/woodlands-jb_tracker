@@ -60,8 +60,3 @@ option {
     color: black;
     text-align: center;
 }
-
-.output_jam {
-    width: auto; /* Maintain aspect ratio */
-    max-width: 80%;
-}
