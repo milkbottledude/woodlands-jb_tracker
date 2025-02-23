@@ -1,3 +1,11 @@
+* {
+    --c5: #9a1d21;
+    --c4: #c45026;
+    --c3: #b26f23;
+    --c2: #8BA247;
+    --c1: #23b44e;
+}
+
 html, body {
     height: 100%; /* so that bg pic takes up full height of the screen */
     margin: 0; /* Remove any default margin */
@@ -14,7 +22,7 @@ body {
 }
 
 .top {
-    padding: 3% 0% 5% 0%;
+    padding: 3% 0% 2% 0%;
 }
 
 .title {
@@ -29,8 +37,8 @@ body {
 }
 
 .datetime-container {
-    margin-top: 4%;
-    margin-bottom: 5%;
+    margin-top: 1%;
+    margin-bottom: 1%;
 }
 
 .column {
@@ -67,6 +75,7 @@ option {
 .output_jam {
     width: auto; /* Maintain aspect ratio */
     max-width: 40%;
+    padding: 4% 0%
 }
 
 .youchose {
@@ -85,14 +94,62 @@ button {
     padding: 5px 10px;
     border: 3px solid #ccc; /* border */
     border-radius: 15px; /* Rounded corners */
-    font-size: 100%;
+    font-size: 18px;
+    color: #ffffff; /* text color */
 }
 
 .submit {
     background-color: rgb(0, 255, 94);
+    color: rgb(11, 75, 98); /* text color */
     }
 
-.clear {
+.reset {
     background-color: rgb(255, 0, 0);
+}
+
+
+
+/* css for the gauge meter below */
+
+.meter_shi {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centers text inside vertically*/
+}
+
+.progress_bar {
+    position: relative;
+    background: black;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    mask-image: radial-gradient(transparent 55%, blue 55%);
+    background: conic-gradient(var(--c3) 7%, var(--c4) 7% 21%, var(--c5) 21% 35%, rgb(255, 255, 255) 35% 35.5%, transparent 35.5% 64.5%, rgb(255, 255, 255) 64.5% 65%, var(--c1) 65% 79%, var(--c2) 79% 93%, var(--c3) 93%);
+}
+
+.inner_circle_needle {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center; /* Centers text inside horizontally */
+    align-items: center; /* Centers text inside vertically*/
+    z-index: 2;
+    background: 
+       conic-gradient(
+            from 400deg at 50% 50%, /* Rotating from this point 233deg to 477deg*/
+            skyblue 2deg, /* Light color */
+            white 3deg 8deg, /* Needle color */
+            skyblue 8deg 10deg, /* Light color after needle */
+            transparent 10deg /* Transparent portion */
+        )
+}
+
+.percentage {
+    position: absolute;
+    top: 575px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 200%;
 }
 
