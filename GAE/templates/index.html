@@ -10,21 +10,15 @@
     </head>
     <body>
         <div class="top">
-            <div class="title">Johorscrape<sup style="font-size: 18px;">&copy;</sup></div>
+            <a href="/" style="text-decoration: none;">
+                <div class="title">Johorscrape<sup style="font-size: 18px;">&copy;</sup></div>
+            </a>
             <div class="sub-title">Tell us when, and we'll handle the rest :)</div>
         </div>
-        {% if date %}
-            <div>
-                <p class="youchose" style="display: inline-block; padding: 0% 1%;">Date: <span class="boldasf">{{date}}</span></p> 
-                <p class="youchose" style="display: inline-block; padding: 0% 5%;">Time: <span class="boldasf">{{time}} {{ampm}}</span></p>
-                <p class="yougot">Prediction: <span class="boldasf">{{pred}} units</span></p>
-            </div>
-            <div>
-                <!-- src="static/{{pic_no}}.jpg" -->
-                <img src="static/1_11-04_19-00_Mon.jpg" alt="Jam Image" class="output_jam">
-            </div>
-        {% endif %}
         <form action="/predict" method="POST" class="datetime-container">
+        {% if date %}
+            <button class="reset">Reset</button>
+        {% else %}
             <div class="column">
                 <label for="date">Date</label>
                 <input type="date" id="date" name="date" class="where-u-click"> 
@@ -52,12 +46,28 @@
                     <option value="PM">PM</option>
                 </select>
             </div>
-            {% if date %}
-                <button class="clear">Clear</button>
-            {% else %}
-                <button class="submit">Submit</button>
-            {% endif %}
+            <button class="submit">Submit</button>
+        {% endif %}
         </form>
-
+        <!-- output portion below -->
+        {% if date %}
+        <div>
+            <p class="youchose" style="display: inline-block; padding: 0% 1%;">Date: <span class="boldasf">{{date}}</span></p> 
+            <p class="youchose" style="display: inline-block; padding: 0% 5%;">Time: <span class="boldasf">{{time}} {{ampm}}</span></p>
+        </div>
+        <div class="pred">
+            <p class="yougot">Prediction:</p>
+            <div class="meter_shi">
+                <div class="progress_bar" style="--value: 3"></div>
+                <div class="inner_circle_needle"></div>
+                <span class="percentage"> {{pred}} </span>
+            </div>
+        <div>
+            <!-- src="static/{{pic_no}}.jpg" -->
+            <img src="static/1_11-04_19-00_Mon.jpg" alt="Jam Image" class="output_jam">
+        </div>
+    {% endif %}
     </body>
 </html>
+
+
