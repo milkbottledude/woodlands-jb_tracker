@@ -1,27 +1,22 @@
 import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 import joblib
 
-train_df = pd.read_csv('train_df.csv')
-y_column = train_df.pop('congestion_area')
-test_df = pd.read_csv('test_df.csv')
+df = pd.read_csv('newdata.csv')
+y_column_jb = df.pop('congestion_scale_jb')
+y_column_wdlands = df.pop('congestion_scale_wdlands')
+X_train, X_test, y_train, y_test = train_test_split(df, y_column_jb, test_size=0.2, random_state=0) # start of with jb
 
 # Random Forest Regressor model
 rfr_model = RandomForestRegressor()
-rfr_model.fit(train_df, y_column)
-joblib.dump(rfr_model, "rfr_model.joblib") # saving rfr weights for App Engine
+rfr_model.fit(X_train, y_train)
+# joblib.dump(rfr_model, "rfr_model.joblib") # saving rfr weights for App Engine
 
-rfr_predictions = rfr_model.predict(test_df)
-test_df['congestion_prediction'] = pd.Series(rfr_predictions)
-print(test_df.head(20))
-
-# # Decision Tree Regressor model for shits and giggles
-# test_df = pd.read_csv('test_df.csv') # getting test_df again
-# dtr_model = DecisionTreeRegressor()
-# dtr_model.fit(train_df, y_column)
-
-
-# dtr_predictions = dtr_model.predict(test_df)
-# test_df['congestion_prediction'] = pd.Series(dtr_predictions)
-print(test_df.head(20))
+rfr_predictions = rfr_model.predict(X_test)
+X_test['congestion_prediction'] = list(rfr_predictions)
+print(X_test.head(20))
+print(mean_absolute_error(y_test, rfr_predictions))
+print(mean_squared_error(y_test, rfr_predictions))
