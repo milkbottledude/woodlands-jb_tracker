@@ -1333,7 +1333,11 @@ Its not a major flaw, but its still a little annoying 💢. I hope to find a sol
 
 Now that we know the frontend is able to send input data to the backend, and the backend can send output back without any hiccups, we can focus more on what **kind** of output we want to be sent. Not just the date and time like before, but also the prediction value 📊.
 
-Perhaps I'll also add an image of what the congestion situation will likely look like, in case the prediction value is not enough to convey how severe the traffic jam will be 🚙🚗💨 to the user. Actually yea I think I'll add some annotated pictures to the [static/](GAE/static/) folder, stay tuned for this 🖼️.
+I'll also add an image of what the congestion situation will likely look like 🖼️, in case the prediction value is not enough to convey how severe the traffic jam will be 🚙🚗💨 to the user. These pictures will have a red line annotated on the road to show a rough estimate of where the traffic jam is likely to end at that instance. I have 6 photos ranging from a scale of 0 - 5, with 0 being no jam at all and 5 being max congestion. You can see them below.
+
+![](progress_pics/Fig-5.6-zero_to_five_pics.gif)
+
+Fig 5.6: Images showing congestion values from 0-5, with red lines annotated on the roads.
 
 ### 5.3: .joblib file and Project Folder structure
 #### Making ML weights portable with Joblib
@@ -1396,9 +1400,9 @@ You may notice that there is one more css file, mobile.css. Its basically the sa
 
 So far, every time I have entered the website, it has been from my laptop 👨‍💻, so the website is opened in landscape mode. It looks great, formatting and space between elements have been hand-tuned to perfection by yours truly 🔧. But enter the very same url in your iPhone or Samsung galaxy 📱, and you get something that looks like this...
 
-insert chopped formatting for fone:
+![](progress_pics/Fig-5.7-chopped_css_fone.jpg)
 
-Fig 5.6: How the website looks like when viewed from an iPhone 12.
+Fig 5.7: How the website looks like when viewed from a Samsung Galaxy S8+.
 
 As you can see, css that looks good for one device may not look as good for another. Rather, it can be pretty hideous 🤮.
 
@@ -1444,20 +1448,20 @@ Notice how I type 'prediction[0]' instead of just 'prediction', thats because th
 
 Now let's test run this and see how the output looks like. I'll run it with just the prediction value first (Fig 5.5), then if there are no issues I'll include the jam image in the output too 🖼️ (Fig 5.6). You can see how they turned out below.
 
-insert vid of with pred
+![](progress_pics/Fig-5.8-output_with_number_vid.gif)
 
-Fig 5.7: Test run with prediction value included
+Fig 5.8: Test run with prediction value included
 
 And here it is with the image included 🖼️
 
-insert vid of with pred and image
+![](progress_pics/Fig-5.9-output_with_pic_vid.gif)
 
-Fig 5.8: Test run with both prediction value and jam image included
+Fig 5.9: Test run with both prediction value and jam image included
 
 Looks like the base structure of the website is complete! Now we can finally move on to deploying this thing for real 🚀 on Google App Engine (GAE) so that everyone can use it. This does not mean that the development of the website HTML and CSS will be halted though, I will continue to improve the visuals ✨ and overall performance of the website as inspiration strikes and my skills continue to improve.
 
 #### app.yaml
-To run the website on GAE, we need an app.yaml file, as mentioned before when showcasing the project folder structure. We already one, but its still empty, so let's change that 😎.
+To run the website on GAE, we need an app.yaml file, as mentioned before when showcasing the project folder structure. We already have one, but its still empty, so let's change that 😎.
 
 ```
 1  runtime: python312
