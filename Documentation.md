@@ -1317,7 +1317,7 @@ Me personally, I draw the line when the code is completely made by AI 🤖, or 9
 #### Test run + first thoughts
 Anyway, here's the 1st website test run, I ran it using 'python main.py' on the Google shell terminal 📟. This is just a test run on a local port to make sure everything runs fine, more refinements to the website visual will be made over time. 
 
-![OIII](oo)
+![OIII](progress_pics/Fig-5.5-outputs_the_input_vid.gif)
 
 Fig 5.5: Website test run, output printed is the input date and time
 
