@@ -29,7 +29,7 @@ for num in range(1, 4):
                 x = float(numbers[1])
                 actual_y = float(numbers[2])
                 y = 1 / (1 + np.exp(4 * (x - 0.73)))
-                if actual_y < y:
+                if actual_y > y:
                     box_area = float(numbers[3]) * float(numbers[4])
                     total_box_area += box_area
         new_row = [0, 0, 0, 0, 0, 0, int(time[:2]), total_box_area]
@@ -52,38 +52,38 @@ df = df.iloc[:293]
 df['hour_sin'] = np.sin(2 * np.pi * df['Time of Day'] / 24)
 df['hour_cos'] = np.cos(2 * np.pi * df['Time of Day'] / 24)
 df.drop(columns=['Time of Day'], inplace=True)
-df.to_csv('train_df.csv', index=False)
+df.to_csv('train_df_wdlands.csv', index=False)
 
 
-# Linear Regression model
-y_column = df.pop('congestion_area')
-model = LinearRegression()
-model.fit(df, y_column)
-
-# making a test df from some unannotated pics
-test_df = pd.DataFrame(columns=column_names[:-1])
-test_snaps_path = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\test_snaps"
-for file_name in os.listdir(test_snaps_path):
-    parts = file_name.split('_')
-    date = parts[0]
-    time = parts[1]
-    day = parts[2][:3]
-    index = None
-    for i in range(len(column_names)):
-        if day == column_names[i]:
-            index = i
-            break
-    new_test_row = [0, 0, 0, 0, 0, 0, int(time[:2])]
-    if index:
-        new_test_row[index] = 1
-    test_df.loc[len(test_df)] = new_test_row
-
-# cyclic encoding of time column for test_df
-test_df['hour_sin'] = np.sin(2 * np.pi * test_df['Time of Day'] / 24)
-test_df['hour_cos'] = np.cos(2 * np.pi * test_df['Time of Day'] / 24)
-test_df.drop(columns=['Time of Day'], inplace=True)
-test_df.to_csv('test_df.csv', index=False)
-
-predictions = model.predict(test_df)
-test_df['congestion_prediction'] = pd.Series(predictions)
-print(test_df.head(20))
+# # Linear Regression model
+# y_column = df.pop('congestion_area')
+# model = LinearRegression()
+# model.fit(df, y_column)
+#
+# # making a test df from some unannotated pics
+# test_df = pd.DataFrame(columns=column_names[:-1])
+# test_snaps_path = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\test_snaps"
+# for file_name in os.listdir(test_snaps_path):
+#     parts = file_name.split('_')
+#     date = parts[0]
+#     time = parts[1]
+#     day = parts[2][:3]
+#     index = None
+#     for i in range(len(column_names)):
+#         if day == column_names[i]:
+#             index = i
+#             break
+#     new_test_row = [0, 0, 0, 0, 0, 0, int(time[:2])]
+#     if index:
+#         new_test_row[index] = 1
+#     test_df.loc[len(test_df)] = new_test_row
+#
+# # cyclic encoding of time column for test_df
+# test_df['hour_sin'] = np.sin(2 * np.pi * test_df['Time of Day'] / 24)
+# test_df['hour_cos'] = np.cos(2 * np.pi * test_df['Time of Day'] / 24)
+# test_df.drop(columns=['Time of Day'], inplace=True)
+# test_df.to_csv('test_df.csv', index=False)
+#
+# predictions = model.predict(test_df)
+# test_df['congestion_prediction'] = pd.Series(predictions)
+# print(test_df.head(20))
