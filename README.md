@@ -38,6 +38,8 @@ Tools and libraries used in this project:
     ![image](progress_pics/Fig-III-gcloud_storage_preview.jpg)
 
         Figure III: Preview of GCloud Storage
+      
+    - Google App Engine (GAE)
 
 - **YOLO** (You Only Look Once), for object detection 
     ![image](progress_pics/Fig-IV-yolo_beachscreenshot.jpg)
@@ -62,11 +64,6 @@ Tools and libraries used in this project:
     Fig VII: Graph of coordinates of bounding boxes, with each colour representing one side of the bridge.
 
 - **Scikit-learn** for machine learning models 🤖
-
-- Google App Engine (GAE)
-  ![insert GAE screenshot hereeeeeeeeeeEEEE](1)
-
-  Fig VIII: Preview of Google App Engine
 
 The full list of libraries I imported to use in this project can be found in the [requirements.txt](miscellaneous/requirements.txt) file, but do check their versions in case they are outdated.
 
