@@ -1190,6 +1190,7 @@ We have already been able to extract the 1)time of day and 2)day of the week in 
 chapt 4.3 TBCC!
 
 ### 4.4: Model Tuning (tbc)
+First, lets see how good our first RFR model is, the one without the extra features from feature engineering. I labelled the rest of the pictures (snaps 4, 5, 6 & 7) and trained the model on those too. However, I labelled the last 4 'snaps' folder pictures differently, straight up rating the congestion on either side of the causeway on a scale of 0-5 instead of using bounding boxes. CVAT takes way too long and the bounding box areas are not consistent, I'm over it. Screw that.
 
 ## Chapter 5: Automation and Website Making
 ### 5.1: Making HTML and CSS for Frontend
