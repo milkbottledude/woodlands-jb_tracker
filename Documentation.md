@@ -23,7 +23,7 @@ Chapter 4: Machine Learning
 - 4.1: [One-hot encoding, sin-cos encoding, and Linear Regression model](#41-one-hot-encoding-sin-cos-encoding-and-linear-regression-model)
 - 4.2: [Random Forest (+ Decision Tree) Regression](#42-random-forest-and-decision-tree-regression-regression)
 - 4.3: [Feature Engineering (in progress, tbc!)](#43-feature-engineering-in-progress-tbc) (delete when done)
-- 4.4: [Model Tuning (tbc)](#44-model-tuning-tbc) (delete when done)
+- 4.4: [Model Train/Test and Tuning (tbc)](#44-model-tuning-tbc) (delete when done)
 
 Chapter 5: Deploying Code to Website
 - 5.1: [Making HTML & CSS for Frontend](#51-making-html-and-css-for-frontend) (delete when done)
@@ -1189,7 +1189,7 @@ We have already been able to extract the 1)time of day and 2)day of the week in 
 
 chapt 4.3 TBCC!
 
-### 4.4: Model Tuning (tbc)
+### 4.4: Model Train/Test and Tuning (tbc)
 First, lets see how good our RFR model is without the extra features from feature engineering. I labelled the rest of the pictures 🖼️ (snaps 4, 5, 6 & 7) and trained the model on those too. However, I labelled the last 4 'snaps' folder pictures differently, straight up rating the congestion on either side of the causeway on a scale of 0-5 instead of using CVAT bounding boxes. Drawing them for every image takes too long ⌛, and the bounding box areas are not consistent.
 
 To test how good the model is, lets use 2 relatively simples metrics 🧐: mean actual error (MAE) and root mean squared error (RMSE). MAE will show us the average difference between the predicted and actual values, while RMSE will place more emphasis on large errors due to its 'squaring' nature. This is helpful to identify if the model is doing well for certain instances but not doing so well for others, since the larger errors are penalised more.
