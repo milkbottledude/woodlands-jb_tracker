@@ -115,7 +115,7 @@ These print statements may not look important now, but in the next subchapter wh
 
 I need to know at which point did the code stop working, so its important to set up logging statements here and there, which allows us to pinpoint where the code stopped based on which statements are output.
 
-I know this is in the overview above already, but I like GIFs so ill put it down here again👍.
+I know this is in the README already, but I like GIFs so ill put it down here again👍.
 
 ![Fig V](progress_pics/Fig-V-selenium_screenrecord.gif)
 
