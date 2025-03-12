@@ -23,7 +23,7 @@ Chapter 4: Machine Learning
 - 4.1: [One-hot encoding, sin-cos encoding, and Linear Regression model](#41-one-hot-encoding-sin-cos-encoding-and-linear-regression-model)
 - 4.2: [Random Forest (+ Decision Tree) Regression](#42-random-forest-and-decision-tree-regression-regression)
 - 4.3: [Feature Engineering (in progress, tbc!)](#43-feature-engineering-in-progress-tbc) (delete when done)
-- 4.4: [Model Tuning (tbc)](#44-model-tuning-tbc) (delete when done)
+- 4.4: [Model Train/Test and Tuning (tbc)](#44-model-traintest-and-tuning-tbc) (delete when done)
 
 Chapter 5: Deploying Code to Website
 - 5.1: [Making HTML & CSS for Frontend](#51-making-html-and-css-for-frontend) (delete when done)
@@ -1189,7 +1189,44 @@ We have already been able to extract the 1)time of day and 2)day of the week in 
 
 chapt 4.3 TBCC!
 
-### 4.4: Model Tuning (tbc)
+### 4.4: Model Train/Test and Tuning (tbc)
+First, lets see how good our RFR model is without the extra features from feature engineering. I labelled the rest of the pictures 🖼️ (snaps 4, 5, 6 & 7) and trained the model on those too. However, I labelled the last 4 'snaps' folder pictures differently, straight up rating the congestion on either side of the causeway on a scale of 0-5 instead of using CVAT bounding boxes. Drawing them for every image takes too long ⌛, and the bounding box areas are not consistent.
+
+To test how good the model is, lets use 2 relatively simples metrics 🧐: mean actual error (MAE) and root mean squared error (RMSE). MAE will show us the average difference between the predicted and actual values, while RMSE will place more emphasis on large errors due to its 'squaring' nature. This is helpful to identify if the model is doing well for certain instances but not doing so well for others, since the larger errors are penalised more.
+
+```
+1    df = pd.read_csv("newdata.csv")
+2    y_column_jb = df.pop('congestion_scale_jb')
+3    y_column_wdlands = df.pop('congestion_scale_wdlands')
+4    X_train, X_test, y_train, y_test = train_test_split(df, y_column_jb, test_size=0.2, random_state=0) # start off with jb
+5    rfr_mae = mean_absolute_error(y_test, rfr_predictions)
+6    rfr_rmse = mean_squared_error(y_test, rfr_predictions)**0.5
+.
+.
+10    print(f"rfr mae: {rfr_mae} ")
+11    print(f"rfr rmse: {rfr_rmse} ")   
+```
+
+I compiled all the data we have so far and did a 80% train, 20% test split. Normally I would do a 70/30 split, which you would know if you saw in the other repositories the way I go about my Kaggle competitions. But as we have limited image data that has been labelled with a congestion value, I chose to prioritise training data in this case. The code above is currently testing the model trained on data from the road to Johor, hence the y column selected for the split in Line 4 is 'y_column_jb'. But not to worry, we will change that and test the model for the road to Woodlands as well.
+
+After testing both, here are the results:
+# road to JB model
+rfr mae: 0.33655183072079514
+rfr rmse: 0.7618679373275961
+ratio: 2.2637462280205067 
+# road to Wdlands model
+rfr mae: 0.6924568892719933
+rfr rmse: 1.2608052907655005
+ratio: 1.8207708094160688
+
+Looks like the congestion on the road to JB is more predictable, with the MAE and RMSE being quite low (compared to the range of our values, 0-5). However, the RMSE being more than double the MAE implies there are some cases of large deviations in predicted values from the actual value. Overall, not too shabby for a first test.
+
+The model for the other side of the road does not look as promising 😔. While the RMSE to MAE ratio is less than the other model, meaning there are no 'abnormally larger than usual' errors, thats probably because the MAE is already so high (more than double the previous MAE value). The fact that the MAE in this case is about 13% of the max congestion value, 5, is a little concerning but not a huge problem. However, the RMSE is 1.26 arbitrary units, a quarter of the congestion value range, which is a big problem 🚩. This means that when predicting the congestion on the road to Woodlands based on user input data 🗓️🕝, the predicted value output back to the user may differ from the actual value by more than 1 au. Thats a lot, considering the max congestion value is 5au.
+
+Based on the EDA I did in [Chapter 3.2](#32-exploratory-data-analysis-eda), the congestion patterns for the road to Woodlands is certainly more inconsistent. The JB road model is nearly there but the Woodlands one needs some serious tinkering 🔧, and perhaps more training data for it to better generalise to the unpredictable nature of the traffic jams coming into Woodlands Checkpoint from JB.
+
+#### RFR weights
+
 
 ## Chapter 5: Automation and Website Making
 ### 5.1: Making HTML and CSS for Frontend
@@ -1338,6 +1375,8 @@ I'll also add an image of what the congestion situation will likely look like �
 ![](progress_pics/Fig-5.6-zero_to_five_pics.gif)
 
 Fig 5.6: Images showing congestion values from 0-5, with red lines annotated on the roads.
+
+I also added images scaling from 0 to 5 in congestion intensity for the woodlands side of the causeway.
 
 ### 5.3: .joblib file and Project Folder structure
 #### Making ML weights portable with Joblib
