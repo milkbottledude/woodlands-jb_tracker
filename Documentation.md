@@ -246,7 +246,7 @@ Here is a snippet from Google's Cloud scheduler guide 📝 to help you.
 
 Fig 1.10: Cloud Scheduler time-field formatting information
 
-In order to collect the data from the bucket, you need a python script and link your google credentials to said script. You can find mine [here LINKKKKKKKKKKKKKK](), the filename is frombucket.py. You won't find my credentials though cuz that stuff is private, if you want you can get your own under your gmail account its free.
+In order to collect the data from the bucket, you need a python script and link your google credentials to said script. You can find mine [here](python_scripts/frombucket.py), the filename is frombucket.py. You won't find my credentials though cuz that stuff is private. If you want, you can get your own under your gmail account, its free.
 
 That wraps up Chapter 1, let's move on to object detection in Chapter 2.
 
