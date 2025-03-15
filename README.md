@@ -19,6 +19,13 @@ This project aims to predict the congestion level of the bridge at the Singapore
 
 Known as the most busiest land crossing in the world, the bridge allows cars to go to and fro between Johor, Malaysia and Singapore. It would certainly help us if we could know when the bridge was clear so that we can pop into Johor for a shopping trip, or a day out with the family without being stuck in traffic for hours.
 
+## How To Use ❓
+Simply enter a future date 📅 and time 🕑 of your choosing, as well as whether you are looking to go to Johor from Woodlands or vice versa, then click submit 🟢. 
+
+Johorscrape will then predict the level of congestion at that moment and output an arbitrary congestion value ranging from 0 to 5. From 0, meaning no cars on the road at all 🤩, to 5, meaning the road is extremely congested 🚙😭🚗💨. 
+
+To allow the user to better visualise the congestion level 👁️, a picture showing a rough estimate of how the causeway would look like will also be shown 🛣️.
+
 ---
 
 Tools and libraries used in this project:
@@ -81,7 +88,7 @@ To automate this process, we shall write a script 💻 and dockerfile for ☁️
 
 Chapter 2️⃣ : Prepping Images for Object Detection
 
-With the few jpegs 🛣️ of the bridge that we have collected, we will experiment with different deep learning models for object detection, mainly OpenCV and YOLO. However, YOLO requires manual annotatation of the pictures with bounding boxes 🔲.
+With the few jpegs of the bridge 🛣️ that we have collected, we will experiment with different deep learning models for object detection, mainly OpenCV and YOLO. However, YOLO requires manual annotatation of the pictures with bounding boxes 🔲.
 
 Unfortunately, manual annotation of thousands of cars is very tedious and time consuming ⏳, and cannot be automated until the YOlO model is sufficiently well trained to do so itself. 
 
