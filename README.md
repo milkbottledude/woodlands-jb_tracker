@@ -26,7 +26,7 @@ Simply enter a future date 📅 and time 🕑 of your choosing, as well as wheth
 
 Johorscrape will then predict the level of congestion at that moment and output an arbitrary congestion value ranging from 0 to 5. From 0, meaning no cars on the road at all 🤩, to 5, meaning the road is extremely congested 🚙😭🚗💨. The higher the value, the longer the jam will be.
 
-To allow the user to better visualise the congestion level 👁️, a picture showing a rough estimate of how the causeway might look like will also be shown 🛣️. The traffic jam length will be represented by a red line drawn on the road.
+To allow the user to better visualise the congestion level 👁️, a picture showing a rough estimate of how the causeway might look like will also be shown 🛣️. The traffic jam length will be represented by a red line drawn on the road, as you can see below.
 
 ![](progress_pics/Fig-5.6-zero_to_five_pics.gif)
 
