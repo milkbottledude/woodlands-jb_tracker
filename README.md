@@ -136,7 +136,7 @@ After we have achieved an ML model with weights ⚖️ that have been trained we
 
 #### Want a more in-depth view of the project?
 
-If you are still interested and would like to know more, [here](Documentation.md) is a more detailed documentation of the 5 stages.
+If you are still interested and would like to know more, here is a [detailed documentation](Documentation.md) of the 5 stages.
 
 I will be going more in depth on setting up of the code and dockerized container 📦 for the GCloud functions, the headaches and setbacks 🤕, processing of the image data into clear readable data, and more. 
 
