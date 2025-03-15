@@ -24,9 +24,12 @@ Known as the most busiest land crossing in the world, the bridge allows cars to 
 ## How To Use ❓
 Simply enter a future date 📅 and time 🕑 of your choosing, as well as whether you are looking to go to Johor from Woodlands or vice versa, then click submit 🟢. 
 
-Johorscrape will then predict the level of congestion at that moment and output an arbitrary congestion value ranging from 0 to 5. From 0, meaning no cars on the road at all 🤩, to 5, meaning the road is extremely congested 🚙😭🚗💨. 
+Johorscrape will then predict the level of congestion at that moment and output an arbitrary congestion value ranging from 0 to 5. From 0, meaning no cars on the road at all 🤩, to 5, meaning the road is extremely congested 🚙😭🚗💨. The higher the value, the longer the jam will be.
 
-To allow the user to better visualise the congestion level 👁️, a picture showing a rough estimate of how the causeway might look like will also be shown 🛣️.
+To allow the user to better visualise the congestion level 👁️, a picture showing a rough estimate of how the causeway might look like will also be shown 🛣️. The traffic jam length will be represented by a red line drawn on the road.
+
+
+![](progress_pics/Fig-5.9-output_with_pic_vid.gif)
 
 ---
 
