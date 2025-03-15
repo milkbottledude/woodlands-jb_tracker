@@ -28,8 +28,7 @@ Johorscrape will then predict the level of congestion at that moment and output 
 
 To allow the user to better visualise the congestion level 👁️, a picture showing a rough estimate of how the causeway might look like will also be shown 🛣️. The traffic jam length will be represented by a red line drawn on the road.
 
-
-![](progress_pics/Fig-5.9-output_with_pic_vid.gif)
+![](progress_pics/Fig-5.6-zero_to_five_pics.gif)
 
 ---
 
