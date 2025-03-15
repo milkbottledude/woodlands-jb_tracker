@@ -8,7 +8,7 @@
 
 Please read through the README before visiting the [webapp](https://sapient-metrics-436909-v6.appspot.com/#1739003720204209127). 
 
-If you are interested, the [Documentation](Documentation.md) showcases the process of creating the Machine Learning 🤖 and Google Cloud backend ⚙️ of the website, as well as the HTML and CSS frontend. Feel free to take a look at that as well 📚.
+If you are interested, the [Documentation](Documentation.md) showcases the process of creating the Machine Learning 🤖 and Google Cloud backend ⚙️ of the website, as well as the HTML and CSS frontend 📱. Feel free to take a look at that as well 📚.
 
 ## Overview 🔍
 Welcome to Project: Woodlands-JB Tracker!
