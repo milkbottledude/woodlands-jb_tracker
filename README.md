@@ -19,12 +19,12 @@ This project aims to predict the congestion level of the bridge at the Singapore
 - Presence of holidays (public hol & sch hol) 🏖️
 - Month of the year 📅
 
-Known as the most busiest land crossing in the world, the bridge allows cars to go to and fro between Johor, Malaysia and Singapore. It would certainly help us if we could know when the bridge was clear so that we can pop into Johor for a shopping trip, or a day out with the family without being stuck in traffic for hours.
+Known as the most busiest land crossing in the world, the bridge allows cars to go to and fro between Johor and Singapore 🚘. It would certainly help us if we could know when the bridge was clear so that we can pop into Johor for a shopping trip 🛍️💳, or a day out with the family 👨‍👩‍👧🥂 without being stuck in traffic for hours.
 
 ## How To Use ❓
 Simply enter a future date 📅 and time 🕑 of your choosing, as well as whether you are looking to go to Johor from Woodlands or vice versa, then click submit 🟢. 
 
-Johorscrape will then predict the level of congestion at that moment and output an arbitrary congestion value ranging from 0 to 5. The higher the value, the longer the jam will be.
+Johorscrape will then predict the level of congestion at that moment and output an arbitrary congestion value ranging from 0 to 5 📈. The higher the value, the longer the jam will be.
 
 0 - no cars on the road at all 🤩
 
@@ -36,7 +36,7 @@ Johorscrape will then predict the level of congestion at that moment and output 
 
 4 - road is extremely congested 🚙😭🚗💨
 
-5 - might as well take a nap and watch a movie while waiting for the traffic to clear 🤮😴
+5 - just take a nap and watch a movie while waiting for the traffic to clear 🤮😴
 
 To allow the user to better visualise the congestion level 👁️, a picture showing a rough estimate of how the causeway might look like will also be shown 🛣️. The traffic jam length will be represented by a red line drawn on the road, as you can see below.
 
