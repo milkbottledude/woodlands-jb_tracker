@@ -27,10 +27,15 @@ Simply enter a future date 📅 and time 🕑 of your choosing, as well as wheth
 Johorscrape will then predict the level of congestion at that moment and output an arbitrary congestion value ranging from 0 to 5. The higher the value, the longer the jam will be.
 
 0 - no cars on the road at all 🤩
+
 1 - you will encounter maybe 5 or so cars on your way 😁
+
 2 - may have to wait for 10-15 cars before your passport gets stamped 🙂
+
 3 - a small jam built up, around 20-30min wait before either checkpoint 🤨
+
 4 - road is extremely congested 🚙😭🚗💨
+
 5 - might as well take a nap and watch a movie while waiting for the traffic to clear 🤮😴
 
 To allow the user to better visualise the congestion level 👁️, a picture showing a rough estimate of how the causeway might look like will also be shown 🛣️. The traffic jam length will be represented by a red line drawn on the road, as you can see below.
