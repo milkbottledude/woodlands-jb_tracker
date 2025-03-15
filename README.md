@@ -4,9 +4,11 @@
 
 - 🗪 Feel free to telegram me [@milkbottledude](https://t.me/milkbottledude) if you have any questions, or just want to chat :)
 
-> TLDR: I made a [website]([https://www.apple.com/](https://sapient-metrics-436909-v6.as.r.appspot.com/)) that uses machine learning and Google Cloud to predict the amount of traffic on the Johor-Singapore Causeway, at a future date and time of your choosing.
+> TLDR: I made a [webapp](https://sapient-metrics-436909-v6.as.r.appspot.com/) on Google Cloud that uses machine learning to predict the amount of traffic on the Johor-Singapore Causeway, at a future date and time of your choosing.
 
-Please read through the README before using the app. The [Documentation](Documentation.md) showcases the process of creating the Machine Learning and Google Cloud backend of the website, as well as the HTML and CSS frontend. Feel free to take a look at that as well.
+Please read through the README before visiting the [webapp](https://sapient-metrics-436909-v6.appspot.com/#1739003720204209127). 
+
+If you are interested, the [Documentation](Documentation.md) showcases the process of creating the Machine Learning 🤖 and Google Cloud backend ⚙️ of the website, as well as the HTML and CSS frontend. Feel free to take a look at that as well 📚.
 
 ## Overview 🔍
 Welcome to Project: Woodlands-JB Tracker!
@@ -24,7 +26,7 @@ Simply enter a future date 📅 and time 🕑 of your choosing, as well as wheth
 
 Johorscrape will then predict the level of congestion at that moment and output an arbitrary congestion value ranging from 0 to 5. From 0, meaning no cars on the road at all 🤩, to 5, meaning the road is extremely congested 🚙😭🚗💨. 
 
-To allow the user to better visualise the congestion level 👁️, a picture showing a rough estimate of how the causeway would look like will also be shown 🛣️.
+To allow the user to better visualise the congestion level 👁️, a picture showing a rough estimate of how the causeway might look like will also be shown 🛣️.
 
 ---
 
