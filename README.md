@@ -4,7 +4,7 @@
 
 - 🗪 Feel free to telegram me [@milkbottledude](https://t.me/milkbottledude) if you have any questions, or just want to chat :)
 
-> TLDR: I made a [webapp](https://sapient-metrics-436909-v6.as.r.appspot.com/) on Google Cloud that uses machine learning to predict the amount of traffic on the Johor-Singapore Causeway, at a future date and time of your choosing.
+> TLDR: I made a webapp on Google Cloud that uses machine learning to predict the amount of traffic on the Johor-Singapore Causeway, at a future date and time of your choosing.
 
 Please read through the README before visiting the [webapp](https://sapient-metrics-436909-v6.appspot.com/#1739003720204209127). 
 
