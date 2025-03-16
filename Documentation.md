@@ -1210,14 +1210,16 @@ To test how good the model is, lets use 2 relatively simples metrics 🧐: mean 
 I compiled all the data we have so far and did a 80% train, 20% test split. Normally I would do a 70/30 split, which you would know if you saw in the other repositories the way I go about my Kaggle competitions. But as we have limited image data that has been labelled with a congestion value, I chose to prioritise training data in this case. The code above is currently testing the model trained on data from the road to Johor, hence the y column selected for the split in Line 4 is 'y_column_jb'. But not to worry, we will change that and test the model for the road to Woodlands as well.
 
 After testing both, here are the results:
-# road to JB model
-rfr mae: 0.33655183072079514
-rfr rmse: 0.7618679373275961
-ratio: 2.2637462280205067 
-# road to Wdlands model
-rfr mae: 0.6924568892719933
-rfr rmse: 1.2608052907655005
-ratio: 1.8207708094160688
+
+**road to JB model**
+- rfr mae: 0.33655183072079514
+- rfr rmse: 0.7618679373275961
+- ratio: 2.2637462280205067 
+
+**road to Wdlands model**
+- rfr mae: 0.6924568892719933
+- rfr rmse: 1.2608052907655005
+- ratio: 1.8207708094160688
 
 Looks like the congestion on the road to JB is more predictable, with the MAE and RMSE being quite low (compared to the range of our values, 0-5). However, the RMSE being more than double the MAE implies there are some cases of large deviations in predicted values from the actual value. Overall, not too shabby for a first test.
 
