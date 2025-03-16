@@ -301,13 +301,13 @@ This means learning general characteristics of cars, such as '4 wheels', and not
 
 Unfortunately, our data ticks neither box. The image quality isn't the worst, but having the cars so far away means that the image pixels making up the cars are fewer. It also does not help that the image quality becomes even grainier on rainy days 🌧️.
 
-[insert rainy day pic here LINKKKKKKKKKK](GCloud\snaps_3\11-17_13-00_Sun.jpg)
+![insert rainy day pic here LINKKKKKKKKKK](GCloud/snaps_3/11-17_13-00_Sun.jpg)
 
 Fig 2.3: Picture of the bridge on a rainy day, looks like it was taken in 12 b.c
 
 Furthermore, the headlights of cars at night make it difficult to see the outline of the car bodies (Fig 2.4)
 
-[insert nightime pic here OIIIIIIIIIIIII](GCloud\snaps_2\11-29_07-00_Fri.jpg)
+![insert nightime pic here OIIIIIIIIIIIII](GCloud/snaps_2/11-29_07-00_Fri.jpg)
 
 Fig 2.4: Picture of the bridge at night, the headlights are very glaring.
 
