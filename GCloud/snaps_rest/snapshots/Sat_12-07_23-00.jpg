@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)/content/datamall/en.html -->
+<html lang="en" class="hydrated"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="MobileOptimized" content="320">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="x5-orientation" content="portrait">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="browsermode" content="application">
+    <meta name="keywords" content="">
+
+
+                <meta name="description" content="Home">
+
+    <meta name="google-site-verification" content="Us3oiC7CQ2zs0hEELEOfYRFK3ePFDRM8ue31-8ykidk">
+         <!--<link rel="stylesheet" href="/etc/designs/datamall/clientlib.min.css" type="text/css">
+<script src="/etc/designs/datamall/clientlib.min.js"></script>
+-->
+
+    <link rel="shortcut icon" href="/content/dam/datamall/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/content/dam/datamall/images/apple-touch-icons/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/content/dam/datamall/images/apple-touch-icons/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="/content/dam/datamall/images/apple-touch-icons/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/content/dam/datamall/images/apple-touch-icons/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/content/dam/datamall/images/apple-touch-icons/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/content/dam/datamall/images/apple-touch-icons/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/content/dam/datamall/images/apple-touch-icons/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/content/dam/datamall/images/apple-touch-icons/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/content/dam/datamall/images/apple-touch-icons/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/content/dam/datamall/images/apple-touch-icons/apple-touch-icon-180x180.png">
+
+        <link rel="stylesheet" href="/etc/designs/datamall/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/etc/designs/datamall/clientlibs/font/css/fontawesome.css">
+    <link rel="stylesheet" href="/etc/designs/datamall/css/global.css">
+
+    <script type="text/javascript" src="/etc/designs/datamall/js/jquery-3.5.1.js"></script>
+        <script type="text/javascript" src="/etc/designs/datamall/js/global.js"></script>
+
+    <link rel="stylesheet" href="/etc/designs/datamall/clientlibs/swiper/swiper.min.css">
+    <script type="text/javascript" src="/etc/designs/datamall/clientlibs/swiper/swiper.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/etc/designs/datamall/vendor/featherlight/style.css"/>
+        <script type="text/javascript" src="/etc/designs/datamall/vendor/featherlight/script.js"></script>
+
+    <script type="text/javascript" src="/etc/designs/datamall/vendor/slick/script.js"></script>
+        <link rel="stylesheet" type="text/css" href="/etc/designs/datamall/vendor/slick/style.css"/>
+
+    <title>DataMall | Land Transport Authority (LTA)</title>
+
+
+
+
+</head>
+
+
+    <body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<input type="hidden" id="home_url" value="/content/datamall/en">
+<header>
+    <!-- sggov header start -->
+    <div class="sg-gov-header text-center text-lg-left">
+            <div class="container py-1">
+                <a href="https://www.gov.sg/" target="_blank" rel="noopener noreferrer">
+                                        <img src="/content/dam/datamall/images/logo-sg-gov-2.png" alt="Singapore Government logo">
+                    <span class="text-dark sg-gov-header__text">A Singapore Government Agency Website</span>
+
+                          <!-- ADO requirements for LTA.GOV
+                                                        1. Helpful link with collapsible banner  -->
+
+                                        </a><a id="helpful-link" data-toggle="collapse" data-target="#header-banner">How to identify <i class="fas fa-caret-down"></i> <i class="fas fa-caret-up" style="display: none;"></i></a>
+
+                                 <!-- ADO requirements for LTA.GOV
+                                                1. Helpful link with collapsible banner  -->
+
+            </div>
+    </div>
+
+    <div id="header-banner" class="header-banner collapse" style="display: none;">
+        <div class="banner-container">
+            <div class="container nav-wrapper">
+                                  <div class="banner-item">
+                <img src="https://d33wubrfki0l68.cloudfront.net/2ec2122b2010672b9cbb6efb5138048d8aff4a09/5d1ab/assets/img/government_building.svg" class="banner-icon" alt="banner-home-icon">
+
+                <div class="banner-content-text-container">
+                    <strong class="banner-content-title">Official website links end with .gov.sg</strong>
+                    <p>
+                        Government agencies communicate via
+                        <strong> .gov.sg </strong>
+                        websites <span class="avoidwrap">(e.g. go.gov.sg/open)</span>.
+                        <a href="https://go.gov.sg/trusted-sites" class="banner-content-text bp-masthead-button-link bp-masthead-button-text" target="_blank" rel="noopener noreferrer">
+                            Trusted website<text style="letter-spacing: -3px">s</text>
+                        </a>
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="banner-item">
+                <img src="https://d33wubrfki0l68.cloudfront.net/aecdf1b88c0edfa72e7fef099f28e93b80c8336a/8c6a1/assets/img/lock.svg" class="banner-icon" alt="banner-lock-icon">
+                <div class="banner-content-text-container">
+                    <strong class="banner-content-title">Secure websites use HTTPS</strong>
+                    <p>
+                        Look for a
+                        <strong> lock </strong>(<img src="https://d33wubrfki0l68.cloudfront.net/aecdf1b88c0edfa72e7fef099f28e93b80c8336a/8c6a1/assets/img/lock.svg" class="inline-banner-icon" alt="banner-lock-icon-inline">)
+                        or https:// as an added precaution. Share sensitive information only on official, secure
+                        websites.
+                    </p>
+                </div>
+            </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- sggov header end -->
+
+    <!-- main navigation -->
+    <nav class="main-nav navbar navbar-light align-items-stretch navbar-expand-lg py-0" role="navigation">
+        <div class="container">
+            <a href="/content/datamall/en.html" class="mr-5 py-2">
+                                 <img src="/content/dam/datamall/images/DT_logoBeta.jpg" alt="datamall logo">
+            </a>
+            <!-- mobile nav icon -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                <div class="navbar-icon-close" style="display:none;"></div>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav h-100 my-0">
+                    <!-- search mobile -->
+                    <li class="d-lg-none my-3">
+                        <div id="form-search-mobile">
+                            <div class="search search-desktop">
+                                <div id="form-search-2-container" class="container px-0">
+                                    <div id="cse-search-box" name="cseSearchBox" autocomplete="off" class="input-group">
+                                        <input id="searchInputMobile" name="q" class="form-control search-input search-input-container" type="search" placeholder="Search" aria-label="Search datasets" onfocus="saveOldInput()" onchange="checkInput()" onkeypress="searchEnter(event, &#39;search-mobile&#39;)">
+
+                                        <div class="input-group-append">
+                                                <a id="search-mobile" class="search-btn" href="javascript:searchDatasets(&#39;/content/datamall/en&#39;,&#39;searchInputMobile&#39;);">
+                                                <i class="fas fa-search" autocomplete="off"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <div class="nav-link container collapse-toggle" style="padding:0px">
+                           <a href="/content/ltagov/en/who_we_are.html">About Us</a>
+                        </div>
+                    </li>
+
+                                        <li class="nav-item dropdown">
+                        <div class="nav-link container collapse-toggle" style="padding:0px">
+                           <a href="/content/datamall/en/static-data.html">
+                               Static Datasets
+                                 </a>
+                        </div>
+
+                    </li>
+
+
+                                        <li class="nav-item dropdown">
+                        <div class="nav-link container collapse-toggle" style="padding:0px">
+                           <a href="/content/datamall/en/dynamic-data.html">
+                               Dynamic Datasets
+                                 </a>
+                        </div>
+
+                    </li>
+
+
+                                        <li class="nav-item dropdown">
+                        <div class="nav-link container collapse-toggle" style="padding:0px">
+                           <a href="/content/datamall/en/extended-obu-library.html">
+                               Extended OBU Library
+                                 </a>
+                        </div>
+
+                    </li>
+
+
+                                        <li class="nav-item dropdown">
+                        <div class="nav-link container collapse-toggle" style="padding:0px">
+                           <a href="/content/datamall/en/app-zone.html">
+                               App Zone
+                                 </a>
+                        </div>
+
+                    </li>
+
+
+                                        <li class="nav-item dropdown">
+                        <div class="nav-link container collapse-toggle" style="padding:0px">
+                           <a href="/content/datamall/en/on-request_datasets.html">
+                               On-Request Datasets
+                                 </a>
+                        </div>
+
+                    </li>
+
+
+                </ul>
+                <!-- desktop search icon -->
+                                <a class="navbar-search blackBtn d-none d-lg-flex align-items-center ml-auto collapsed" href="javascript:void(0);" style="font-size: 0;" data-toggle="collapse" aria-expanded="false">
+                        <i class="fas fa-search" style="font-size: 1rem;"></i>
+                        Search
+                                </a>
+            </div>
+        </div>
+    </nav>
+    <div>
+
+    </div>
+
+    <!-- desktop search form start -->
+    <div class="form-search-2-div position-absolute collapse" id="form-search-desktop">
+        <div class="search search-desktop">
+            <div id="form-search-2-container" class="container">
+                <div id="cse-search-box" name="cseSearchBox" autocomplete="off" class="input-group my-4">
+
+                    <input id="searchInput" name="q" class="form-control search-input search-input-container" type="search" placeholder="Search datasets" aria-label="Search Datasets" onfocus="saveOldInput()" onchange="checkInput()" onkeypress="searchEnter(event, &#39;search-desktop&#39;)">
+
+                    <div class="input-group-append">
+                        <a id="search-desktop" class="search-btn" href="javascript:searchDatasets(&#39;/content/datamall/en&#39;,&#39;searchInput&#39;);">
+                                <i class="fas fa-search" autocomplete="off"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- desktop search form end -->
+</header>
+  <div id="content" class="subpage">
+    <div class="container page_container">
+                <div class="breadcrumb bcrumb"><ol class="breadcrumb"><li><a class="purpleBtn" href="/content/datamall/en.html">DataMall</a></li> <li class="active">Page Not Found</li> </ol>
+                </div>
+
+        </div>
+        <div class="container">
+                <div class="text-center" style="margin-top:6rem; margin-bottom:8.5rem;">
+                        <div class="image-showcase" style="margin:10px auto;">
+                                <img src="https://www.lta.gov.sg/content/dam/ltagov/img/general/ic-404.svg"
+                                        alt="Page Not Found">
+                        </div>
+                        <h2>Page Not Found</h2>
+                        <div class="privacy_content">
+                                <p>Thank you for visiting our website.</p>
+                                <p>The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.</p>
+                                <p>You will be redirected to <a href="/content/datamall/en.html">DataMall's home page </a>in <b id="countDown">10</b> seconds</p>
+                        </div>
+                        <script>
+                                var countDown = 10;
+                                var x = setInterval(function() {
+                                        countDown = countDown - 1;
+                                        document.getElementById("countDown").innerHTML = countDown;
+                                        if (countDown < 0) {
+                                                clearInterval(x);
+                                                document.getElementById("countDown").innerHTML = "Redirecting...";
+                                                window.location.href = "/content/datamall/en.html";
+                                        }
+                                }, 1000);
+                        </script>
+                </div>
+        </div>
+</div>
+
+<footer>
+    <div class="container pt-2">
+                <div class="footer-logo">
+            <img src="/content/dam/datamall/images/logo.png" width="332" height="32" alt="DataMall logo">
+        </div>
+
+        <div class="footer-links-secondary">
+            <nav>
+                <ul>
+
+                    <li><a href="/content/datamall/en.html" class="purpleBtn">Home</a></li>
+
+                    <li><a href="/content/datamall/en/static-data.html" class="purpleBtn">Static Datasets</a></li>
+
+                    <li><a href="/content/datamall/en/dynamic-data.html" class="purpleBtn">Dynamic Datasets</a></li>
+
+                    <li><a href="/content/datamall/en/extended-obu-library.html" class="purpleBtn">Extended OBU Library</a></li>
+
+                    <li><a href="/content/datamall/en/app-zone.html" class="purpleBtn">App Zone</a></li>
+
+                    <li><a href="/content/datamall/en/on-request_datasets.html" class="purpleBtn">On-Request Datasets</a></li>
+
+                    <li><a href="https://www.reach.gov.sg/" class="purpleBtn" target="_blank" rel="noopener noreferrer">REACH</a></li>
+
+                    <li><a href="/content/datamall/en/contact-us.html" class="purpleBtn">Contact Us</a></li>
+                </ul>
+            </nav>
+                        <nav>
+                                <ul>
+
+                    <li>
+                        <nav class="social-media-icons">
+                            <a class="icon-facebook" target="_blank" href="https://www.facebook.com/WeKeepYourWorldMoving" rel="noopener noreferrer">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+
+                             <a class="icon-instagram" target="_blank" href="https://www.instagram.com/ltasg" rel="noopener noreferrer">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                                                        <a class="icon-tiktok" target="_blank" href="https://www.tiktok.com/@ltasg" rel="noopener noreferrer">
+                                <i class="fab fa-tiktok"></i><span>TikTok</span>
+                            </a>
+                              <a class="icon-twitter" target="_blank" href="https://twitter.com/LTAsg" rel="noopener noreferrer">
+                                <i class="fab fa-twitter"></i><span>Twitter</span>
+                            </a>
+
+                            <a class="icon-telegram" target="_blank" href="https://t.me/LTASingapore" rel="noopener noreferrer">
+                                <i class="fab fa-telegram-plane"></i><span>Telegram</span>
+                            </a>
+                            <a class="icon-youtube" target="_blank" href="https://www.youtube.com/user/LTAsingapore" rel="noopener noreferrer">
+                                <i class="fab fa-youtube"></i><span>Youtube</span>
+                            </a>
+                             <a class="icon-linkedin" target="_blank" href="https://www.linkedin.com/company/lta/?originalSubdomain=sg" rel="noopener noreferrer">
+                                <i class="fab fa-linkedin"></i><span>Linkedin</span>
+                            </a>
+                        </nav>
+                    </li>
+                                </ul>
+                        </nav>
+                </div>
+
+                <hr>
+
+        <section class="footer">
+            <div>
+                <div class="d-lg-flex custom-footer-flex justify-content-between">
+                    <nav class="footer-links">
+                        <ul class="list-unstyled d-flex flex-column flex-md-row">
+                            <li class="mt-3 mt-md-0"><a class="purpleBtn" href="https://tech.gov.sg/report_vulnerability">Report Vulnerability</a></li>
+                            <li class="mt-3 mt-md-0"><a class="purpleBtn" href="/content/datamall/en/privacy-statement.html">Privacy Statement</a></li>
+                            <li class="mt-3 mt-md-0"><a class="purpleBtn" href="/content/datamall/en/term-of-use.html">Terms of Use</a></li>
+                            <li class="mt-3 mt-md-0"><a class="purpleBtn" href="/content/datamall/en/site-requirements.html">Site Requirements</a></li>
+                        </ul>
+                    </nav>
+
+                </div>
+                 <div class="my-5 my-md-0" style="text-align: right;">
+                        <span>© 2024 Government of Singapore</span>
+                        <br>
+                        <span>Last updated 25 July 2024</span><br>
+                 </div>
+            </div>
+        </section>
+    </div>
+</footer>
+
+<style>
+    .subpage{padding-bottom:1px;}
+</style>
+
+
