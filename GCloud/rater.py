@@ -7,3 +7,4 @@ for x in range(8, 15):
     with open(writeto, 'a') as file:
         for filename in filenames:
             file.write(filename + ' \n')
+
