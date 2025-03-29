@@ -1207,7 +1207,7 @@ Another idea i have for a column is 'amount of jam in the previous hour' or prev
 
 Below is an excerpt from the [csv](python_scripts/data_to_attach.csv) with all the new columns I'm planning to add.
 
-(please view in landscape/horizontal screen, otherwise the table will look kinda funny)
+Its a little messy and cramped, as all csv files are. I apologise for that.
 
 ```
 month,exact_date_value,week_value,date_sin,date_cos,day_of_year,day_of_year_sin,day_of_year_cos,full_date_ymd,sch_hol_period,public_hol_period
