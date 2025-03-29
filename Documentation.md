@@ -1160,39 +1160,40 @@ Update: As the amount of congestion data has piled up over the months 📈 and w
 My plan is to have a 'public hols period' column, which will show whether the date of the row 📆 falls within 3 days of a public holiday 🎉. Both school holiday periods as well as public holiday periods will be represented by a single column each, you will see later on in my code.
 
 Additionally, I'll be adding the following:
-1) full datetime value
+
+**1) full datetime value**
    
-This is to make it easier to determine whether the row is within the various holiday periods. Datetime values are easy to work with.
+    This is to make it easier to determine whether the row's date is within the various holiday periods 📆. Datetime values are easy to work with.
      
-2) month value
+**2) month value**
 
-For tracking trends in months of the year.
+    For tracking trends of the months within the year 📈📉.
      
-3) date value (1st to 31st)
+**3) exact date value (1st to 31st)**
 
-For tracking trends within the month.
+    For tracking trends within the month 📈📉.
 
-4) day of year value (1 to 365)
+**4) day of year value (1 to 365)**
 
-One worry I have for date value above (3) is that the ML model may wrongly learn that rows of the same date value are more similar than they actually are. 
+    One worry I have for the feature 'exact date value' above (3) is that the ML model may wrongly learn that rows of the same date value are very similar, when they really are not. 
 
-For example, the model might see a row of date March 21st in the training data, and afterwards have to predict a row of date August 21st. The 2 dates have little in common and its unlikely they will have similar congestion patterns as well. 
+    For example, the model might see a row of date March 21st in the training data, and afterwards have to predict a row of date August 21st. The 2 dates have little in common, and its unlikely they will have similar congestion patterns as well. 
 
-However, the model's prediction for the congestion value for August 21st may be heavily influenced by March 21st's congestion value since they have the same 'date value'.
+    However, the model's prediction for the congestion value for August 21st may be heavily influenced by March 21st's congestion value since they have the same 'date value'.
 
-Hence, I have come up with this new variable, 'day of the year' value, just in case that happens, but we still want a metric that can tell the model the date of the row at a more granular level than the month value.
+    Hence, I have come up with this new variable, 'day of the year' value, just in case that happens, but we still want a metric that can tell the model the date of the row at a more granular level than the month value.
 
-5) week number
+**5) week number**
 
-Again, similar to (4), another countermeasure to the potential overfitting problem stemming from (3). However, this still has the potential to make the model overfit on week number for other months, just not as likely as (3).
+    Again, similar to (4), another countermeasure to the potential overfitting problem stemming from (3). However, this still has the potential to make the model overfit on week number for other months, just not as likely as 'exact date value' (3).
 
-6) sin & cos of date value
+**6) sin & cos of date value**
 
-Similar to the cyclical encoding of time values, this feature aims to illustrate to the ML model at what point in the month the row's date is. The start, middle, or end of the month.
+    Similar to the cyclical encoding of time values, this feature aims to illustrate to the ML model at what point in the month the row's date is. The start, middle, or end of the month.
 
-7) sin & cos of day of year value
+**7) sin & cos of day of year value**
 
-Same as (6), except instead of showing what point in the month the row's date is at, this feature shows at what point the row's date is in the year.
+    Same as (6), except instead of showing what point in the month the row's date is at, this feature shows at what point the row's date is in the year.
 
 Another idea i have for a column is 'amount of jam in the previous hour' or previous few hours. An instance is likely to have a jam if there was already a build up of cars in the previous hour/hours 🚙🚗💨. I only recently learned this, its known as 'lagging', which we can implement using the 'shift' function from pandas. (TBC) It will kinda look like this in a train.csv:
 
