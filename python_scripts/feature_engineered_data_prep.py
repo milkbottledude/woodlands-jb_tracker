@@ -1,91 +1,106 @@
 import os
 import pandas as pd
 import numpy as np
+from datetime import datetime
 
 # getting date details for outdated snaps that dont follow the new rating formatting (snaps 4-8)
 
 pics_folder_template = r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\GCloud\snaps_"
 
-extra_column_names = ['month', 'exact_date_value', 'week_value', 'date_sin', 'date_cos', 'day_of_year', 'day_of_year_sin', 'day_of_year_cos']
-
+extra_column_names = ['month', 'exact_date_value', 'week_value', 'date_sin', 'date_cos', 'day_of_year', 'day_of_year_sin', 'day_of_year_cos', 'full_date_ymd']
 df_to_attach = pd.DataFrame(columns=extra_column_names)
 
-for p in range(4, 8):
-    pics_folder_path = pics_folder_template + str(p)
-    file_names = os.listdir(pics_folder_path)
-    for file_name in file_names:
-        parts = file_name.split('_')
-        date_parts = parts[0].split('-')
-        month = date_parts[0]
-        exact_date = int(date_parts[1])
-        week_no = 1
-        for m in range(1, 4):
-            if exact_date < m * 7:
-                break
-            else:
-                week_no += 1
-        date_sined = np.sin(2 * np.pi * exact_date / 31)
-        date_cosed = np.cos(2 * np.pi * exact_date / 31)
-        year = '2025-'
-        if int(month) >= 9:
-            year = '2024-'
-        datetime_object = pd.to_datetime(year + str(parts[0]), format='%Y-%m-%d')
-        day_of_year = datetime_object.dayofyear
-        day_of_year_sined = np.sin(2 * np.pi * exact_date / 365)
-        day_of_year_cosed = np.cos(2 * np.pi * exact_date / 365)
-        new_row = [month, exact_date, week_no, date_sined, date_cosed, day_of_year, day_of_year_sined, day_of_year_cosed]
-        df_to_attach.loc[len(df_to_attach)] = new_row
+def part_one():
+    for p in range(4, 8):
+        pics_folder_path = pics_folder_template + str(p)
+        file_names = os.listdir(pics_folder_path)
+        for file_name in file_names:
+            parts = file_name.split('_')
+            date_parts = parts[0].split('-')
+            month = date_parts[0]
+            exact_date = int(date_parts[1])
+            week_no = 1
+            for m in range(1, 4):
+                if exact_date < m * 7:
+                    break
+                else:
+                    week_no += 1
+            date_sined = np.sin(2 * np.pi * exact_date / 31)
+            date_cosed = np.cos(2 * np.pi * exact_date / 31)
+            year = '2025-'
+            if int(month) >= 9:
+                year = '2024-'
+            datetime_object = pd.to_datetime(year + str(parts[0]), format='%Y-%m-%d')
+            day_of_year = datetime_object.dayofyear
+            day_of_year_sined = np.sin(2 * np.pi * exact_date / 365)
+            day_of_year_cosed = np.cos(2 * np.pi * exact_date / 365)
+            new_row = [month, exact_date, week_no, date_sined, date_cosed, day_of_year, day_of_year_sined, day_of_year_cosed, datetime_object]
+            df_to_attach.loc[len(df_to_attach)] = new_row
 
-df_to_attach.to_csv('data_to_attach.csv', index=False)
-
-
-
-
+# part_one()
+# df_to_attach.to_csv('data_to_attach.csv', index=False)
 
 
 
+# the code below does the same as above, but for ratings 8-14 as they have different formatting
+
+rating_template = r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\GCloud\rating_"
+
+df_to_attach = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\data_to_attach.csv")
+
+def part_two():
+    for x in range(8, 15):
+        rating_path = rating_template + str(x) + '.txt'
+        with open(rating_path, "r") as file:
+            # lines = len(file.readlines()) - 1
+            # limit = 0
+            for line in file:
+                if len(line) < 5:
+                    break
+                else:
+                    parts = line.split('_')
+                    date_parts = parts[0].split('-')
+                    month = date_parts[0]
+                    exact_date = int(date_parts[1])
+                    week_no = 1
+                    for m in range(1, 4):
+                        if exact_date < m * 7:
+                            break
+                        else:
+                            week_no += 1
+                    date_sined = np.sin(2 * np.pi * exact_date / 31)
+                    date_cosed = np.cos(2 * np.pi * exact_date / 31)
+                    year = '2025-'
+                    if int(month) >= 9:
+                        year = '2024-'
+                    datetime_object = pd.to_datetime(year + str(parts[0]), format='%Y-%m-%d')
+                    day_of_year = datetime_object.dayofyear
+                    day_of_year_sined = np.sin(2 * np.pi * exact_date / 365)
+                    day_of_year_cosed = np.cos(2 * np.pi * exact_date / 365)
+                    datetime_object = str(datetime_object)[:-9]
+                    new_row = [month, exact_date, week_no, date_sined, date_cosed, day_of_year, day_of_year_sined, day_of_year_cosed, datetime_object]
+                    df_to_attach.loc[len(df_to_attach)] = new_row
+        print(f'{x} done')
+
+# part_two()
+# df_to_attach.to_csv('data_to_attach.csv', index=False)
 
 
 
-# rating_template = r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\GCloud\rating_"
+# feature engineering for busy periods (sch hols, public hols, etc) below
 
-# # df = pd.DataFrame(columns=column_names)
-# df = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\newdata.csv")
+sch_hols_periods = [['2024-11-23', '2024-12-31'], ['2025-3-15', '2025-3-23'], ['2025-5-31', '2025-6-29'], ['2025-9-6', '2025-9-14'], ['2025-11-22', '2026-1-1']]
 
+# i added 1-3 days before and after the public hol days, since ppl tend to travel before and after the actual days as well
+# Respectively: cny, hari raya puasa, vesak day, hari raya haji, deepavali, christmas
+public_hols_periods = [['2025-1-28', '2025-1-31'], ['2025-3-29', '2025-3-31'], ['2025-6-9', '2025-6-12'], ['2025-6-5', '2025-6-8'], ['2025-10-17', '2025-10-20'], ['2025-12-23', '2025-12-26']]
 
-# for x in range(8, 15):
-#     rating_path = rating_template + str(x) + '.txt'
-#     with open(rating_path, "r") as file:
-#         lines = len(file.readlines()) - 1
-#         limit = 0
-#         for line in file:
-#             if limit == lines:
-#                 break
-#             else:
-#                 scale_jb = int(line[-3])
-#                 scale_wdlands = int(line[-2])
-#                 file_name = line[:-8]
-#                 print(file_name)
-#                 parts = file_name.split('_')
-#                 date = parts[0]
-#                 time = int(parts[1][:2])
-#                 day = parts[2][:3]
-#                 index = None
-#                 for i in range(6):
-#                     if day == column_names[i]:
-#                         index = i
-#                         break
-#                 hour_sin = np.sin(2 * np.pi * time / 24)
-#                 hour_cos = np.cos(2 * np.pi * time / 24)
-#                 new_row = [0, 0, 0, 0, 0, 0, time, hour_sin, hour_cos, scale_jb, scale_wdlands]
-#                 # print(new_row)
-#                 if index:
-#                     new_row[index] = 1
-#                 df.loc[len(df)] = new_row
-#                 pic_index += 1
-#                 limit += 1
-#     print(f'{str(x)} done')
+df_to_attach['full_date_ymd'] = pd.to_datetime(df_to_attach['full_date_ymd'], format='%Y-%m-%d')
+df_to_attach['sch_hol_period'] = False
+for sch_hol_period in sch_hols_periods:
+    df_to_attach['sch_hol_period'] = df_to_attach['sch_hol_period'] | df_to_attach['full_date_ymd'].between(pd.to_datetime(sch_hol_period[0]), pd.to_datetime(sch_hol_period[1]))
+df_to_attach['public_hol_period'] = False
+for public_hol_period in public_hols_periods:    
+    df_to_attach['public_hol_period'] = df_to_attach['public_hol_period'] | df_to_attach['full_date_ymd'].between(pd.to_datetime(public_hol_period[0]), pd.to_datetime(public_hol_period[1]))
 
-# print(df.head(40))
-
-# df.to_csv('newdata_2.csv', index=False)
+df_to_attach.to_csv('data_to_attach_yuh.csv', index=False)
