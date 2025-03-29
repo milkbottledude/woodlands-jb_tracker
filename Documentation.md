@@ -1119,13 +1119,13 @@ I'd like more variables for Machine Learning than just day 📅 and time 🕓, s
 
 We could add month, but we barely have 2 months worth of processed data, so I'll hold off on that until we have data from more months. Another variable I'm considering is public holiday/presence of public holiday 🎄🧧🍊. I say presence because people tend to travel a few days before or after the actual holiday, not just on the day itself. Our processed data happens to fall on the school holiday/Christmas period 🎅🏻🎁, so lets start with this variable.
 
-First I'll identify the school holiday periods for schools in Singapore in 2024 📚🏫
+First I'll identify the school holiday periods for schools in Singapore in 2024 and 2025 📚🏫
 
 ![nonpolyhols](progress_pics/Fig-4.1-sch_hols.jpg)
 
-Fig 4.1: School holiday periods for JCs, as well as primary and secondary schools
+Fig 4.1: School holiday periods for JCs, as well as primary and secondary schools. 2024 on the left in white, and 2025 on the right in black
 
-Looks like aside from 16th-23rd November, the holiday period of all 3 types of education institutions perfectly align, so I'll set the generic year end 'sch hols' period to be from 23rd November to 31st December. Let's take a look at the holiday periods for the polytechnics of Singapore that overlap with the dates of our web-scraped image data.
+Looks like aside from the end of the year, the holiday period of all 3 education institution types perfectly align, so I'll set the generic year end 'sch hols' period to follow that of junior colleges. Let's take a look at the holiday periods for the polytechnics of Singapore that overlap with the dates of our web-scraped image data.
 
 ![tpoly](progress_pics/Fig-4.2-temasek_poly_hols.jpg)
 
@@ -1147,17 +1147,19 @@ Fig 4.5: Ngee Ann Polytechnic's holiday schedule
 
 Fig 4.6: Republic Polytechnic's holiday schedule
 
-As we can see, the holiday periods of polytechnics mostly overlap between early/mid December 2024 to early Jan 2025, so i will set a general polytechnic holiday period from 12 Dec - 1 Jan 🗓
+As we can see, the holiday periods of polytechnics mostly overlap between early/mid December 2024 to early Jan 2025 🗓️. For simplicity's sake, I will just make the 'sch hol period' to include polytechnics as well.
 
 We can feed this information to our machine learning model as binary columns ✅❌, 
 
-for example: `column name: 'within sch hols period'` , `values: True/False.`
+for example: `column name: 'within sch hols period'` , `values: 1 (True)/0 (False)`
 
-As for public holidays, the only public holidays we should be concerned with given our current data are 25th Dec 2024 🎅🏻🎄, which is Christmas on a wednesday, and 1st Jan 2025 🎇🥳, New Year's which is also on a Wednesday. 
+As for public holidays, the only public holidays we should be concerned with given our current data are 25th Dec 2024 🎅🏻🎄, which is Christmas on a wednesday, and 1st Jan 2025 🎇🥳, New Year's which is also on a Wednesday.
 
-My plan is to have a 'proximity to Christmas' and 'proximity to New Years' column (or make them both into a 'public hols' column, not a bad idea too), which shows the number of days between the date of the image 📆 and the public holiday 🎉. To make things simpler, I'll cap the number at '7' days away, so if the date is more than 7 days away, the value in that column would still be 7.
+Update: As the amount of congestion data has piled up over the months 📈 and we now have a substantial amount, I'll also include other public holidays that occur in the year, not just Christmas and New Years. 
 
-Another idea i have for a column is 'amount of jam in the previous hour' or previous few hours. An instance is likely to have a jam if there was already a build up of cars in the previous hour/hours 🚙🚗💨. This is known as 'lagging', which we can implement using the 'shift' function from pandas. Below is a visual example with all the new columns I'm planning to add.
+My plan is to have a 'public hols period' column, which will show whether the date of the row 📆 falls within 3 days of a public holiday 🎉. Both school holiday periods as well as public holiday periods will be represented by a single column each, you will see later on in my code.
+
+Another idea i have for a column is 'amount of jam in the previous hour' or previous few hours. An instance is likely to have a jam if there was already a build up of cars in the previous hour/hours 🚙🚗💨. I only recently learned this, its known as 'lagging', which we can implement using the 'shift' function from pandas. Below is a visual example with all the new columns I'm planning to add.
 
 (please view in landscape/horizontal screen, otherwise the table will look kinda funny)
 
