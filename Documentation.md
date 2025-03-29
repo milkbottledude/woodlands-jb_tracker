@@ -1151,7 +1151,7 @@ As we can see, the holiday periods of polytechnics mostly overlap between early/
 
 We can feed this information to our machine learning model as binary columns ✅❌, 
 
-for example: `column name: 'within sch hols period'` , `values: 1 (True)/0 (False)`
+for example: `column name: 'within sch hols period'` , `values: True/False`
 
 As for public holidays, the only public holidays we should be concerned with given our current data are 25th Dec 2024 🎅🏻🎄, which is Christmas on a wednesday, and 1st Jan 2025 🎇🥳, New Year's which is also on a Wednesday.
 
@@ -1159,35 +1159,84 @@ Update: As the amount of congestion data has piled up over the months 📈 and w
 
 My plan is to have a 'public hols period' column, which will show whether the date of the row 📆 falls within 3 days of a public holiday 🎉. Both school holiday periods as well as public holiday periods will be represented by a single column each, you will see later on in my code.
 
-Another idea i have for a column is 'amount of jam in the previous hour' or previous few hours. An instance is likely to have a jam if there was already a build up of cars in the previous hour/hours 🚙🚗💨. I only recently learned this, its known as 'lagging', which we can implement using the 'shift' function from pandas. Below is a visual example with all the new columns I'm planning to add.
+Additionally, I'll be adding the following:
+1) full datetime value
+   
+This is to make it easier to determine whether the row is within the various holiday periods. Datetime values are easy to work with.
+     
+2) month value
+
+For tracking trends in months of the year.
+     
+3) date value (1st to 31st)
+
+For tracking trends within the month.
+
+4) day of year value (1 to 365)
+
+One worry I have for date value above (3) is that the ML model may wrongly learn that rows of the same date value are more similar than they actually are. 
+
+For example, the model might see a row of date March 21st in the training data, and afterwards have to predict a row of date August 21st. The 2 dates have little in common and its unlikely they will have similar congestion patterns as well. 
+
+However, the model's prediction for the congestion value for August 21st may be heavily influenced by March 21st's congestion value since they have the same 'date value'.
+
+Hence, I have come up with this new variable, 'day of the year' value, just in case that happens, but we still want a metric that can tell the model the date of the row at a more granular level than the month value.
+
+5) week number
+
+Again, similar to (4), another countermeasure to the potential overfitting problem stemming from (3). However, this still has the potential to make the model overfit on week number for other months, just not as likely as (3).
+
+6) sin & cos of date value
+
+Similar to the cyclical encoding of time values, this feature aims to illustrate to the ML model at what point in the month the row's date is. The start, middle, or end of the month.
+
+7) sin & cos of day of year value
+
+Same as (6), except instead of showing what point in the month the row's date is at, this feature shows at what point the row's date is in the year.
+
+Another idea i have for a column is 'amount of jam in the previous hour' or previous few hours. An instance is likely to have a jam if there was already a build up of cars in the previous hour/hours 🚙🚗💨. I only recently learned this, its known as 'lagging', which we can implement using the 'shift' function from pandas. (TBC) It will kinda look like this in a train.csv:
+
+```
+    ...     congestion_value     previous_hour  
+0   ...     2.0                  NaN  
+1   ...     5.0                  2.0  
+2   ...     3.0                  5.0  
+3   ...     0.0                  3.0
+```
+
+Below is an excerpt from the [csv](python_scripts/data_to_attach.csv) with all the new columns I'm planning to add.
 
 (please view in landscape/horizontal screen, otherwise the table will look kinda funny)
 
 ```
-    ...     Time of Day     sch hols period     poly hols period    days to X'mas               days to NY     congestion_value     previous_hour  
-0   ...     23              False               False               7 (actually 33 days away)   7              2.0                  NaN  
-1   ...     0               True                False               7                           7              5.0                  2.0  
-2   ...     1               True                False               7                           7              3.0                  5.0  
-3   ...     2               True                False               7                           7              0.0                  3.0
+month,exact_date_value,week_value,date_sin,date_cos,day_of_year,day_of_year_sin,day_of_year_cos,full_date_ymd,sch_hol_period,public_hol_period
+11,20,3,-0.7907757369376986,-0.6121059825476627,325,0.3375228995941133,0.9413173175128472,2024-11-20,False,False
+11,20,3,-0.7907757369376986,-0.6121059825476627,325,0.3375228995941133,0.9413173175128472,2024-11-20,False,False
+11,20,3,-0.7907757369376986,-0.6121059825476627,325,0.3375228995941133,0.9413173175128472,2024-11-20,False,False
 ```
-I know I suggested it, but the 'days to X'mas' and 'days to NY' column having continuous values does not really sit right with me. I'm worried that since the value '7' represents so many rows (out of 365 days, 351 days are **not** within 1 week of Christmas), the ML model may get confused by the large variance in congestion levels for a single value of 7 (๑﹏๑//)
 
-Another potential idea I have for those 2 columns is making them into binary columns ✅❌. So when the date does fall within 1 week of the public holiday, the value would be True, and vice-versa.
-
-I'll stick with this design for now. But after training and testing the ML model with it once, I will train it again with the 2nd design I just mentioned, and see which yields more accurate predictions.
+Of course, we won't be using all these features in the final ML model training for the webapp. This chapter was more of a brainstorming session to engineer with as many possibly helpful features as possible. In the following chapter, we will be testing all these features using k-folds validation and see which actually help reduce loss, then filter the features accordingly to obtain the most optimal set of features.
 
 So far, the independent variables we have are:
-1) time of day 🕒
-2) day 🗓️
-3) whether the date is within sch hols period 📚🎒
-4) variable 3 but for poly
-5) days to Christmas 🎅🏻🎄🎁
-6) days to New Years 🎆🍾🥳
-7) previous hour's traffic 🚙🚗💨
+1) month (Jan, Feb, etc)
+2) exact_date_value 🗓️ (eg: 21st, 8th)
+3) week (1 to 4, since a month has around 4 weeks)
+4) sch_hol_period 📚
+5) [ublic_hol_periods (Christmas🎅🏻, New Years🥳, etc)
+6) day_of_year (1-365)
+7) sin and cos of exact_date_value
+8) sin and cos of day_of_year
+TBC) previous hour's traffic 🚙🚗💨
 
-When fed to a machine learning model, hopefully the model can identify meaningful patterns between them and the congestion level of the target road. Lets start prepping the data of the 6 columns into a training dataframe 📝
+When fed to a machine learning model, hopefully the model can identify meaningful patterns between them and the congestion level of the target road. As you can see from the csv excerpt, I have already prepped the new features neatly in a df with a python file, [feature_engineered_data_prep.py](python_scripts/feature_engineered_data_prep.py). 📝
 
-We have already been able to extract the 1)time of day and 2)day of the week in our previous data analysis, now we need to extract the date and compare it with holiday dates 🎉🗓 to get the 3rd to 6th variable values.
+Lets take a look at the code which prepped the 8 new features into a tidy [csv](python_scripts/data_to_attach.csv)
+
+```
+put in code
+```
+
+First, I 
 
 chapt 4.3 TBCC!
 
