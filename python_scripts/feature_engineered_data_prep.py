@@ -8,7 +8,7 @@ from datetime import datetime
 pics_folder_template = r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\GCloud\snaps_"
 
 extra_column_names = ['month', 'exact_date_value', 'week_value', 'date_sin', 'date_cos', 'day_of_year', 'day_of_year_sin', 'day_of_year_cos', 'full_date_ymd']
-df_to_attach = pd.DataFrame(columns=extra_column_names)
+# df_to_attach = pd.DataFrame(columns=extra_column_names)
 
 def part_one():
     for p in range(4, 8):
@@ -45,8 +45,6 @@ def part_one():
 # the code below does the same as above, but for ratings 8-14 as they have different formatting
 
 rating_template = r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\GCloud\rating_"
-
-df_to_attach = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\data_to_attach.csv")
 
 def part_two():
     for x in range(8, 15):
@@ -95,12 +93,14 @@ sch_hols_periods = [['2024-11-23', '2024-12-31'], ['2025-3-15', '2025-3-23'], ['
 # Respectively: cny, hari raya puasa, vesak day, hari raya haji, deepavali, christmas
 public_hols_periods = [['2025-1-28', '2025-1-31'], ['2025-3-29', '2025-3-31'], ['2025-6-9', '2025-6-12'], ['2025-6-5', '2025-6-8'], ['2025-10-17', '2025-10-20'], ['2025-12-23', '2025-12-26']]
 
-df_to_attach['full_date_ymd'] = pd.to_datetime(df_to_attach['full_date_ymd'], format='%Y-%m-%d')
-df_to_attach['sch_hol_period'] = False
-for sch_hol_period in sch_hols_periods:
-    df_to_attach['sch_hol_period'] = df_to_attach['sch_hol_period'] | df_to_attach['full_date_ymd'].between(pd.to_datetime(sch_hol_period[0]), pd.to_datetime(sch_hol_period[1]))
-df_to_attach['public_hol_period'] = False
-for public_hol_period in public_hols_periods:    
-    df_to_attach['public_hol_period'] = df_to_attach['public_hol_period'] | df_to_attach['full_date_ymd'].between(pd.to_datetime(public_hol_period[0]), pd.to_datetime(public_hol_period[1]))
+def hol_perioding(df_to_attach):
+    df_to_attach['full_date_ymd'] = pd.to_datetime(df_to_attach['full_date_ymd'], format='%Y-%m-%d')
+    df_to_attach['sch_hol_period'] = False
+    for sch_hol_period in sch_hols_periods:
+        df_to_attach['sch_hol_period'] = df_to_attach['sch_hol_period'] | df_to_attach['full_date_ymd'].between(pd.to_datetime(sch_hol_period[0]), pd.to_datetime(sch_hol_period[1]))
+    df_to_attach['public_hol_period'] = False
+    for public_hol_period in public_hols_periods:    
+        df_to_attach['public_hol_period'] = df_to_attach['public_hol_period'] | df_to_attach['full_date_ymd'].between(pd.to_datetime(public_hol_period[0]), pd.to_datetime(public_hol_period[1]))
 
-df_to_attach.to_csv('data_to_attach_yuh.csv', index=False)
+df_to_attach = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\data_to_attach.csv")
+original_df = pd.read_csv(r)

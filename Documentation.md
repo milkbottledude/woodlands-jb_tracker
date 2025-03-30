@@ -22,11 +22,11 @@ Chapter 3: Processing and Visualizing Data
 Chapter 4: Machine Learning
 - 4.1: [One-hot encoding, sin-cos encoding, and Linear Regression model](#41-one-hot-encoding-sin-cos-encoding-and-linear-regression-model)
 - 4.2: [Random Forest + Decision Tree Regression](#42-random-forest-and-decision-tree-regression)
-- 4.3: [Feature Engineering (in progress, tbc!)](#43-feature-engineering-in-progress-tbc) (delete when done)
-- 4.4: [Model Train/Test and Tuning (tbc)](#44-model-traintest-and-tuning-tbc) (delete when done)
+- 4.3: [Feature Engineering (in progress)](#43-feature-engineering) (delete when done)
+- 4.4: [Model Train/Test and Tuning (in progress, tbc!)](#44-model-traintest-and-tuning-tbc) (delete when done)
 
 Chapter 5: Deploying Code to Website
-- 5.1: [Making HTML & CSS for Frontend](#51-making-html-and-css-for-frontend) (delete when done)
+- 5.1: [Making HTML & CSS for Frontend (in progress, tbc!)](#51-making-html-and-css-for-frontend) (delete when done)
 - 5.2: [Creating Backend with Flask, main.py, and then app.yaml](#52-creating-backend-with-flask-mainpy-and-then-appyaml)
 - 5.3: [.joblib file & Project Folder structure](#53-joblib-file-and-project-folder-structure)
 - 5.4: [Creating main.py v2 & app.yaml](#54-creating-mainpy-v2-and-appyaml)
@@ -1113,7 +1113,7 @@ Put it this way, right now the overfitted model will have more accurate output. 
 
 I like the way the model is performing so far. However, every good machine learning engineer knows that an ML model is only as good as the data its fed, no matter how well the model is configured and tuned ⚙️. So before we get into the nitty gritty tuning, lets work on feature engineering 🔧.
 
-### 4.3: Feature Engineering (in progress, tbc!)
+### 4.3: Feature Engineering
 
 I'd like more variables for Machine Learning than just day 📅 and time 🕓, so in this subchapter I'll be trying to come up with more. Variables are kind of like clues for an ML model; the more you have, the more accurate the output prediction.
 
@@ -1195,7 +1195,7 @@ Additionally, I'll be adding the following:
 
     Same as (6), except instead of showing what point in the month the row's date is at, this feature shows at what point the row's date is in the year.
 
-Another idea i have for a column is 'amount of jam in the previous hour' or previous few hours. An instance is likely to have a jam if there was already a build up of cars in the previous hour/hours 🚙🚗💨. I only recently learned this, its known as 'lagging', which we can implement using the 'shift' function from pandas. (TBC) It will kinda look like this in a train.csv:
+Another idea i have for a column is 'amount of jam in the previous hour' or previous few hours (not familiar enough with this method yet, TBC). An instance is likely to have a jam if there was already a build up of cars in the previous hour/hours 🚙🚗💨. I only recently learned this, its known as 'lagging' and we can implement it using the 'shift' function from pandas. It will kinda look like this in a train.csv:
 
 ```
     ...     congestion_value     previous_hour  
@@ -1216,7 +1216,9 @@ month,exact_date_value,week_value,date_sin,date_cos,day_of_year,day_of_year_sin,
 11,20,3,-0.7907757369376986,-0.6121059825476627,325,0.3375228995941133,0.9413173175128472,2024-11-20,False,False
 ```
 
-Of course, we won't be using all these features in the final ML model training for the webapp. This chapter was more of a brainstorming session to engineer with as many possibly helpful features as possible. In the following chapter, we will be testing all these features using k-folds validation and see which actually help reduce loss, then filter the features accordingly to obtain the most optimal set of features.
+Of course, we won't be using all these features in the final ML model training for the webapp. This chapter was more of a brainstorming session 🧠 to come up with as many possibly helpful features as possible.
+
+In the following chapter, we will be testing all these features using k-folds validation and see which actually help reduce loss 🧐, then filter the features accordingly to obtain the most optimal set of features 🎯.
 
 So far, the independent variables we have are:
 1) month (Jan, Feb, etc)
@@ -1229,17 +1231,93 @@ So far, the independent variables we have are:
 8) sin and cos of day_of_year
 TBC) previous hour's traffic 🚙🚗💨
 
-When fed to a machine learning model, hopefully the model can identify meaningful patterns between them and the congestion level of the target road. As you can see from the csv excerpt, I have already prepped the new features neatly in a df with a python file, [feature_engineered_data_prep.py](python_scripts/feature_engineered_data_prep.py). 📝
+When fed to a machine learning model, hopefully the model can identify meaningful patterns 📈 between them and the congestion level of the target road. 
 
-Lets take a look at the code which prepped the 8 new features into a tidy [csv](python_scripts/data_to_attach.csv)
+As you can see from the csv excerpt, I have already prepped the new features neatly in a df with a python file, [feature_engineered_data_prep.py](python_scripts/feature_engineered_data_prep.py). 📝
+
+Lets take a look at the code used to prep the 8 new features into a tidy [csv](python_scripts/data_to_attach.csv). I'll break up the code into parts to make it more digestible 🧩.
+
+(Line 1-6)
 
 ```
-put in code
+rating_template = r"GCloud\rating_"
+
+1    for x in range(4, 15):
+2        rating_path = rating_template + str(x) + '.txt'
+3        with open(rating_path, "r") as file:
+4            for line in file:
+5                if len(line) < 1:
+6                    break
+7                else:
 ```
 
-First, I 
+Similar to the previous data preparation, I define a naming template for the rating files, then 'for' loop through the numbers 4 to 15 to go through all the relevant rating files 🔄.
 
-chapt 4.3 TBCC!
+I then check whether the line has more than 1 character before continuing, as the last line does not have any content. This is due to the way txt files deal with '\n' newlines. This 'if' statement will only execute on the last line.
+
+(Line 7-17)
+
+```
+7                else:
+8                    parts = line.split('_')
+9                    date_parts = parts[0].split('-')
+10                   month = date_parts[0]
+11                   exact_date = int(date_parts[1])
+12                   week_no = 1
+13                   for m in range(1, 4):
+14                       if exact_date < m * 7:
+15                           break
+16                       else:
+17                           week_no += 1
+```
+
+Same as before, I split the filename into parts. However, we only care about the first part, the date 🗓️, as you can see in Line 9. I first extract the month and date. Then, I check what week of the month it is in Lines 12-17 by seeing if the date value is greater or smaller than multiples of 7 up to 28.
+
+(Line 18-22)
+
+```
+18                   date_sined = np.sin(2 * np.pi * exact_date / 31)
+19                   date_cosed = np.cos(2 * np.pi * exact_date / 31)
+20                   year = '2025-'
+21                   if int(month) >= 9:
+22                       year = '2024-'
+23                   datetime_object = pd.to_datetime(year + str(parts[0]), format='%Y-%m-%d')
+```
+
+After cylical encoding of the date value using numpy's sin and cos functions, I check whether the month value is greater than 9. If it is, that means the data was collected in 2024. Otherwise, the 'year' defaults to 2025.
+
+A rather crude way of determining the year, and it will stop working once we start to collect data in the 9th month of 2025 ⛔. I'm looking to change the way the year is determined in the near future, but not now.
+
+(Line 23-27)
+
+```
+23                   datetime_object = pd.to_datetime(year + str(parts[0]), format='%Y-%m-%d')
+24                   day_of_year = datetime_object.dayofyear
+25                   day_of_year_sined = np.sin(2 * np.pi * exact_date / 365)
+26                   day_of_year_cosed = np.cos(2 * np.pi * exact_date / 365)
+27                   datetime_object = str(datetime_object)[:-9]
+```
+
+First, I attach the year to the month and date to form the full date 🗓️, then I convert it to a datetime object to find its 'day_of_the_year' value (the one that ranges from 1 to 365). 
+
+After cyclical encoding of the 'day_of_year' value, I convert the full date value back to a string to remove the last 9 characters, which are the default time values '00:00:00' 🕓. 
+
+They are assigned to datetime objects by default when they are saved to a csv file 📑, but they are of no use since we already have the time value for the rows. Also they are incorrect.
+
+(Line 28-30)
+
+```
+27                   datetime_object = str(datetime_object)[:-9]
+28                   new_row = [month, exact_date, week_no, date_sined, date_cosed, day_of_year, day_of_year_sined, day_of_year_cosed, datetime_object]
+29                   df_to_attach.loc[len(df_to_attach)] = new_row
+30       print(f'rating_{x} done')
+```
+
+I then compile all the new data into a list called 'new_row' and add it to the df 📝. At the end of the 'for' loop, I print a little log 💬 stating that the info in that particular rating file has been recorded down, before moving on to the next file. 
+
+*feature engineering of 'lagging' variable columns TBC!*
+
+I'll attach the new columns to the original csv later on. In the next chapter, we will be using testing the loss values for each newly engineered feature to see which ones to keep, and which to discard.
 
 ### 4.4: Model Train/Test and Tuning (tbc)
 First, lets see how good our RFR model is without the extra features from feature engineering. I labelled the rest of the pictures 🖼️ (snaps 4, 5, 6 & 7) and trained the model on those too. However, I labelled the last 4 'snaps' folder pictures differently, straight up rating the congestion on either side of the causeway on a scale of 0-5 instead of using CVAT bounding boxes. Drawing them for every image takes too long ⌛, and the bounding box areas are not consistent.
@@ -1273,13 +1351,55 @@ After testing both, here are the results:
 - rfr rmse: 1.2608052907655005
 - ratio: 1.8207708094160688
 
-Looks like the congestion on the road to JB is more predictable, with the MAE and RMSE being quite low (compared to the range of our values, 0-5). However, the RMSE being more than double the MAE implies there are some cases of large deviations in predicted values from the actual value. Overall, not too shabby for a first test.
+Looks like the congestion on the road to JB is more predictable, with the MAE and RMSE being quite low (compared to the range of our values, 0-5). However, the RMSE being more than double the MAE implies there are some cases of large deviations in predicted values from the actual value. Overall, not too shabby for a first test 🤝.
 
 The model for the other side of the road does not look as promising 😔. While the RMSE to MAE ratio is less than the other model, meaning there are no 'abnormally larger than usual' errors, thats probably because the MAE is already so high (more than double the previous MAE value). The fact that the MAE in this case is about 13% of the max congestion value, 5, is a little concerning but not a huge problem. However, the RMSE is 1.26 arbitrary units, a quarter of the congestion value range, which is a big problem 🚩. This means that when predicting the congestion on the road to Woodlands based on user input data 🗓️🕝, the predicted value output back to the user may differ from the actual value by more than 1 au. Thats a lot, considering the max congestion value is 5au.
 
 Based on the EDA I did in [Chapter 3.2](#32-exploratory-data-analysis-eda), the congestion patterns for the road to Woodlands is certainly more inconsistent. The JB road model is nearly there but the Woodlands one needs some serious tinkering 🔧, and perhaps more training data for it to better generalise to the unpredictable nature of the traffic jams coming into Woodlands Checkpoint from JB.
 
-#### RFR weights
+Now lets see whether the new features will improve the loss values. I hope they do, otherwise it would have been a big waste of time. We will test them in the python file [Predicting_with_RFR.py](python_scripts/Predicting_with_RFR.py), as I think I've made too many python files.
+
+```
+testing code here
+```
+
+*explain testing code*
+
+Lets take a look at the loss values:
+
+`loss values here`
+
+Looks like....
+
+After careful consideration, I've decided to incorporate the following features:
+- feature
+
+  *justify*
+  
+- feature
+  *justify*
+
+OR *all justify here*
+
+Now that we are done with that, lets move on to testing the new 'holiday period' features. But first, lets check for any class imbalance.
+
+```
+code here
+```
+Here are the results:
+`hi`
+As you can see, the number of rows that have 'True' for the school holiday period feature is ..., and ... for the public holiday feature. There is a clear class imbalance. 
+
+We don't want a situation where the train data is mainly made up of rows not within the holiday period. To prevent this, I'll be using k-folds validation instead of a standard train/test split to test the loss of the model when the holiday period features are implemented. 
+
+K-folds validation splits the data into 'k' parts and trains the model 'k' times, such that the model is trained on the whole dataset. Although its more computationally expensive, it helps prevent the above from happening, meaning the model wont overfit on the non-holiday rows. 
+
+Furthermore, we have a small dataset, so its good to train our model on as much of it as possible.
+
+
+*continue here*
+
+#### RFR weights (tbc)
 
 
 ## Chapter 5: Automation and Website Making
