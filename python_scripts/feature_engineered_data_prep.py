@@ -2,6 +2,9 @@ import os
 import pandas as pd
 import numpy as np
 from datetime import datetime
+# for correlation matrix;
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 # getting date details for outdated snaps that dont follow the new rating formatting (snaps 4-8)
 
@@ -103,4 +106,13 @@ def hol_perioding(df_to_attach):
         df_to_attach['public_hol_period'] = df_to_attach['public_hol_period'] | df_to_attach['full_date_ymd'].between(pd.to_datetime(public_hol_period[0]), pd.to_datetime(public_hol_period[1]))
 
 df_to_attach = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\data_to_attach.csv")
-original_df = pd.read_csv(r)
+final_df = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\final_data.csv")
+final_df.pop('month')
+final_df.pop('full_date_ymd')
+# no hols first
+final_df.pop('sch_hol_period')
+final_df.pop('public_hol_period')
+
+correlation_matrix = final_df.corr()
+sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap="RdBu")
+plt.show()

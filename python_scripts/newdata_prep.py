@@ -87,8 +87,9 @@ def part_two():
                     df.loc[len(df)] = new_row
         print(f'{str(x)} done {len(df)}')
 
-part_one()
-part_two()
 
-df.to_csv('newdata.csv', index=False)
+# df.to_csv('newdata.csv', index=False)
+
+df_loss = pd.read_csv('loss_data.csv')
+print(df_loss)
 

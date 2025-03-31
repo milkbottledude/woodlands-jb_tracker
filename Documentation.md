@@ -30,7 +30,7 @@ Chapter 5: Deploying Code to Website
 - 5.2: [Creating Backend with Flask, main.py, and then app.yaml](#52-creating-backend-with-flask-mainpy-and-then-appyaml)
 - 5.3: [.joblib file & Project Folder structure](#53-joblib-file-and-project-folder-structure)
 - 5.4: [Creating main.py v2 & app.yaml](#54-creating-mainpy-v2-and-appyaml)
-- 5.5: [
+- 5.5: 
 
 
 [Conclusion](#conclusion)
@@ -1317,7 +1317,7 @@ I then compile all the new data into a list called 'new_row' and add it to the d
 
 *feature engineering of 'lagging' variable columns TBC!*
 
-I'll attach the new columns to the original csv later on. In the next chapter, we will be using testing the loss values for each newly engineered feature to see which ones to keep, and which to discard.
+In the next chapter, we will be using testing the loss values for each newly engineered feature to see which ones to keep, and which to discard.
 
 ### 4.4: Model Train/Test and Tuning (tbc)
 First, lets see how good our RFR model is without the extra features from feature engineering. I labelled the rest of the pictures 🖼️ (snaps 4, 5, 6 & 7) and trained the model on those too. However, I labelled the last 4 'snaps' folder pictures differently, straight up rating the congestion on either side of the causeway on a scale of 0-5 instead of using CVAT bounding boxes. Drawing them for every image takes too long ⌛, and the bounding box areas are not consistent.
@@ -1357,19 +1357,129 @@ The model for the other side of the road does not look as promising 😔. While 
 
 Based on the EDA I did in [Chapter 3.2](#32-exploratory-data-analysis-eda), the congestion patterns for the road to Woodlands is certainly more inconsistent. The JB road model is nearly there but the Woodlands one needs some serious tinkering 🔧, and perhaps more training data for it to better generalise to the unpredictable nature of the traffic jams coming into Woodlands Checkpoint from JB.
 
-Now lets see whether the new features will improve the loss values. I hope they do, otherwise it would have been a big waste of time. We will test them in the python file [Predicting_with_RFR.py](python_scripts/Predicting_with_RFR.py), as I think I've made too many python files.
+Now lets see whether the new features will improve the loss values. I hope they do, otherwise it would have been a big waste of time.
+
+We will test them in the python file [Predicting_with_RFR.py](python_scripts/Predicting_with_RFR.py), as I think I've made too many python files.
+
+Prior to this, the python file already had a function to test RFR models coded in Chapter 4.2, you can see its explanation [here](#random-forest-regression). I made some minor tweaks to it to include the train/test splitting for greater efficiency, as you can see below.
 
 ```
-testing code here
+df_loss = pd.DataFrame(columns=['feature', 'mae', 'rmse', 'mae_to_rmse ratio'])
+
+def train_test_rfr(X, y, column_name, save_model=False):
+    print(X.shape, y.shape)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+    rfr_model = RandomForestRegressor()
+    rfr_model.fit(X_train, y_train)
+    rfr_predictions = rfr_model.predict(X_test)
+    # X_test['congestion_prediction'] = list(rfr_predictions)
+    rfr_mae = mean_absolute_error(y_test, rfr_predictions)
+    rfr_rmse = mean_squared_error(y_test, rfr_predictions)**0.5
+    mae_to_rmse = rfr_rmse/rfr_mae
+    print(f"rfr mae: {rfr_mae} ")
+    print(f"rfr rmse: {rfr_rmse} ")
+    print(f'ratio: {mae_to_rmse}')
+    new_row = [column_name, rfr_mae, rfr_rmse, mae_to_rmse]
+    df_loss.loc[len(df_loss)] = new_row
+    if save_model == True:
+        joblib.dump(rfr_model, "rfr_model_jb.joblib") # saving rfr weights for App Engine
+```
+I also created a df to store the loss values so that its easier to compare between loss values of the various features 
+
+```
+df = pd.read_csv('newdata.csv')
+df_to_attach = pd.read_csv('data_to_attach.csv')
+new_features = []
+for feature_name in df_to_attach:
+    new_features.append(feature_name)
+
+y_column_jb = df.pop('congestion_scale_jb')
+y_column_wdlands = df.pop('congestion_scale_wdlands')
+
+for feature_name in new_features:
+    df[feature_name] = df_to_attach[feature_name]
+    train_test_rfr(df, y_column_jb, feature_name) # depends on which road you want to test (REM)
+    df.drop(feature_name)
+
 ```
 
-*explain testing code*
+*explain testing code*  ADD THE CORRELATION TING TOO
 
-Lets take a look at the loss values:
+Lets take a look at the loss values. But first, let's see what the loss values are without any new variables first when y-column = y_column_jb:
 
-`loss values here`
+```
+# original loss values from snaps 4-7 without new features (4dp):
+mae = 0.3366
+rmse = 0.7619 
+ratio = 2.2637
 
-Looks like....
+# loss values from snaps 4-14 without new features (4dp):
+mae: 0.9166942560262104 
+rmse: 1.5240956662682845 
+ratio: 1.6625997776784447
+
+# with new features
+             feature       mae      rmse  mae_to_rmse ratio
+0              month  0.838329  1.540698           1.837822
+1   exact_date_value  0.674292  1.178735           1.748107
+2         week_value  0.683278  1.188597           1.739550
+3           date_sin  0.662335  1.170298           1.766927
+4           date_cos  0.661014  1.163488           1.760157
+5        day_of_year  0.666203  1.196155           1.795482
+6    day_of_year_sin  0.660283  1.193352           1.807335
+7    day_of_year_cos  0.659929  1.183392           1.793211
+```
+
+*more data from greater time period = more errors.  Gd news is that the new values did reduce the mae and rmse except for month, where only the mae decreased. Overall, the loss values themselves are not good, but its encouraging to see that the feature engineering I did actually make a difference in reducing the loss values. Since all but one improve the loss metrics, ill use them all at once and plot a correlation matrix to see ukw, den can further trim down the total number of columns, since many columns doesnt necessarily mean btr results*
+
+The RFR file is getting quite messy, lets create the correlation matrix in the [feature engineering prep python file](python_scripts/feature_engineered_data_prep.py) instead:
+
+```
+correlation_matrix = df.corr()
+sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap="RdBu")
+plt.show()
+```
+- "annot=True" writes the correlation value inside the coloured boxes. If it were set to False, we would not see the number, just the heatmap colours
+  
+- 'fmt=".2f"' makes sure all the correlation values inside the boxes are rounded to 2dp. Without this, the heatmap would be very messy with long and incomprehensive numbers strewn everywhere.
+  
+- 'cmap="RdBu"' defines the red-blue colourmap in matplotlib, which makes it such that a square of value -1 is of the same colour as a square of value 1. Since we want to avoid numbers close to -1 as well as 1, I thought it would be good to make them both of the same colour, making the plot more decipherable.
+
+Here are the results:
+
+![](progress_pics/Fig-4.7-feature_correlation_heatmap.jpg)
+
+Fig 4.7: Heatmap showing correlation values between features, as well as between features and the two y-columns.
+
+
+Now that I think about it, it seems quite a waste to not use the 'month' column. It should be providing a wealth of useful information to the model since its a good representation of the different seasons in a year, yet its increasing the mae and rmse. 
+
+I have a feeling the model is misunderstanding the relationship between the numerical 'month' column and the congestion values, in that it thinks a bigger 'month' value means larger congestion value, or something along those lines. 
+
+Let's try a different approach, one-hot encoding the month values instead of having them as numerical values all in one column. 
+
+*Now imma do for month*
+
+
+
+Now lets check out the loss values when y-column = y_column_wdlands:
+```
+# original loss values from snaps 4-7 without new features (4dp):
+    mae = 0.6925
+    rmse = 1.2608
+    mae_to_rmse ratio = 1.8208
+
+# with new features
+             feature       mae      rmse  mae_to_rmse ratio
+0              month  1.802642  2.286182           1.268239
+1   exact_date_value  1.379175  1.775633           1.287461
+2         week_value  1.377712  1.775881           1.289007
+3           date_sin  1.372665  1.772797           1.291500
+4           date_cos  1.360896  1.763427           1.295783
+5        day_of_year  1.317476  1.735460           1.317261
+6    day_of_year_sin  1.309835  1.715894           1.310008
+7    day_of_year_cos  1.313066  1.725410           1.314032
+```
 
 After careful consideration, I've decided to incorporate the following features:
 - feature
@@ -1396,8 +1506,11 @@ K-folds validation splits the data into 'k' parts and trains the model 'k' times
 
 Furthermore, we have a small dataset, so its good to train our model on as much of it as possible.
 
+```
+k folds code here
+```
 
-*continue here*
+*explain k folds results n elab*
 
 #### RFR weights (tbc)
 
