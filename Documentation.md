@@ -1451,6 +1451,7 @@ Here are the results:
 
 Fig 4.7: Heatmap showing correlation values between features, as well as between features and the two y-columns.
 
+*talk abt heatmap values*
 
 Now that I think about it, it seems quite a waste to not use the 'month' column. It should be providing a wealth of useful information to the model since its a good representation of the different seasons in a year, yet its increasing the mae and rmse. 
 
