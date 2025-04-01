@@ -109,10 +109,23 @@ df_to_attach = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\pyt
 final_df = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\final_data.csv")
 final_df.pop('month')
 final_df.pop('full_date_ymd')
-# no hols first
-final_df.pop('sch_hol_period')
-final_df.pop('public_hol_period')
+# # no hols first
+# final_df.pop('sch_hol_period')
+# final_df.pop('public_hol_period')
 
-correlation_matrix = final_df.corr()
-sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap="RdBu")
-plt.show()
+def correlation_heatmap():
+    correlation_matrix = final_df.corr()
+    sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap="RdBu")
+    plt.show()
+
+def count_true(df, column_name):
+    count_true = df[column_name].sum()
+    print(count_true)
+    total_no_of_rows = len(df)
+    print(total_no_of_rows)
+    print(int(count_true)/total_no_of_rows)
+
+count_true(final_df, 'sch_hol_period')
+count_true(final_df, 'public_hol_period')
+
+## execute k folds on month here

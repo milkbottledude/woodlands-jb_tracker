@@ -1339,17 +1339,17 @@ To test how good the model is, lets use 2 relatively simples metrics 🧐: mean 
 
 I compiled all the data we have so far and did a 80% train, 20% test split. Normally I would do a 70/30 split, which you would know if you saw in the other repositories the way I go about my Kaggle competitions. But as we have limited image data that has been labelled with a congestion value, I chose to prioritise training data in this case. The code above is currently testing the model trained on data from the road to Johor, hence the y column selected for the split in Line 4 is 'y_column_jb'. But not to worry, we will change that and test the model for the road to Woodlands as well.
 
-After testing both, here are the results, rounded off to 4dp:
+After testing both, here are the results:
 
 **road to JB model**
-- rfr mae: 0.3366
-- rfr rmse: 0.7619
-- ratio: 2.2637 
+- rfr mae: 0.33655183072079514
+- rfr rmse: 0.7618679373275961
+- ratio: 2.2637462280205067 
 
 **road to Wdlands model**
-- rfr mae: 0.6925
-- rfr rmse: 1.2608
-- ratio: 1.8208
+- rfr mae: 0.6924568892719933
+- rfr rmse: 1.2608052907655005
+- ratio: 1.8207708094160688
 
 Looks like the congestion on the road to JB is more predictable, with the MAE and RMSE being quite low (compared to the range of our values, 0-5). However, the RMSE being more than double the MAE implies there are some cases of large deviations in predicted values from the actual value. Overall, not too shabby for a first test 🤝.
 
@@ -1357,7 +1357,7 @@ The model for the other side of the road does not look as promising 😔. While 
 
 Based on the EDA I did in [Chapter 3.2](#32-exploratory-data-analysis-eda), the congestion patterns for the road to Woodlands is certainly more inconsistent. The JB road model is nearly there but the Woodlands one needs some serious tinkering 🔧, and perhaps more training data for it to better generalise to the unpredictable nature of the traffic jams coming into Woodlands Checkpoint from JB.
 
-Now lets see whether the new features will help to bring down the loss values 📉. I hope they do, otherwise all that feature engineering would have been a big waste of time.
+Now lets see whether the new features will improve the loss values. I hope they do, otherwise it would have been a big waste of time.
 
 We will test them in the python file [Predicting_with_RFR.py](python_scripts/Predicting_with_RFR.py), as I think I've made too many python files.
 
@@ -1387,25 +1387,25 @@ def train_test_rfr(X, y, column_name, save_model=False):
 I also created a df to store the loss values so that its easier to compare between loss values of the various features 
 
 ```
-1    df = pd.read_csv('newdata.csv')
-2    df_to_attach = pd.read_csv('data_to_attach.csv')
-3    new_features = []
-4    for feature_name in df_to_attach:
-5        new_features.append(feature_name)
-    
-6    y_column_jb = df.pop('congestion_scale_jb')
-7    y_column_wdlands = df.pop('congestion_scale_wdlands')
-    
-8    for feature_name in new_features:
-9        df[feature_name] = df_to_attach[feature_name]
-10       train_test_rfr(df, y_column_jb, feature_name) # depends on which road you want to test
-11       df.drop(feature_name)
+df = pd.read_csv('newdata.csv')
+df_to_attach = pd.read_csv('data_to_attach.csv')
+new_features = []
+for feature_name in df_to_attach:
+    new_features.append(feature_name)
+
+y_column_jb = df.pop('congestion_scale_jb')
+y_column_wdlands = df.pop('congestion_scale_wdlands')
+
+for feature_name in new_features:
+    df[feature_name] = df_to_attach[feature_name]
+    train_test_rfr(df, y_column_jb, feature_name) # depends on which road you want to test (REM)
+    df.drop(feature_name)
 
 ```
 
 *explain testing code*  ADD THE CORRELATION TING TOO
 
-Before going into the new loss values, let's see what the loss values are without any new variables first, when y-column = y_column_jb:
+Lets take a look at the loss values. But first, let's see what the loss values are without any new variables first when y-column = y_column_jb:
 
 ```
 # original loss values from snaps 4-7 without new features (4dp):
@@ -1417,11 +1417,7 @@ ratio = 2.2637
 mae: 0.9166942560262104 
 rmse: 1.5240956662682845 
 ratio: 1.6625997776784447
-```
 
-Keeping that in mind, lets see how the loss values when the new features are added fare:
-
-```
 # with new features
              feature       mae      rmse  mae_to_rmse ratio
 0              month  0.838329  1.540698           1.837822
@@ -1499,30 +1495,10 @@ OR *all justify here*
 Now that we are done with that, lets move on to testing the new 'holiday period' features. But first, lets check for any class imbalance.
 
 ```
-1    def count_true(df, column_name):
-2        count_true = df['column_name'].sum()
-3        print(count_true)
-4        total_no_of_rows = len(df)
-5        print(total_no_of_rows)
-6        print(int(count_true)/total_no_of_rows)
-    
-7    count_true(final_df, 'sch_hol_period')
-8    count_true(final_df, 'public_hol_period')
+code here
 ```
-
-*quick explanation of code*
-
 Here are the results:
-```
-number of rows with 'True' for 'sch_hol_period' column = 732
-total number of rows = 2119 
-'True' rows to total number of rows ratio: 0.3454459650778669
-
-number of rows with 'True' for 'sch_hol_period' column = 96
-total number of rows = 2119
-'True' rows to total number of rows ratio: 0.045304388862671074
-```
-
+`hi`
 As you can see, the number of rows that have 'True' for the school holiday period feature is ..., and ... for the public holiday feature. There is a clear class imbalance. 
 
 We don't want a situation where the train data is mainly made up of rows not within the holiday period. To prevent this, I'll be using k-folds validation instead of a standard train/test split to test the loss of the model when the holiday period features are implemented. 

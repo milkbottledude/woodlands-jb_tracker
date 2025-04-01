@@ -16,7 +16,7 @@ df_to_attach = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\pyt
 
 dontneedtime = df.pop('Time of Day')
 dontneedfulldate = df_to_attach.pop('full_date_ymd')
-remove_holperiods_first = df_to_attach.pop(['sch_hol_period', 'public_hol_period'])
+remove_holperiods_first = df_to_attach.drop(['sch_hol_period', 'public_hol_period'], axis=1)
 
 df_loss = pd.DataFrame(columns=['feature', 'mae', 'rmse', 'mae_to_rmse ratio'])
 
@@ -58,6 +58,7 @@ def testing_new_features(to_csv=False):
     print(df_loss)
     if to_csv:
         df_loss.to_csv('loss_data_wdlands.csv', index=False)
+
 
 
 
