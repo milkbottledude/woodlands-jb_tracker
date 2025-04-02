@@ -1539,29 +1539,36 @@ Now that we are done with that, lets move on to testing the new 'holiday period'
 ```
 1    def count_true(df, column_name):
 2        count_true = df['column_name'].sum()
-3        print(count_true)
+3        print(f'number of rows with 'True' for 'sch_hol_period' column = [count_true}')
 4        total_no_of_rows = len(df)
-5        print(total_no_of_rows)
-6        print(int(count_true)/total_no_of_rows)
+5        print(f'total number of rows = {total_no_of_rows}')
+6        print(f'Percentage of rows with 'True' = {int(count_true)/total_no_of_rows}')
     
 7    count_true(final_df, 'sch_hol_period')
 8    count_true(final_df, 'public_hol_period')
 ```
+(Line 1-6)
 
-*quick explanation of code*
+I made a little function that checks for the number of rows with value = 'True' for a given column in a given df. It gives the number in Line 3, before also printing the total number of rows as well as the percentage of rows with 'True'. 
+
+(Line 7-8)
+
+Then, I call the function, passing the two holiday period features in as parameters.
 
 Here are the results:
 ```
 number of rows with 'True' for 'sch_hol_period' column = 732
 total number of rows = 2119 
-'True' rows to total number of rows ratio: 0.3454459650778669
+Percentage of rows with 'True': 0.3454459650778669
 
 number of rows with 'True' for 'sch_hol_period' column = 96
 total number of rows = 2119
-'True' rows to total number of rows ratio: 0.045304388862671074
+Percentage of rows with 'True': 0.045304388862671074
 ```
 
-As you can see, the number of rows that have 'True' for the school holiday period feature is ..., and ... for the public holiday feature. There is a clear class imbalance. 
+As you can see, the percentage of rows that have 'True' for the school holiday period feature (1dp) is 34.5%, and 4.5% for the public holiday feature. 
+
+While 34.5% is only a mild class imbalance and does not warrant any changes, a percentage of 4.5% is very clearly a severe case of class imbalance that requires our attention.
 
 We don't want a situation where the train data is mainly made up of rows not within the holiday period. To prevent this, I'll be using k-folds validation instead of a standard train/test split to test the loss of the model when the holiday period features are implemented. 
 
