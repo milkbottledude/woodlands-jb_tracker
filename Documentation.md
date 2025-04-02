@@ -1319,7 +1319,7 @@ I then compile all the new data into a list called 'new_row' and add it to the d
 
 In the next chapter, we will be using testing the loss values for each newly engineered feature to see which ones to keep, and which to discard.
 
-### 4.4: Model Train/Test and Tuning (tbc)
+### 4.4: Feature Selection Testing and Model Tuning (tbc)
 First, lets see how good our RFR model is without the extra features from feature engineering. I labelled the rest of the pictures 🖼️ (snaps 4, 5, 6 & 7) and trained the model on those too. However, I labelled the last 4 'snaps' folder pictures differently, straight up rating the congestion on either side of the causeway on a scale of 0-5 instead of using CVAT bounding boxes. Drawing them for every image takes too long ⌛, and the bounding box areas are not consistent.
 
 To test how good the model is, lets use 2 relatively simples metrics 🧐: mean actual error (MAE) and root mean squared error (RMSE). MAE will show us the average difference between the predicted and actual values, while RMSE will place more emphasis on large errors due to its 'squaring' nature. This is helpful to identify if the model is doing well for certain instances but not doing so well for others, since the larger errors are penalised more.
@@ -1361,7 +1361,9 @@ Now lets see whether the new features will help to bring down the loss values �
 
 We will test them in the python file [Predicting_with_RFR.py](python_scripts/Predicting_with_RFR.py), as I think I've made too many python files.
 
-Prior to this, the python file already had a function to test RFR models coded in Chapter 4.2, you can see its explanation [here](#random-forest-regression). I made some minor tweaks to it to include the train/test splitting for greater efficiency, as you can see below.
+Prior to this, the python file already had a function to test RFR models coded in Chapter 4.2, you can see its explanation [here](#random-forest-regression). 
+
+I made some minor tweaks to it to include the train/test splitting for greater efficiency, as you can see below. I also created a df_loss to store the loss values so that its easier to compare between loss values of the various features.
 
 ```
 df_loss = pd.DataFrame(columns=['feature', 'mae', 'rmse', 'mae_to_rmse ratio'])
@@ -1384,7 +1386,9 @@ def train_test_rfr(X, y, column_name, save_model=False):
     if save_model == True:
         joblib.dump(rfr_model, "rfr_model_jb.joblib") # saving rfr weights for App Engine
 ```
-I also created a df to store the loss values so that its easier to compare between loss values of the various features 
+
+
+Next, we execute the code to find out the loss values when each feature is added, for every feature.
 
 ```
 1    df = pd.read_csv('newdata.csv')
@@ -1402,8 +1406,15 @@ I also created a df to store the loss values so that its easier to compare betwe
 11       df.drop(feature_name)
 
 ```
+(Line 1-5)
 
-*explain testing code*  ADD THE CORRELATION TING TOO
+To start, I extract the original columns and the new columns, storing them in 'df' and 'df_to_attach' respectively. Then, I store the new column names in a list, new_features.
+
+(Line 6-11)
+
+After separating the two y_columns from the df, I iterate through 'new_features' and add each feature column to the original df. I chose to start with y_column = y_column_jb, we will do the same for y_column_wdlands later on.
+
+Then, I call the train_test_rfr function to find the loss values and add them to the df_loss, before removing the feature from the df so that we can test the next feature in the list.
 
 Before going into the new loss values, let's see what the loss values are without any new variables first, when y-column = y_column_jb:
 
@@ -1419,6 +1430,8 @@ rmse: 1.5240956662682845
 ratio: 1.6625997776784447
 ```
 
+As expected, with more data spanning over a larger period of time, patterns and trends become more diverse, ultimately leading to higher loss values overall.
+
 Keeping that in mind, lets see how the loss values when the new features are added fare:
 
 ```
@@ -1433,8 +1446,20 @@ Keeping that in mind, lets see how the loss values when the new features are add
 6    day_of_year_sin  0.660283  1.193352           1.807335
 7    day_of_year_cos  0.659929  1.183392           1.793211
 ```
+Glad to see that all the new features managed to reduce both mae and rmse values. One exception is the month feature, which reduced mae but caused rmse to increase slightly.
 
-*more data from greater time period = more errors.  Gd news is that the new values did reduce the mae and rmse except for month, where only the mae decreased. Overall, the loss values themselves are not good, but its encouraging to see that the feature engineering I did actually make a difference in reducing the loss values. Since all but one improve the loss metrics, ill use them all at once and plot a correlation matrix to see ukw, den can further trim down the total number of columns, since many columns doesnt necessarily mean btr results*
+While the actual loss values are not exactly stellar, its encouraging to see that the feature engineering I did actually made a difference in lowering loss. This means what we are doing is working, its a step in the right direction.
+
+Since all but one of the new features reduced the loss values by large percentages, I'll use them all for now. But I still have a few more tests I need to run to ensure no redundant features are implemented in the final model.
+
+As for the 'month' feature, I don't plan to completely not use it, but its clearly not as effective as the others, so I'll leave it aside for now, but I'll tinker with it more later on in the chapter.
+
+Improving loss metrics is good and all, but thats only one of the requirements of being a good, useful feature. Next up, I'll be testing for multicollinearity between features, which is not good for ML models. 
+
+We have quite a number of features anyway, so its good to trim them down a little, since too many columns can make the model less interpretable and more prone to overfitting.
+
+
+*ill use them all at once and plot a correlation matrix to see ukw, den can further trim down the total number of columns, since many columns doesnt necessarily mean btr results*
 
 The RFR file is getting quite messy, lets create the correlation matrix in the [feature engineering prep python file](python_scripts/feature_engineered_data_prep.py) instead:
 
