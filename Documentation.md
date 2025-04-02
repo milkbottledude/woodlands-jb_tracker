@@ -23,7 +23,7 @@ Chapter 4: Machine Learning
 - 4.1: [One-hot encoding, sin-cos encoding, and Linear Regression model](#41-one-hot-encoding-sin-cos-encoding-and-linear-regression-model)
 - 4.2: [Random Forest + Decision Tree Regression](#42-random-forest-and-decision-tree-regression)
 - 4.3: [Feature Engineering (in progress)](#43-feature-engineering) (delete when done)
-- 4.4: [Model Train/Test and Tuning (in progress, tbc!)](#44-model-traintest-and-tuning-tbc) (delete when done)
+- 4.4: [Feature Selection Testing and Model Tuning (in progress, tbc!)](#44-feature-selection-testing-and-model-tuning-tbc) (delete when done)
 
 Chapter 5: Deploying Code to Website
 - 5.1: [Making HTML & CSS for Frontend (in progress, tbc!)](#51-making-html-and-css-for-frontend) (delete when done)
