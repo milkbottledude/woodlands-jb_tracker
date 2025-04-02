@@ -1454,12 +1454,9 @@ Since all but one of the new features reduced the loss values by large percentag
 
 As for the 'month' feature, I don't plan to completely not use it, but its clearly not as effective as the others, so I'll leave it aside for now, but I'll tinker with it more later on in the chapter.
 
-Improving loss metrics is good and all, but thats only one of the requirements of being a good, useful feature. Next up, I'll be testing for multicollinearity between features, which is not good for ML models. 
+Improving loss metrics is good and all, but thats only one of the requirements for being a good feature. Next up, I'll be testing for multicollinearity between features, which is not good for ML models. 
 
-We have quite a number of features anyway, so its good to trim them down a little, since too many columns can make the model less interpretable and more prone to overfitting.
-
-
-*ill use them all at once and plot a correlation matrix to see ukw, den can further trim down the total number of columns, since many columns doesnt necessarily mean btr results*
+We have quite a number of features anyway, so its good to trim them down a little, since too many columns can make the model less interpretable and more prone to overfitting. Also, many features don't necessarily mean better results.
 
 The RFR file is getting quite messy, lets create the correlation matrix in the [feature engineering prep python file](python_scripts/feature_engineered_data_prep.py) instead:
 
@@ -1468,11 +1465,15 @@ correlation_matrix = df.corr()
 sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap="RdBu")
 plt.show()
 ```
+The following parameters of the sns.heatmap() function serve different purposes to ensure the heatmap is outputted in a way we can understand more easily:
+
 - "annot=True" writes the correlation value inside the coloured boxes. If it were set to False, we would not see the number, just the heatmap colours
   
 - 'fmt=".2f"' makes sure all the correlation values inside the boxes are rounded to 2dp. Without this, the heatmap would be very messy with long and incomprehensive numbers strewn everywhere.
   
-- 'cmap="RdBu"' defines the red-blue colourmap in matplotlib, which makes it such that a square of value -1 is of the same colour as a square of value 1. Since we want to avoid numbers close to -1 as well as 1, I thought it would be good to make them both of the same colour, making the plot more decipherable.
+- 'cmap="RdBu"' defines the red-blue colourmap in matplotlib, which makes it such that a squares of correlation values closer to -1 and 1 are coloured red and blue respectively, while those with values closer to 0 are more whitish in colour.
+  
+Since we want to avoid numbers close to -1 as well as 1, I thought it would be good to make values further away from them be of a more contrasting colour (white), making the plot more decipherable.
 
 Here are the results:
 
@@ -1480,7 +1481,19 @@ Here are the results:
 
 Fig 4.7: Heatmap showing correlation values between features, as well as between features and the two y-columns.
 
+A good rule of thumb I learned is that if the correlation value is < 0.3, there is no multicollinearity. As we can see, a large majority of the squares are whitish in colour with correlation values not surpassing 0.3. However, there are a few bad eggs here and there.
+
+- First off, the pale orange squares of value -0.47. Those show the correlation between 'hour_cos', an independent variable (x), and 'congestion_value_wdlands', a dependent variable (y).
+
+Since the correlation is not between two independent variables, there is no multicollinearity, so no cause for alarm. In fact, this is actually good news, it means the feature 'hour_cos' is a good indicator of the congestion condition on the road to woodlands.
+
+- Next, a 
+
+
+
 *talk abt heatmap values*
+
+
 
 Now that I think about it, it seems quite a waste to not use the 'month' column. It should be providing a wealth of useful information to the model since its a good representation of the different seasons in a year, yet its increasing the mae and rmse. 
 
