@@ -1570,11 +1570,13 @@ As you can see, the percentage of rows that have 'True' for the school holiday p
 
 While 34.5% is only a mild class imbalance and does not warrant any changes, a percentage of 4.5% is very clearly a severe case of class imbalance that requires our attention.
 
-We don't want a situation where the train data is mainly made up of rows not within the holiday period. To prevent this, I'll be using k-folds validation instead of a standard train/test split to test the loss of the model when the holiday period features are implemented. 
+We don't want a situation where the train data is mainly made up of rows not within the holiday period. This is likely to happen if we use the default train_test_split to obtain our training and test datasets, since train_test_split splits randomly.
 
-K-folds validation splits the data into 'k' parts and trains the model 'k' times, such that the model is trained on the whole dataset. Although its more computationally expensive, it helps prevent the above from happening, meaning the model wont overfit on the non-holiday rows. 
+To prevent this, I'll be using k-folds validation instead of a standard train/test split to test the loss of the model when the holiday period features are implemented. 
 
-Furthermore, we have a small dataset, so its good to train our model on as much of it as possible.
+K-folds validation splits the data into 'k' parts and trains the model 'k' times. Each part will have the same mix of rows with 'public_hols_period' = True and False as the entire dataset. 
+
+Additionally, the model is trained on the whole dataset, which is ideal since we have very little rows with 'public_hol_period' = True. One downside to k-folds, however, is that it is more computationally expensive than train_test_split.
 
 ```
 k folds code here
