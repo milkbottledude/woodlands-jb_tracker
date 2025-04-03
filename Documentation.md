@@ -23,11 +23,11 @@ Chapter 4: Machine Learning
 - 4.1: [One-hot encoding, sin-cos encoding, and Linear Regression model](#41-one-hot-encoding-sin-cos-encoding-and-linear-regression-model)
 - 4.2: [Random Forest + Decision Tree Regression](#42-random-forest-and-decision-tree-regression)
 - 4.3: [Feature Engineering](#43-feature-engineering)
-- 4.4: [Feature Selection Testing (in progress, tbc!)](#44-feature-selection-testing-in-progress) (delete when done)
-- 4.5: [Hyperparameter Tuning (in progress, tbc!)](#45-hyperparameter-tuning-tbc) (delete when done)
+- 4.4: [Feature Selection Testing (in progress)](#44-feature-selection-testing-in-progress) (delete when done)
+- 4.5: [Hyperparameter Tuning (tbc!)](#45-hyperparameter-tuning-tbc) (delete when done)
 
 Chapter 5: Deploying Code to Website
-- 5.1: [Making HTML & CSS for Frontend (in progress, tbc!)](#51-making-html-and-css-for-frontend) (delete when done)
+- 5.1: [Making HTML & CSS for Frontend (in progress)](#51-making-html-and-css-for-frontend) (delete when done)
 - 5.2: [Creating Backend with Flask, main.py, and then app.yaml](#52-creating-backend-with-flask-mainpy-and-then-appyaml)
 - 5.3: [.joblib file & Project Folder structure](#53-joblib-file-and-project-folder-structure)
 - 5.4: [Creating main.py v2 & app.yaml](#54-creating-mainpy-v2-and-appyaml)
