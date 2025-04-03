@@ -1359,36 +1359,38 @@ Based on the EDA I did in [Chapter 3.2](#32-exploratory-data-analysis-eda), the 
 
 Now lets see whether the new features will help to bring down the loss values 📉. I hope they do, otherwise all that feature engineering would have been a big waste of time.
 
-We will test them in the python file [Predicting_with_RFR.py](python_scripts/Predicting_with_RFR.py), as I think I've made too many python files.
+We will test them in an existing python file, [Predicting_with_RFR.py](python_scripts/Predicting_with_RFR.py), instead of creating a new one. I think I've made too many python files 🗃️.
 
 Prior to this, the python file already had a function to test RFR models coded in Chapter 4.2, you can see its explanation [here](#random-forest-regression). 
 
-I made some minor tweaks to it to include the train/test splitting for greater efficiency, as you can see below. I also created a df_loss to store the loss values so that its easier to compare between loss values of the various features.
+I made some minor tweaks to it 🔧 to include the train/test splitting (Line 4) for greater efficiency, as you can see below. 
+
+I also created 'df_loss' to store the loss values (Line 1), so that its easier to compare between loss values of the various features.
 
 ```
-df_loss = pd.DataFrame(columns=['feature', 'mae', 'rmse', 'mae_to_rmse ratio'])
-
-def train_test_rfr(X, y, column_name, save_model=False):
-    print(X.shape, y.shape)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
-    rfr_model = RandomForestRegressor()
-    rfr_model.fit(X_train, y_train)
-    rfr_predictions = rfr_model.predict(X_test)
-    # X_test['congestion_prediction'] = list(rfr_predictions)
-    rfr_mae = mean_absolute_error(y_test, rfr_predictions)
-    rfr_rmse = mean_squared_error(y_test, rfr_predictions)**0.5
-    mae_to_rmse = rfr_rmse/rfr_mae
-    print(f"rfr mae: {rfr_mae} ")
-    print(f"rfr rmse: {rfr_rmse} ")
-    print(f'ratio: {mae_to_rmse}')
-    new_row = [column_name, rfr_mae, rfr_rmse, mae_to_rmse]
-    df_loss.loc[len(df_loss)] = new_row
-    if save_model == True:
-        joblib.dump(rfr_model, "rfr_model_jb.joblib") # saving rfr weights for App Engine
+1    df_loss = pd.DataFrame(columns=['feature', 'mae', 'rmse', 'mae_to_rmse ratio'])
+    
+2    def train_test_rfr(X, y, column_name, save_model=False):
+3        print(X.shape, y.shape)
+4        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+5        rfr_model = RandomForestRegressor()
+6        rfr_model.fit(X_train, y_train)
+7        rfr_predictions = rfr_model.predict(X_test)
+8        # X_test['congestion_prediction'] = list(rfr_predictions)
+9        rfr_mae = mean_absolute_error(y_test, rfr_predictions)
+10       rfr_rmse = mean_squared_error(y_test, rfr_predictions)**0.5
+11       mae_to_rmse = rfr_rmse/rfr_mae
+12       print(f"rfr mae: {rfr_mae} ")
+13       print(f"rfr rmse: {rfr_rmse} ")
+14       print(f'ratio: {mae_to_rmse}')
+15       new_row = [column_name, rfr_mae, rfr_rmse, mae_to_rmse]
+16       df_loss.loc[len(df_loss)] = new_row
+17       if save_model == True:
+18           joblib.dump(rfr_model, "rfr_model_jb.joblib") # saving rfr weights for App Engine
 ```
 
 
-Next, we execute the code to find out the loss values when each feature is added, for every feature.
+Next, we execute the code to find out the loss values when each feature is added, for every feature one at a time 🔎.
 
 ```
 1    df = pd.read_csv('newdata.csv')
@@ -1408,13 +1410,16 @@ Next, we execute the code to find out the loss values when each feature is added
 ```
 (Line 1-5)
 
-To start, I extract the original columns and the new columns, storing them in 'df' and 'df_to_attach' respectively. Then, I store the new column names in a list, new_features.
+To start, I extract the original columns and the new columns ✂️, storing them in 'df' and 'df_to_attach' respectively. Then, I store the new column names in a list, new_features.
 
 (Line 6-11)
 
-After separating the two y_columns from the df, I iterate through 'new_features' and add each feature column to the original df. I chose to start with y_column = y_column_jb, we will do the same for y_column_wdlands later on.
+After separating the two y_columns from the df ✂️, I iterate through 'new_features' and add each feature column to the original df. 
 
-Then, I call the train_test_rfr function to find the loss values and add them to the df_loss, before removing the feature from the df so that we can test the next feature in the list.
+
+I chose to start with y_column = y_column_jb, we will do the same for y_column_wdlands later on.
+
+Then, I call the train_test_rfr function to find and add the loss values to df_loss 📝, before removing the feature from the df so that we can test the next feature in the list.
 
 Before going into the new loss values, let's see what the loss values are without any new variables first, when y-column = y_column_jb:
 
@@ -1430,9 +1435,9 @@ rmse: 1.5240956662682845
 ratio: 1.6625997776784447
 ```
 
-As expected, with more data spanning over a larger period of time, patterns and trends become more diverse, ultimately leading to higher loss values overall.
+As expected, with more data that spans over a larger period of time, patterns and trends become more diverse, ultimately leading to higher loss values overall 📈.
 
-Keeping that in mind, lets see how the loss values when the new features are added fare:
+Keeping that in mind, lets see how the loss values when the new features are added compare:
 
 ```
 # with new features
@@ -1446,17 +1451,21 @@ Keeping that in mind, lets see how the loss values when the new features are add
 6    day_of_year_sin  0.660283  1.193352           1.807335
 7    day_of_year_cos  0.659929  1.183392           1.793211
 ```
-Looks like all the new features managed to reduce both mae and rmse values. One exception is the month feature, which reduced mae but caused rmse to increase slightly.
+This looks good, all the new features managed to reduce both mae and rmse values 📉. One exception is the 'month' feature, which reduced mae a little but caused rmse to increase slightly.
 
-While the actual loss values are not exactly stellar, its encouraging to see that the feature engineering I did actually made a difference in lowering loss. This means what we are doing is working, its a step in the right direction.
+While the actual loss values are not exactly stellar, its encouraging to see that the feature engineering I did actually made a difference in lowering loss values. 
 
-Since all but one of the new features reduced the loss values by large percentages, I'll use them all for now. But I still have a few more tests I need to run to ensure no redundant features are implemented in the final model.
+This means what we are doing is working, its a step in the right direction ❤️‍🩹.
 
-As for the 'month' feature, I don't plan to completely not use it, but it's clearly not as effective as the others, so I'll leave it aside for now, but I'll try and get some use out of it later on in the chapter.
+As for the 'month' feature, I don't plan to completely not use it, but it's clearly not as effective as it should be 🤔. I'll leave it aside for now, but I'll try and get some use out of it later on in the chapter.
 
-Improving loss metrics is good and all, but thats only one of the requirements for being a good feature. Next up, I'll be testing for multicollinearity between features, which is not good for ML models. 
+Since all but one of the new features reduced the loss values by large percentages, I'll use them all for now (except 'month', still need time to figure that one out).
 
-We have quite a number of features anyway, so its good to trim them down a little, since too many columns can make the model less interpretable and more prone to overfitting. Also, many features don't necessarily mean better results.
+However, I still have a few more tests I need to run, to ensure no redundant features slip through the cracks 🧐 and get implemented in the final model.
+
+Improving loss metrics is good and all, but thats only one of the requirements for being a good feature. Next up, I'll be testing for multicollinearity between features 🔬, which is not good for ML models. 
+
+We have quite a number of features anyway, so its good to trim them down a little, since too many columns can make the model less interpretable 😵‍💫 and more prone to overfitting. Also, many features don't necessarily mean better results.
 
 The RFR file is getting quite messy, lets create the correlation matrix in the [feature engineering prep python file](python_scripts/feature_engineered_data_prep.py) instead:
 
@@ -1465,15 +1474,15 @@ correlation_matrix = df.corr()
 sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap="RdBu")
 plt.show()
 ```
-The following parameters of the sns.heatmap() function serve different purposes to ensure the heatmap is outputted in a way we can understand more easily:
+The following parameters of the sns.heatmap() function serve different purposes to ensure the heatmap is outputted in a way we can understand more easily 🤓:
 
 - "annot=True" writes the correlation value inside the coloured boxes. If it were set to False, we would not see the number, just the heatmap colours
   
 - 'fmt=".2f"' makes sure all the correlation values inside the boxes are rounded to 2dp. Without this, the heatmap would be very messy with long and incomprehensive numbers strewn everywhere.
   
-- 'cmap="RdBu"' defines the red-blue colourmap in matplotlib, which makes it such that a squares of correlation values closer to -1 and 1 are coloured red and blue respectively, while those with values closer to 0 are more whitish in colour.
+- 'cmap="RdBu"' defines the red-blue colourmap in matplotlib, which makes it such that a squares of correlation values closer to -1 and 1 are coloured red 🟥 and blue 🟦 respectively, while those with values closer to 0 are more whitish in colour ⬜.
   
-Since we want to avoid numbers close to -1 as well as 1, I thought it would be good to make values further away from them be of a more contrasting colour (white), making the plot more decipherable.
+Since we want to avoid numbers close to -1 as well as 1, I thought it would be good to make values further away from them be of a more contrasting colour ⬜, making it easier to tell whether a square has a high (🟥🟦 = 👎) or low (⬜ = 👍) modulus correlation value.
 
 Here are the results:
 
@@ -1481,11 +1490,13 @@ Here are the results:
 
 Fig 4.7: Heatmap showing correlation values between features, as well as between features and the two y-columns.
 
-A good rule of thumb I learned is that if the correlation value is < 0.3, there is no multicollinearity. As we can see, a large majority of the squares are whitish in colour with correlation values not surpassing 0.3. However, there are a few bad eggs here and there.
+A good rule of thumb I learned is that if the correlation value is < 0.3, there is no multicollinearity. As we can see, a large majority of the squares are whitish in colour (⬜ = 👍) with correlation values not surpassing 0.3. However, there are a few bad eggs here and there.
 
-- First off, the pale orange squares of value -0.47. Those show the correlation between 'hour_cos', an independent variable (x), and 'congestion_value_wdlands', a dependent variable (y).
+- First off, the pale orange squares 🟧 of value -0.47. Those show the correlation between 'hour_cos', an independent variable (x), and 'congestion_value_wdlands', a dependent variable (y).
 
-Since the correlation is not between two independent variables, there is no multicollinearity, so no cause for alarm. In fact, this is actually good news, it means the feature 'hour_cos' is a good indicator of the congestion condition on the road to woodlands.
+Since the correlation is not between two independent variables, there is no multicollinearity, so no cause for alarm 😮‍💨. 
+
+In fact, this is actually good news, because it means the feature 'hour_cos' is a good indicator of the congestion condition on the road to woodlands.
 
 - Next, a 
 
@@ -1505,7 +1516,11 @@ mae_to_rmse ratio = 1.8208
 mae =
 rmse =
 mae_to_rmse ratio = 
+```
 
+Similar trend from before in that the loss metrics are worse overall 📈 when y_column = y_column_wdlands as compared to when y_column = y_column_wdlands.
+
+```
 # with new features
              feature       mae      rmse  mae_to_rmse ratio
 0              month  1.802642  2.286182           1.268239
@@ -1517,23 +1532,25 @@ mae_to_rmse ratio =
 6    day_of_year_sin  1.309835  1.715894           1.310008
 7    day_of_year_cos  1.313066  1.725410           1.314032
 ```
-Similar trend from before in that the loss metrics are worse overall when y_column = y_column_wdlands as compared to when y_column = y_column_wdlands.
 
-Again, a decrease in mae and rmse for all but one of the new features. Looks like the new features' success was not a fluke.
+Again, a decrease in mae and rmse for all but one of the new features. Looks like the new features' success was not a fluke 😎.
 
-After looking at the performance of the new features, as well as taking the correlation matrix heatmap into consideration, I've decided to incorporate the following features:
+After looking at the performance of the new features 📊, as well as taking the correlation matrix heatmap into consideration, I've decided to incorporate the following features:
 - feature
 
   *justify*
   
 - feature
+- 
   *justify*
 
 OR *all justify here*
 
-Now that I think about it, it seems quite a waste to not use the 'month' column. It should be providing a wealth of useful information to the model since its a good representation of the different seasons in a year, yet its increasing the mae and rmse. 
+Now that I think about it, it seems quite a waste to not use the 'month' column. 
 
-I have a feeling the model is misunderstanding the relationship between the numerical 'month' column and the congestion values, in that it thinks a bigger 'month' value means larger congestion value, or something along those lines. 
+It should be providing a wealth of useful information to the model since its a good representation of the different seasons in a year, yet its increasing the mae and rmse 🤔. 
+
+I have a feeling the model is misunderstanding the relationship between the numerical 'month' column and the congestion values, in that it thinks a bigger 'month' value means larger congestion value 📈, or something along those lines. 
 
 Let's try a different approach, one-hot encoding the month values instead of having them as numerical values all in one column. 
 
@@ -1541,18 +1558,18 @@ Let's try a different approach, one-hot encoding the month values instead of hav
 code for one hot encoding of month
 ```
 
-*Now imma do for month*
+*explain what the code is doing*
 
-After one-hot encoding, lets see if that helps prove the month column's worth. I'll be testing using y-column_jb as the variable to predict:
+Lets see if one-hot encoding helps prove the month column's worth 💎. I'll be testing using y-column_jb as the dependent variable:
 
 ```
 # loss values from addition of one-hot encoded month values
 bluh
 ```
 
-I'm glad I did not give up on the month column, just look how much the model's loss metrics improved! So much more than the other new features. Will definitely be incorporating this in the final model.
+I'm glad I did not give up on the month column, just look how much the model's loss metrics improved! So much more than with the other new features 🥇. Will definitely be incorporating this in the final model.
 
-Now that we are done with that, lets move on to testing the new 'holiday period' features. But first, lets check for any class imbalance.
+Now that we are done with that, lets move on to testing the new 'holiday period' features 🎉🏖️. But first, lets check for any class imbalance.
 
 ```
 1    def count_true(df, column_name):
@@ -1567,7 +1584,7 @@ Now that we are done with that, lets move on to testing the new 'holiday period'
 ```
 (Line 1-6)
 
-I made a little function that checks for the number of rows with value = 'True' for a given column in a given df. It gives the number in Line 3, before also printing the total number of rows as well as the percentage of rows with 'True'. 
+I made a little function that checks for the number of rows with value = 'True' for a given column in a given df. It outputs the number (Line 3), before printing the total number of rows (line 4) as well as the percentage of rows with 'True' (Line 6). 
 
 (Line 7-8)
 
@@ -1584,13 +1601,13 @@ total number of rows = 2119
 Percentage of rows with 'True': 0.045304388862671074
 ```
 
-As you can see, the percentage of rows that have 'True' for the school holiday period feature (1dp) is 34.5%, and 4.5% for the public holiday feature. 
+As you can see, the percentage of rows that have 'True' for the school holiday period 🎒🏖️ feature is 34.5%, and 4.5% for the public holiday 🎄🧧 feature (1dp).
 
-While 34.5% is only a mild class imbalance and does not warrant any changes, a percentage of 4.5% is very clearly a severe case of class imbalance that requires our attention.
+While 34.5% is only a mild class imbalance and does not warrant any changes, a percentage of 4.5% is very clearly a severe case of class imbalance ⚠️ that requires our attention.
 
-We don't want a situation where the train data is mainly made up of rows not within the holiday period. This is likely to happen if we use the default train_test_split to obtain our training and test datasets, since train_test_split splits randomly.
+We don't want a situation where the train data is mainly made up of rows not within the public holiday period ❌. This is likely to happen if we use the default train_test_split to obtain our training and test datasets, since train_test_split splits randomly.
 
-To prevent this, I'll be using k-folds validation instead of a standard train/test split to test the loss of the model when the holiday period features are implemented. 
+To prevent this, I'll be using k-folds validation instead of a standard train/test split to test the loss of the model 🧐 when the holiday period features are implemented. 
 
 K-folds validation splits the data into 'k' parts and trains the model 'k' times. Each part will have the same mix of rows with 'public_hols_period' = True and False as the entire dataset. 
 
@@ -1601,6 +1618,22 @@ k folds code here
 ```
 
 *explain k folds results n elab*
+
+To end off, let's compare the loss values at the start to the loss values now, using all the new features we acquired as well as the one-hot encoded 'month' columns.
+
+When y_column = y_column_jb:
+```
+hi
+```
+
+When y_column = y_column_wdlands:
+```
+hi
+```
+
+*final words*
+
+Moving on from that, let's see if we can improve the accuracy of our model even more than we already have by adjusting the model weights.
 
 #### RFR weights (tbc)
 
