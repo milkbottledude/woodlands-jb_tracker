@@ -22,7 +22,7 @@ Chapter 3: Processing and Visualizing Data
 Chapter 4: Machine Learning
 - 4.1: [One-hot encoding, sin-cos encoding, and Linear Regression model](#41-one-hot-encoding-sin-cos-encoding-and-linear-regression-model)
 - 4.2: [Random Forest + Decision Tree Regression](#42-random-forest-and-decision-tree-regression)
-- 4.3: [Feature Engineering (in progress)](#43-feature-engineering) (delete when done)
+- 4.3: [Feature Engineering](#43-feature-engineering)
 - 4.4: [Feature Selection Testing (in progress, tbc!)](#44-feature-selection-testing-in-progress) (delete when done)
 - 4.5: [Hyperparameter Tuning (in progress, tbc!)](#45-hyperparameter-tuning-tbc) (delete when done)
 
@@ -1648,7 +1648,7 @@ That concludes the feature engineering and testing for this model 🤝.
 
 In the next chapter, let's see if we can improve the accuracy of our model even more than we already have, this time by adjusting the model's hyperparameters ⚙️.
 
-### 4.5 Hperparameter Tuning (tbc)
+### 4.5 Hyperparameter Tuning (tbc)
 
 
 ## Chapter 5: Automation and Website Making
