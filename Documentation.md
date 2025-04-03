@@ -1656,9 +1656,9 @@ I'm not an expert, so I'll only be looking into the more basic hyperparameters, 
 - `max_depth`, lets us choose how deep a tree in the forest is allowed to grow
 - `n_estimators`, allows us to change the number of trees in the forest
 - `criterion`, this allows us to choose which loss metric to consider when splitting at a node
-- `bootstrap`, this lets us choose whether we want to reuse rows when training the model.
+- `bootstrap`, this lets us choose whether we want to reuse rows when training the model
 - `max_features`, (RMore)
-- `min_samples_leaf`, this allows us to decide the minimum number of rows required in a leaf.
+- `min_samples_leaf`, this allows us to decide the minimum number of rows required in a leaf
 
 Let's get into it 💪.
 
