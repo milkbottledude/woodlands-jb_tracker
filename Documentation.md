@@ -1446,13 +1446,13 @@ Keeping that in mind, lets see how the loss values when the new features are add
 6    day_of_year_sin  0.660283  1.193352           1.807335
 7    day_of_year_cos  0.659929  1.183392           1.793211
 ```
-Glad to see that all the new features managed to reduce both mae and rmse values. One exception is the month feature, which reduced mae but caused rmse to increase slightly.
+Looks like all the new features managed to reduce both mae and rmse values. One exception is the month feature, which reduced mae but caused rmse to increase slightly.
 
 While the actual loss values are not exactly stellar, its encouraging to see that the feature engineering I did actually made a difference in lowering loss. This means what we are doing is working, its a step in the right direction.
 
 Since all but one of the new features reduced the loss values by large percentages, I'll use them all for now. But I still have a few more tests I need to run to ensure no redundant features are implemented in the final model.
 
-As for the 'month' feature, I don't plan to completely not use it, but its clearly not as effective as the others, so I'll leave it aside for now, but I'll tinker with it more later on in the chapter.
+As for the 'month' feature, I don't plan to completely not use it, but it's clearly not as effective as the others, so I'll leave it aside for now, but I'll try and get some use out of it later on in the chapter.
 
 Improving loss metrics is good and all, but thats only one of the requirements for being a good feature. Next up, I'll be testing for multicollinearity between features, which is not good for ML models. 
 
@@ -1497,9 +1497,14 @@ Since the correlation is not between two independent variables, there is no mult
 Moving on, lets check out the loss values when y-column = y_column_wdlands:
 ```
 # original loss values from snaps 4-7 without new features (4dp):
-    mae = 0.6925
-    rmse = 1.2608
-    mae_to_rmse ratio = 1.8208
+mae = 0.6925
+rmse = 1.2608
+mae_to_rmse ratio = 1.8208
+
+# loss values from snaps 4-14 without new features (4dp):
+mae =
+rmse =
+mae_to_rmse ratio = 
 
 # with new features
              feature       mae      rmse  mae_to_rmse ratio
@@ -1514,7 +1519,17 @@ Moving on, lets check out the loss values when y-column = y_column_wdlands:
 ```
 Similar trend from before in that the loss metrics are worse overall when y_column = y_column_wdlands as compared to when y_column = y_column_wdlands.
 
-Again, a decrease in mae and rmse for all but one of the new features. Looks like they were not a fluke.
+Again, a decrease in mae and rmse for all but one of the new features. Looks like the new features' success was not a fluke.
+
+After looking at the performance of the new features, as well as taking the correlation matrix heatmap into consideration, I've decided to incorporate the following features:
+- feature
+
+  *justify*
+  
+- feature
+  *justify*
+
+OR *all justify here*
 
 Now that I think about it, it seems quite a waste to not use the 'month' column. It should be providing a wealth of useful information to the model since its a good representation of the different seasons in a year, yet its increasing the mae and rmse. 
 
@@ -1536,16 +1551,6 @@ bluh
 ```
 
 I'm glad I did not give up on the month column, just look how much the model's loss metrics improved! So much more than the other new features. Will definitely be incorporating this in the final model.
-
-After careful consideration, I've decided to incorporate the following features:
-- feature
-
-  *justify*
-  
-- feature
-  *justify*
-
-OR *all justify here*
 
 Now that we are done with that, lets move on to testing the new 'holiday period' features. But first, lets check for any class imbalance.
 
@@ -1589,7 +1594,7 @@ To prevent this, I'll be using k-folds validation instead of a standard train/te
 
 K-folds validation splits the data into 'k' parts and trains the model 'k' times. Each part will have the same mix of rows with 'public_hols_period' = True and False as the entire dataset. 
 
-Additionally, the model is trained on the whole dataset, which is ideal since we have very little rows with 'public_hol_period' = True. One downside to k-folds, however, is that it is more computationally expensive than train_test_split.
+Additionally, the model is trained on the whole dataset, which is ideal since we have very little rows with 'public_hol_period' = True. One downside to k-folds, however, is that it takes much more time to implement than train_test_split, since we are training k-models and taking the average of their predictions.
 
 ```
 k folds code here
