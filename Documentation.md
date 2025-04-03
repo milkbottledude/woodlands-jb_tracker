@@ -1494,18 +1494,7 @@ Since the correlation is not between two independent variables, there is no mult
 *talk abt heatmap values*
 
 
-
-Now that I think about it, it seems quite a waste to not use the 'month' column. It should be providing a wealth of useful information to the model since its a good representation of the different seasons in a year, yet its increasing the mae and rmse. 
-
-I have a feeling the model is misunderstanding the relationship between the numerical 'month' column and the congestion values, in that it thinks a bigger 'month' value means larger congestion value, or something along those lines. 
-
-Let's try a different approach, one-hot encoding the month values instead of having them as numerical values all in one column. 
-
-*Now imma do for month*
-
-
-
-Now lets check out the loss values when y-column = y_column_wdlands:
+Moving on, lets check out the loss values when y-column = y_column_wdlands:
 ```
 # original loss values from snaps 4-7 without new features (4dp):
     mae = 0.6925
@@ -1523,6 +1512,30 @@ Now lets check out the loss values when y-column = y_column_wdlands:
 6    day_of_year_sin  1.309835  1.715894           1.310008
 7    day_of_year_cos  1.313066  1.725410           1.314032
 ```
+Similar trend from before in that the loss metrics are worse overall when y_column = y_column_wdlands as compared to when y_column = y_column_wdlands.
+
+Again, a decrease in mae and rmse for all but one of the new features. Looks like they were not a fluke.
+
+Now that I think about it, it seems quite a waste to not use the 'month' column. It should be providing a wealth of useful information to the model since its a good representation of the different seasons in a year, yet its increasing the mae and rmse. 
+
+I have a feeling the model is misunderstanding the relationship between the numerical 'month' column and the congestion values, in that it thinks a bigger 'month' value means larger congestion value, or something along those lines. 
+
+Let's try a different approach, one-hot encoding the month values instead of having them as numerical values all in one column. 
+
+```
+code for one hot encoding of month
+```
+
+*Now imma do for month*
+
+After one-hot encoding, lets see if that helps prove the month column's worth. I'll be testing using y-column_jb as the variable to predict:
+
+```
+# loss values from addition of one-hot encoded month values
+bluh
+```
+
+I'm glad I did not give up on the month column, just look how much the model's loss metrics improved! So much more than the other new features. Will definitely be incorporating this in the final model.
 
 After careful consideration, I've decided to incorporate the following features:
 - feature
