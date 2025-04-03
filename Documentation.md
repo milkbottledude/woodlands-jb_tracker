@@ -1609,31 +1609,43 @@ We don't want a situation where the train data is mainly made up of rows not wit
 
 To prevent this, I'll be using k-folds validation instead of a standard train/test split to test the loss of the model 🧐 when the holiday period features are implemented. 
 
-K-folds validation splits the data into 'k' parts and trains the model 'k' times. Each part will have the same mix of rows with 'public_hols_period' = True and False as the entire dataset. 
+K-folds validation splits the data into 'k' parts and trains the model 'k' times. Each part will have the same proportion of rows with 'public_hols_period' = True and False as the entire dataset. 
 
-Additionally, the model is trained on the whole dataset, which is ideal since we have very little rows with 'public_hol_period' = True. One downside to k-folds, however, is that it takes much more time to implement than train_test_split, since we are training k-models and taking the average of their predictions.
+Additionally, the model is trained on the whole dataset, which is ideal since we have very little rows 🤏 with 'public_hol_period' = True. 
+
+One downside to k-folds, however, is that it takes much more time to implement than train_test_split, since we are training k-models and taking the average of all the model predictions.
 
 ```
 k folds code here
 ```
 
+*explain k folds code*
+
+```
+k folds results here
+```
+
 *explain k folds results n elab*
 
-To end off, let's compare the loss values at the start to the loss values now, using all the new features we acquired as well as the one-hot encoded 'month' columns.
+To end off, let's compare the loss values at the start to the loss values now, using all the new features we acquired 🌟 (including the one-hot encoded 'month' columns 🗓️).
 
 When y_column = y_column_jb:
+
 ```
 hi
 ```
 
 When y_column = y_column_wdlands:
+
 ```
 hi
 ```
 
 *final words*
 
-Moving on from that, let's see if we can improve the accuracy of our model even more than we already have by adjusting the model weights.
+That concludes the feature engineering and testing for this model 🤝.
+
+Next, let's see if we can improve the accuracy of our model even more than we already have, this time by adjusting the model's weights ⚖️.
 
 #### RFR weights (tbc)
 
