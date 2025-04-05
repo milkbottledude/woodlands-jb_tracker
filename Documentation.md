@@ -1707,21 +1707,52 @@ ratio: 1.7970855045239842
 
 *gd or bad? hmmm, guess u will find out ltr haha. dont forget to elab, n do datacamp dsa. update: IT WORKSSSSSSS WOOOHOOO, slightly only tho...*
 
-To end off, let's compare the loss values at the start to the loss values now, using all the new features we acquired 🌟 (including the quartered 'month' columns 🗓️).
+Let's try using only the selected features and see if removing the following features really helps.
+
+Columns being used: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'hour_sin', 'hour_cos', 'day_of_year_sin', 'day_of_year_cos', 'sch_hol_period', 'public_hol_period', 'year_quarter_Q1', 'year_quarter_Q4']
 
 When y_column = y_column_jb:
 
 ```
-hi
+rfr mae: 0.7150990004492364 
+rfr rmse: 1.2407860746318913
+ratio: 1.7351248901934
 ```
 
 When y_column = y_column_wdlands:
 
 ```
-hi
+rfr mae: 1.4146160152740341 
+rfr rmse: 1.8250879333103731
+ratio: 1.2901649024218236
 ```
 
-*final words*
+*Looks like removing correlated features did not lower loss values, which is weird*
+
+Now lets try using all the new features we acquired 🌟 (including the 'removed' columns that show high multicollinearity 🗓️).
+
+Columns being used: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'hour_sin', 'hour_cos', 'week_value', 'date_sin', 'date_cos', 'day_of_year', 'day_of_year_sin', 'day_of_year_cos', 'sch_hol_period', 'public_hol_period', 'year_quarter_Q1', 'year_quarter_Q4']
+
+When y_column = y_column_jb:
+
+```
+rfr mae: 0.6705896226415093 
+rfr rmse: 1.2117450966458594
+ratio: 1.8069845636332587
+```
+
+When y_column = y_column_wdlands:
+
+```
+rfr mae: 1.2999056603773587 
+rfr rmse: 1.7204476435915226 
+ratio: 1.3235173105501223
+```
+
+*close to but not lowest, there were lower loss values when only 1 new feature was implemented, refer to line 1450 (jb) and line 1535(wdlands) to compare*
+
+*gotta find a combination of features of mae < 0.66 for y_column_jb and mae < 1.3 for y_column_wdlands*
+
 
 That concludes the feature engineering and testing for this model 🤝.
 
