@@ -1321,9 +1321,13 @@ I then compile all the new data into a list called 'new_row' and add it to the d
 In the next chapter, we will be using testing the loss values for each newly engineered feature to see which ones to keep, and which to discard.
 
 ### 4.4: Feature Selection Testing (in progress)
-First, lets see how good our RFR model is without the extra features from feature engineering. I labelled the rest of the pictures 🖼️ (snaps 4, 5, 6 & 7) and trained the model on those too. However, I labelled the last 4 'snaps' folder pictures differently, straight up rating the congestion on either side of the causeway on a scale of 0-5 instead of using CVAT bounding boxes. Drawing them for every image takes too long ⌛, and the bounding box areas are not consistent.
+First, lets see how good our RFR model is without the extra features from feature engineering. I labelled the rest of the pictures 🖼️ (snaps 4, 5, 6 & 7) and trained the model on those too. However, I labelled the last 4 'snaps' folder pictures differently, straight up rating the congestion on either side of the causeway on a scale of 0-5 instead of using CVAT bounding boxes. 
 
-To test how good the model is, lets use 2 relatively simples metrics 🧐: mean actual error (MAE) and root mean squared error (RMSE). MAE will show us the average difference between the predicted and actual values, while RMSE will place more emphasis on large errors due to its 'squaring' nature. This is helpful to identify if the model is doing well for certain instances but not doing so well for others, since the larger errors are penalised more.
+Drawing them for every image takes too long ⌛, and the bounding box areas are not consistent.
+
+To test how good the model is, lets use 2 relatively simples metrics 🧐: mean actual error (MAE) and root mean squared error (RMSE). MAE will show us the average difference between the predicted and actual values, while RMSE will place more emphasis on large errors due to its 'squaring' nature. 
+
+This is helpful for seeing if the model is doing well for certain instances but not doing so well for others, since the larger errors are penalised more.
 
 ```
 1    df = pd.read_csv("newdata.csv")
@@ -1380,11 +1384,11 @@ I also created 'df_loss' to store the loss values (Line 1), so that its easier t
 8        # X_test['congestion_prediction'] = list(rfr_predictions)
 9        rfr_mae = mean_absolute_error(y_test, rfr_predictions)
 10       rfr_rmse = mean_squared_error(y_test, rfr_predictions)**0.5
-11       mae_to_rmse = rfr_rmse/rfr_mae
+11       rmse_to_mae = rfr_rmse/rfr_mae
 12       print(f"rfr mae: {rfr_mae} ")
 13       print(f"rfr rmse: {rfr_rmse} ")
-14       print(f'ratio: {mae_to_rmse}')
-15       new_row = [column_name, rfr_mae, rfr_rmse, mae_to_rmse]
+14       print(f'ratio: {rmse_to_mae}')
+15       new_row = [column_name, rfr_mae, rfr_rmse, rmse_to_mae]
 16       df_loss.loc[len(df_loss)] = new_row
 17       if save_model == True:
 18           joblib.dump(rfr_model, "rfr_model_jb.joblib") # saving rfr weights for App Engine
@@ -1442,16 +1446,21 @@ Keeping that in mind, lets see how the loss values when the new features are add
 
 ```
 # with new features
-             feature       mae      rmse  mae_to_rmse ratio
-0              month  0.838329  1.540698           1.837822
-1   exact_date_value  0.674292  1.178735           1.748107
-2         week_value  0.683278  1.188597           1.739550
-3           date_sin  0.662335  1.170298           1.766927
-4           date_cos  0.661014  1.163488           1.760157
-5        day_of_year  0.666203  1.196155           1.795482
-6    day_of_year_sin  0.660283  1.193352           1.807335
-7    day_of_year_cos  0.659929  1.183392           1.793211
+             feature        mae       rmse   rmse_to_mae ratio
+0              month   0.838329   1.540698            1.837822
+1   exact_date_value   0.674292   1.178735            1.748107
+2         week_value   0.683278   1.188597            1.739550
+3           date_sin   0.662335   1.170298            1.766927
+4           date_cos   0.661014   1.163488            1.760157
+5        day_of_year   0.666203   1.196155            1.795482
+6    day_of_year_sin   0.660283   1.193352            1.807335
+7    day_of_year_cos   0.659929   1.183392            1.793211
+8   sch_hol_period     0.665448   1.202109            1.806464
+9   public_hol_period  0.671415   1.209479            1.801387
 ```
+
+The df above can be found in this [csv file](python_scripts/loss_data_jb.csv)
+
 This looks good, all the new features managed to reduce both mae and rmse values 📉. One exception is the 'month' feature, which reduced mae a little but caused rmse to increase slightly.
 
 While the actual loss values are not exactly stellar, its encouraging to see that the feature engineering I did actually made a difference in lowering loss values. 
@@ -1511,66 +1520,48 @@ Moving on, lets check out the loss values when y-column = y_column_wdlands:
 # original loss values from snaps 4-7 without new features (4dp):
 mae = 0.6925
 rmse = 1.2608
-mae_to_rmse ratio = 1.8208
+rmse_to_mae ratio = 1.8208
 
 # loss values from snaps 4-14 without new features (4dp):
-mae =
-rmse =
-mae_to_rmse ratio = 
+mae: 1.6800370535424127 
+rmse: 2.0927483098343385 
+rmse_to_mae ratio: 1.2456560439674296
 ```
 
 Similar trend from before in that the loss metrics are worse overall 📈 when y_column = y_column_wdlands as compared to when y_column = y_column_wdlands.
 
 ```
 # with new features
-             feature       mae      rmse  mae_to_rmse ratio
-0              month  1.802642  2.286182           1.268239
-1   exact_date_value  1.379175  1.775633           1.287461
-2         week_value  1.377712  1.775881           1.289007
-3           date_sin  1.372665  1.772797           1.291500
-4           date_cos  1.360896  1.763427           1.295783
-5        day_of_year  1.317476  1.735460           1.317261
-6    day_of_year_sin  1.309835  1.715894           1.310008
-7    day_of_year_cos  1.313066  1.725410           1.314032
+             feature         mae      rmse  rmse_to_mae ratio
+0              month    1.802642  2.286182           1.268239
+1   exact_date_value    1.379175  1.775633           1.287461
+2         week_value    1.377712  1.775881           1.289007
+3           date_sin    1.372665  1.772797           1.291500
+4           date_cos    1.360896  1.763427           1.295783
+5        day_of_year    1.317476  1.735460           1.317261
+6    day_of_year_sin    1.309835  1.715894           1.310008
+7    day_of_year_cos    1.313066  1.725410           1.314032
+8    sch_hol_period     1.318537  1.741869           1.321059
+9    public_hol_period  1.303774  1.724481           1.322684
 ```
+The df above can be found in this [csv file](python_scripts/loss_data_wdlands.csv)
 
 Again, a decrease in mae and rmse for all but one of the new features. Looks like the new features' success was not a fluke 😎.
 
-After looking at the performance of the new features 📊, as well as taking the correlation matrix heatmap into consideration, I've decided to incorporate the following features:
+After looking at the performance of the new features 📊, as well as taking the correlation matrix heatmap into consideration, I've decided to remove the following features:
 - feature
 
-  *justify*
-  
+    *justify*
+
 - feature
-- 
-  *justify*
+
+    *justify*
 
 OR *all justify here*
 
-Now that I think about it, it seems quite a waste to not use the 'month' column. 
+Now that we are done with that, lets take a look at our new 'holiday period' features 🎉🏖️. 
 
-It should be providing a wealth of useful information to the model since its a good representation of the different seasons in a year, yet its increasing the mae and rmse 🤔. 
-
-I have a feeling the model is misunderstanding the relationship between the numerical 'month' column and the congestion values, in that it thinks a bigger 'month' value means larger congestion value 📈, or something along those lines. 
-
-Let's try a different approach, one-hot encoding the month values instead of having them as numerical values all in one column. 
-
-```
-code for one hot encoding of month
-```
-
-*explain what the code is doing*
-
-Lets see if one-hot encoding helps prove the month column's worth 💎. I'll be testing using y-column_jb as the dependent variable:
-
-```
-# loss values from addition of one-hot encoded month values
-bluh
-```
-
-I'm glad I did not give up on the month column, just look how much the model's loss metrics improved! So much more than with the other new features 🥇. Will definitely be incorporating this in the final model.
-
-Now that we are done with that, lets move on to testing the new 'holiday period' features 🎉🏖️. But first, lets check for any class imbalance.
+We know from our results above that the 2 columns *do* in fact improve loss metrics. However, I have a sneaky suspicion that theres a class imbalance in either of the columns, something I'd like to check.
 
 ```
 1    def count_true(df, column_name):
@@ -1602,33 +1593,118 @@ total number of rows = 2119
 Percentage of rows with 'True': 0.045304388862671074
 ```
 
-As you can see, the percentage of rows that have 'True' for the school holiday period 🎒🏖️ feature is 34.5%, and 4.5% for the public holiday 🎄🧧 feature (1dp).
+Looks like the percentage of rows that have 'True' for the school holiday period 🎒🏖️ feature is 34.5%, and 4.5% for the public holiday 🎄🧧 feature (1dp).
 
 While 34.5% is only a mild class imbalance and does not warrant any changes, a percentage of 4.5% is very clearly a severe case of class imbalance ⚠️ that requires our attention.
 
-We don't want a situation where the train data is mainly made up of rows not within the public holiday period ❌. This is likely to happen if we use the default train_test_split to obtain our training and test datasets, since train_test_split splits randomly.
+We don't want a situation where the model overfits on non-public holiday rows due to the train data being mainly made up of rows not within the public holiday period ❌.
 
-To prevent this, I'll be using k-folds validation instead of a standard train/test split to test the loss of the model 🧐 when the holiday period features are implemented. 
+To see if this will happen, I'll be using k-folds validation instead of a standard train/test split to test the generalizing power of the model 🧐 when the holiday period features (as well as all the other features) are implemented. 
 
-K-folds validation splits the data into 'k' parts and trains the model 'k' times. Each part will have the same proportion of rows with 'public_hols_period' = True and False as the entire dataset. 
+K-folds validation splits the data into 'k' parts and trains the model 'k' times. 
 
-Additionally, the model is trained on the whole dataset, which is ideal since we have very little rows 🤏 with 'public_hol_period' = True. 
-
-One downside to k-folds, however, is that it takes much more time to implement than train_test_split, since we are training k-models and taking the average of all the model predictions.
+The following code can be found in this [python file](python_scripts/Predicting_with_RFR.py)
 
 ```
-k folds code here
+1    def cross_val(model=rfr_model, X=final_df, y=y_column_jb):
+2        losses = cross_val_score(model, X, y, cv=8, scoring='neg_mean_absolute_error')
+3        losses = np.abs(losses)
+4        for x in range(len(losses)):
+5            print(f'fold {x}: {losses[x]}')
+6        print(f'average mae: {np.mean(losses)}')
+
+7    cross_val()
 ```
 
-*explain k folds code*
+*explain k folds code, for simplicity sake using only mae (line 2), no rmse*
 
 ```
-k folds results here
+fold 0: 0.8011698113207547
+fold 1: 0.6146037735849057
+fold 2: 1.030264150943396
+fold 3: 0.7907169811320754
+fold 4: 0.9013207547169813
+fold 5: 0.8610943396226415
+fold 6: 0.5869056603773585
+fold 7: 1.018598484848485
+average mae: 0.8255842445683248
 ```
 
 *explain k folds results n elab*
 
-To end off, let's compare the loss values at the start to the loss values now, using all the new features we acquired 🌟 (including the one-hot encoded 'month' columns 🗓️).
+Now that I think about it, it seems quite a waste to not use the 'month' column. 
+
+It should be providing a wealth of useful information to the model since its a good representation of the different seasons in a year, yet its increasing the mae and rmse 🤔. 
+
+I have a feeling the model is misunderstanding the relationship between the numerical 'month' column and the congestion values, in that it thinks a bigger 'month' value means larger congestion value 📈, or something along those lines. 
+
+Let's try a different approach, one-hot encoding the month values instead of having them as numerical values all in one column. 
+
+```
+# one-hot encoding of month here, adding the column from final_data.csv
+final_df = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\final_data.csv")
+month = final_df.pop('month')
+df['month'] = month
+df = pd.get_dummies(df, columns=['month'])
+df = df.drop(['month_1'], axis=1)
+print(df.head(5))
+
+# testing without the new features first
+train_test_rfr(df, y_column_jb) # start with jb as y_column
+```
+
+*explain what the code is doing, dropped month 1 cos multicollinearity (camp)  if 11 of the 12 month columns r false, den immediately uk last one is tru*
+
+```
+   Mon  Tue  Wed  Thu  Fri  Sat  hour_sin  hour_cos  month_2  month_3  month_4  ...  month_11  month_12
+0  0.0  0.0  1.0  0.0  0.0  0.0  0.258819  0.965926    False    False    False  ...      True     False
+1  0.0  0.0  1.0  0.0  0.0  0.0  0.500000  0.866025    False    False    False  ...      True     False
+2  0.0  0.0  1.0  0.0  0.0  0.0  0.707107  0.707107    False    False    False  ...      True     False
+3  0.0  0.0  1.0  0.0  0.0  0.0  0.866025  0.500000    False    False    False  ...      True     False
+4  0.0  0.0  1.0  0.0  0.0  0.0  0.965926  0.258819    False    False    False  ...      True     False
+```
+
+Lets see if one-hot encoding helps prove the month column's worth 💎. I'll be testing using y-column_jb as the dependent variable:
+
+```
+# loss values from addition of one-hot encoded month values
+rfr mae: 0.8460125912786498 
+rfr rmse: 1.5448904939684378
+ratio: 1.826084516819679
+```
+
+*darn it (camp)... lower than without any new features, but errors still higher compared to when month column was not one-hot encoded*
+
+*Try quarters of a year using month columns*
+
+```
+    def quarter_col(month_value):
+        if month_value <= 3:
+            return 'Q1'
+        elif month_value <= 6:
+            return 'Q2'
+        elif month_value <= 9:
+            return 'Q3'
+        else:
+            return 'Q4'
+        
+    final_df['year_quarters'] = final_df['month'].apply(quarter_col)
+    final_df = pd.get_dummies(final_df, columns=['year_quarters'])
+    final_df = final_df.drop(['quarter_Q4'])    
+    train_test_rfr(final_df, y_column_jb)
+```
+
+*explain code, also u remove the last column cos multicollinearity just like above. update: IT WORKSSSSSSS WOOOHOOO*
+
+```
+rfr mae: 0.6722405660377357 
+rfr rmse: 1.2059378445449254
+ratio: 1.7939081713751128
+```
+
+*gd or bad? hmmm, guess u will find out ltr haha. dont forget to elab, n do datacamp dsa*
+
+To end off, let's compare the loss values at the start to the loss values now, using all the new features we acquired 🌟 (including the quartered 'month' columns 🗓️).
 
 When y_column = y_column_jb:
 

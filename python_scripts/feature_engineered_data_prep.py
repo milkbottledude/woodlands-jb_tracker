@@ -107,8 +107,10 @@ def hol_perioding(df_to_attach):
 
 df_to_attach = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\data_to_attach.csv")
 final_df = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\final_data.csv")
-final_df.pop('month')
+month = final_df.pop('month')
 final_df.pop('full_date_ymd')
+final_df.pop('Time of Day')
+final_df.pop('exact_date_value')
 # # no hols first
 # final_df.pop('sch_hol_period')
 # final_df.pop('public_hol_period')
@@ -118,6 +120,8 @@ def correlation_heatmap():
     sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap="RdBu")
     plt.show()
 
+correlation_heatmap()
+
 def count_true(df, column_name):
     count_true = df[column_name].sum()
     print(count_true)
@@ -125,7 +129,4 @@ def count_true(df, column_name):
     print(total_no_of_rows)
     print(int(count_true)/total_no_of_rows)
 
-count_true(final_df, 'sch_hol_period')
-count_true(final_df, 'public_hol_period')
-
-## execute k folds on month here
+# doing k-fold for hols periods below

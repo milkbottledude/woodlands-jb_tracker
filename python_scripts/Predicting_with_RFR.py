@@ -1,5 +1,6 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split, KFold
+import numpy as np
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
@@ -20,21 +21,21 @@ remove_holperiods_first = df_to_attach.drop(['sch_hol_period', 'public_hol_perio
 
 df_loss = pd.DataFrame(columns=['feature', 'mae', 'rmse', 'mae_to_rmse ratio'])
 
+rfr_model = RandomForestRegressor()
 # Random Forest Regressor model
-def train_test_rfr(X, y, column_name=None, save_model=False):
+def train_test_rfr(X, y, model=rfr_model, column_name=None, save_model=False):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
-    rfr_model = RandomForestRegressor()
-    rfr_model.fit(X_train, y_train)
-    rfr_predictions = rfr_model.predict(X_test)
+    model.fit(X_train, y_train)
+    rfr_predictions = model.predict(X_test)
     # X_test['congestion_prediction'] = list(rfr_predictions)
     rfr_mae = mean_absolute_error(y_test, rfr_predictions)
     rfr_rmse = mean_squared_error(y_test, rfr_predictions)**0.5
-    mae_to_rmse = rfr_rmse/rfr_mae
+    rmse_to_mae = rfr_rmse/rfr_mae
     print(f"rfr mae: {rfr_mae} ")
     print(f"rfr rmse: {rfr_rmse} ")
-    print(f'ratio: {mae_to_rmse}')
+    print(f'ratio: {rmse_to_mae}')
     if column_name:
-        new_row = [column_name, rfr_mae, rfr_rmse, mae_to_rmse]
+        new_row = [column_name, rfr_mae, rfr_rmse, rmse_to_mae]
         df_loss.loc[len(df_loss)] = new_row
     if save_model == True:
         joblib.dump(rfr_model, "rfr_model_jb.joblib") # saving rfr weights for App Engine
@@ -59,6 +60,40 @@ def testing_new_features(to_csv=False):
     if to_csv:
         df_loss.to_csv('loss_data_wdlands.csv', index=False)
 
+final_df = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\final_data.csv")
+final_df = final_df.drop(['exact_date_value', 'Time of Day', 'full_date_ymd', 'congestion_scale_jb', 'congestion_scale_wdlands'], axis=1)
 
+# using k folds val to test generalization
+def cross_val(model=rfr_model, X=final_df, y=y_column_jb):
+    losses = cross_val_score(model, X, y, cv=8, scoring='neg_mean_absolute_error')
+    losses = np.abs(losses)
+    for x in range(len(losses)):
+        print(f'fold {x}: {losses[x]}')
+    print(f'average mae: {np.mean(losses)}')
 
+# one-hot encoding of month here, adding the column from final_data.csv
+def one_hot_month():
+    month = final_df.pop('month')
+    df['month'] = month
+    df = pd.get_dummies(df, columns=['month'])
+    print(df.head(5))
 
+# one-hot encoding for quarters of a year, using month column
+def one_hot_quarter(df=final_df):
+    def quarter_col(month_value):
+        if month_value <= 3:
+            return 'Q1'
+        elif month_value <= 6:
+            return 'Q2'
+        elif month_value <= 9:
+            return 'Q3'
+        else:
+            return 'Q4'
+        
+    df['year_quarter'] = df['month'].apply(quarter_col)
+    df = pd.get_dummies(df, columns=['year_quarter'])
+    print(df.columns)
+    df = df.drop(['year_quarter_Q4'], axis=1)
+    train_test_rfr(df, y_column_jb)
+
+one_hot_quarter()
