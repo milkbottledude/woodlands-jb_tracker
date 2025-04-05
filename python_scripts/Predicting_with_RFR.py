@@ -79,7 +79,7 @@ def one_hot_month():
     print(df.head(5))
 
 # one-hot encoding for quarters of a year, using month column
-def one_hot_quarter(df=final_df):
+def one_hot_quarter(df=df):
     def quarter_col(month_value):
         if month_value <= 3:
             return 'Q1'
@@ -90,7 +90,9 @@ def one_hot_quarter(df=final_df):
         else:
             return 'Q4'
         
+    df['month'] = final_df['month']
     df['year_quarter'] = df['month'].apply(quarter_col)
+    df = df.drop(['month'], axis=1)
     df = pd.get_dummies(df, columns=['year_quarter'])
     print(df.columns)
     df = df.drop(['year_quarter_Q4'], axis=1)

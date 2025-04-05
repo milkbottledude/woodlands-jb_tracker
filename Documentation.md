@@ -1678,31 +1678,34 @@ ratio: 1.826084516819679
 *Try quarters of a year using month columns*
 
 ```
-    def quarter_col(month_value):
-        if month_value <= 3:
-            return 'Q1'
-        elif month_value <= 6:
-            return 'Q2'
-        elif month_value <= 9:
-            return 'Q3'
-        else:
-            return 'Q4'
+1    def quarter_col(month_value):
+2        if month_value <= 3:
+3            return 'Q1'
+4        elif month_value <= 6:
+5            return 'Q2'
+6        elif month_value <= 9:
+7            return 'Q3'
+8        else:
+9            return 'Q4'
         
-    final_df['year_quarters'] = final_df['month'].apply(quarter_col)
-    final_df = pd.get_dummies(final_df, columns=['year_quarters'])
-    final_df = final_df.drop(['quarter_Q4'])    
-    train_test_rfr(final_df, y_column_jb)
+10   df['month'] = final_df['month']
+11   df['year_quarter'] = df['month'].apply(quarter_col)
+12   df = df.drop(['month'], axis=1)
+13   df = pd.get_dummies(df, columns=['year_quarter'])
+14   print(df.columns)
+15   df = df.drop(['year_quarter_Q4'], axis=1)
+16   train_test_rfr(df, y_column_jb)
 ```
 
-*explain code, also u remove the last column cos multicollinearity just like above. update: IT WORKSSSSSSS WOOOHOOO*
+*explain code, also u remove the last column cos multicollinearity just like above*
 
 ```
-rfr mae: 0.6722405660377357 
-rfr rmse: 1.2059378445449254
-ratio: 1.7939081713751128
+rfr mae: 0.8005795933306458 
+rfr rmse: 1.4387099823922096
+ratio: 1.7970855045239842
 ```
 
-*gd or bad? hmmm, guess u will find out ltr haha. dont forget to elab, n do datacamp dsa*
+*gd or bad? hmmm, guess u will find out ltr haha. dont forget to elab, n do datacamp dsa. update: IT WORKSSSSSSS WOOOHOOO, slightly only tho...*
 
 To end off, let's compare the loss values at the start to the loss values now, using all the new features we acquired 🌟 (including the quartered 'month' columns 🗓️).
 
