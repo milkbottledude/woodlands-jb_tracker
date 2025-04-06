@@ -1512,7 +1512,7 @@ A good rule of thumb I learned is that if the correlation value is < 0.4, there 
 
     In fact, this is actually good news, because it means the feature 'hour_cos' is a good indicator of the congestion condition on the road to woodlands.
 
-- Next, a slightly paler orange square of value 0.42, slightly higher than the multicollinearity threshold. This square involves the features `day_of_year_cos` and `public_hol_period`. 0.42 is not very alarming, but still good to take a mental note of.
+- Next, a slightly paler orange square of value 0.42, slightly higher than the multicollinearity threshold. This square involves the features `day_of_year_cos` and `public_hol_period`. 0.42 is not very alarming, but still good to 📝 take a mental note of.
   
 - This next one is pretty alarming. The feature `week_value` has very high modulus correlation values of -0.92 🟥, 0.97 🟦 and -0.85 🟥 with the features `day_of_year_cos`, `day_of_year_sin`, and `date_sin` respectively. Theres a high chance I'll remove the `week_value` feature later on, its just too correlated with too many other features.
 
@@ -1556,19 +1556,25 @@ The df above can be found in this [csv file](python_scripts/loss_data_wdlands.cs
 Again, a decrease in mae and rmse for all but one of the new features. Looks like the new features' success was not a fluke 😎.
 
 After looking at the performance of the new features 📊, as well as taking the correlation matrix heatmap into consideration, I've decided to remove the following features:
-- feature
+- week_value
 
-    *justify*
+  This feature shows signs of multicollinearity with 3 other features ⚠️, the most out of them all. While it did reduce the mae when implemented, the model still has the 2nd highest mae of all the other models which incorporated other features.
 
-- feature
+- day_of_year
 
-    *justify*
+  The information provided by this feature can be found in its cylical encoded counterparts `day_of_year_sin` and `day_of_year_cos`. Coupled with the fact that its highly correlated with `sch_hol_period` 👎, its a no brainer to remove.
 
-OR *all justify here*
+- date_sin
+
+  Without the `week` column values, we can't really tell where in the year this row’s info was taken 📅. `date_sin` is also highly correlated to `dayy_of_year_sin` and `day_of_year_cos`.
+
+As for `day_pf_year_cos`, I will not remove it even though it has a correlation value of 0.42 with `public_hol_period`. Thats barely above the value I stated before, 0.4. 
+
+Nothing compared to the correlation values of the other features removed, which range from 0.7 to 0.9. So keeping `day_pf_year_cos` around shouldn't pose much of a problem. I hope.
 
 Now that we are done with that, lets take a look at our new 'holiday period' features 🎉🏖️. 
 
-We know from our results above that the 2 columns *do* in fact improve loss metrics. However, I have a sneaky suspicion that theres a class imbalance in either of the columns, something I'd like to check.
+We know from our results above that the 2 holiday columns *do* in fact improve the loss 📉. However, I have a sneaky suspicion that theres a class imbalance in one or both of the columns 🧐, something I'd like to check.
 
 ```
 1    def count_true(df, column_name):
@@ -1583,11 +1589,13 @@ We know from our results above that the 2 columns *do* in fact improve loss metr
 ```
 (Line 1-6)
 
-I made a little function that checks for the number of rows with value = 'True' for a given column in a given df. It outputs the number (Line 3), before printing the total number of rows (line 4) as well as the percentage of rows with 'True' (Line 6). 
+I made a little function that checks for the number of rows with value = 'True' ✅ for a given column in a given df. 
+
+It outputs the number (Line 3), before printing the total number of rows 📝 (line 4) as well as the percentage of rows with 'True' (Line 6). 
 
 (Line 7-8)
 
-Then, I call the function, passing the two holiday period features in as parameters.
+Then, I call the function, passing the two holiday period features 🎉 in as parameters.
 
 Here are the results:
 ```
@@ -1649,18 +1657,29 @@ Let's try a different approach, one-hot encoding the month values instead of hav
 
 ```
 # one-hot encoding of month here, adding the column from final_data.csv
-final_df = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\final_data.csv")
-month = final_df.pop('month')
-df['month'] = month
-df = pd.get_dummies(df, columns=['month'])
-df = df.drop(['month_1'], axis=1)
-print(df.head(5))
+1    month = final_df.pop('month')
+2    df['month'] = month
+3    df = pd.get_dummies(df, columns=['month'])
+4    df = df.drop(['month_1', 'month'], axis=1)
+5    print(df.head(5))
 
 # testing without the new features first
-train_test_rfr(df, y_column_jb) # start with jb as y_column
+6    train_test_rfr(df, y_column_jb) # start with jb as y_column
 ```
 
-*explain what the code is doing, dropped month 1 cos multicollinearity (camp)  if 11 of the 12 month columns r false, den immediately uk last one is tru*
+(Lines 1-2)
+
+First, I transfer the `month` column from the df with all the new features to the original df.
+
+(Lines 3-5)
+
+Next, I call get_dummies from the pandas library on the month column to get 12 'month columns'. Then, I drop one of the encoded month columns to prevent multicollinearity, as well as the actual 'month' column.
+
+Where is the multicollinearity you may ask? Well, if 11 of the 12 one-hot encoded `month` columns were 'False' ❌, Then you would instantly know that the last one was 'True' ✅. That is a prime example of multicollinearity betweem features.
+
+(Lines 5-6)
+
+Lastly, I print the first 5 rows of the df 📝 to make sure all the columns are correct and the values have no problems (see below), before calling the testing function I made earlier, 'train_test_rfr'.
 
 ```
    Mon  Tue  Wed  Thu  Fri  Sat  hour_sin  hour_cos  month_2  month_3  month_4  ...  month_11  month_12
@@ -1680,9 +1699,13 @@ rfr rmse: 1.5448904939684378
 ratio: 1.826084516819679
 ```
 
-*darn it (camp)... lower than without any new features, but errors still higher compared to when month column was not one-hot encoded*
+Looks like although the loss values are better than when none of the new features were used, they did not improve more than when the month column was not encoded 👎. Dang it.
 
-*Try quarters of a year using month columns*
+Another idea I have for the month columns is - instead of splitting the feature into 12 separate columns (which would likely trigger the curse of dimensionality and increase loss values 👎), we decrease the number of new features by sorting the month values into quarters of the year 🗓️.
+
+So month values 1, 2, and 3 (Jan, Feb, Mar) will represent 1 column, the 1st quarter of the year 🗓️. If the row's month column has a value of 4, 5, or 6 (Apr, May, June), the column representing the 2nd quarter of the year will have the value 'True' ✅. I think you get the idea.
+
+The following is my code for encoding the 'month' values into 'yearly quarter' values.
 
 ```
 1    def quarter_col(month_value):
@@ -1695,16 +1718,26 @@ ratio: 1.826084516819679
 8        else:
 9            return 'Q4'
         
-10   df['month'] = final_df['month']
-11   df['year_quarter'] = df['month'].apply(quarter_col)
-12   df = df.drop(['month'], axis=1)
-13   df = pd.get_dummies(df, columns=['year_quarter'])
+10   df['year_quarter'] = df['month'].apply(quarter_col)
+11   df = df.drop(['month'], axis=1)
+12   df = pd.get_dummies(df, columns=['year_quarter'])
+13   df = df.drop(['year_quarter_Q4'], axis=1)
 14   print(df.columns)
-15   df = df.drop(['year_quarter_Q4'], axis=1)
-16   train_test_rfr(df, y_column_jb)
+15   train_test_rfr(df, y_column_jb)
 ```
 
-*explain code, also u remove the last column cos multicollinearity just like above*
+(Lines 1-9)
+
+I make a function which returns the corresponding year quarter value 🔢 when a month value is passed in it.
+
+(Lines 10-12)
+
+I apply the function to the df and create a new column for the quarter values, called 'year_quarter'. Then I get rid of the original 'month' column 🗓️ and get dummy columns for the 'year_quarter' column.
+
+(Lines 13-15)
+
+First, I drop one of the four new 'year_quarter' columns for multicollinearity reasons (I randomly chose 'year_quarter_Q4'). Then I print the columns of the df for a final check 🔎, before calling the custom function to see the new loss values.
+
 
 ```
 rfr mae: 0.8005795933306458 
@@ -1712,9 +1745,9 @@ rfr rmse: 1.4387099823922096
 ratio: 1.7970855045239842
 ```
 
-*gd or bad? hmmm, guess u will find out ltr haha. dont forget to elab, n do datacamp dsa. update: IT WORKSSSSSSS WOOOHOOO, slightly only tho...*
+Slightly better mae and rmse than the original month column, and way better than the 12 one-hot encoded month columns 🌟. Looks like this time, the one-hot encoding was a success 🎯.
 
-Let's try using only the selected features and see if removing the following features really helps.
+Now, let's try using only the selected features, and see if removing the multicollinear features really helps.
 
 Columns being used: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'hour_sin', 'hour_cos', 'day_of_year_sin', 'day_of_year_cos', 'sch_hol_period', 'public_hol_period', 'year_quarter_Q1', 'year_quarter_Q4']
 
@@ -1733,10 +1766,9 @@ rfr mae: 1.4146160152740341
 rfr rmse: 1.8250879333103731
 ratio: 1.2901649024218236
 ```
+This is odd... Removing correlated features almost always improves model performance 🚀, yet the loss values (for when all the chosen features are used) are higher 📈 than when individual columns were used by themselves.
 
-*Looks like removing correlated features did not lower loss values, which is weird*
-
-Now lets try using all the new features we acquired 🌟 (including the 'removed' columns that show high multicollinearity 🗓️).
+Let's try using all the new features we acquired 🌟 (including the 'removed' columns that show high multicollinearity).
 
 Columns being used: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'hour_sin', 'hour_cos', 'week_value', 'date_sin', 'date_cos', 'day_of_year', 'day_of_year_sin', 'day_of_year_cos', 'sch_hol_period', 'public_hol_period', 'year_quarter_Q1', 'year_quarter_Q4']
 
@@ -1747,7 +1779,6 @@ rfr mae: 0.6705896226415093
 rfr rmse: 1.2117450966458594
 ratio: 1.8069845636332587
 ```
-
 When y_column = y_column_wdlands:
 
 ```
@@ -1755,13 +1786,15 @@ rfr mae: 1.2999056603773587
 rfr rmse: 1.7204476435915226 
 ratio: 1.3235173105501223
 ```
+Loss values are lower than when only the chosen features were used 📉, but these still are not low enough. We obtained lower, better mae values when we were testing out individual features (0.66 for y_column_jb and 1.30 for y_column_wdlands). 
 
-*close to but not lowest, there were lower loss values when only 1 new feature was implemented, refer to line 1450 (jb) and line 1535(wdlands) to compare*
+Since we are using them together 🤝, they should be performing better than they were individually.
 
-*gotta find a combination of features of mae < 0.66 for y_column_jb and mae < 1.3 for y_column_wdlands*
+As of right now, these are the best models I can come up with 😖. But there is definitely a specific subset of the features, both new and old, that when used will yield a lower mae than 0.66 for when y_column = y_column_jb and < 1.3 for when y_column = y_column_wdlands 👍.
 
+Unfortunately, aside from 'for' looping 🔄 through every single combination of features, I am not sure how to find that combination at the moment.
 
-That concludes the feature engineering and testing for this model 🤝.
+That concludes the feature engineering and testing for this model 🤝, for now at least 😤.
 
 In the next chapter, let's see if we can improve the accuracy of our model even more than we already have, this time by adjusting the model's hyperparameters ⚙️.
 
