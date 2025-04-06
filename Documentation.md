@@ -1342,7 +1342,9 @@ This is helpful for seeing if the model is doing well for certain instances but 
 11    print(f"rfr rmse: {rfr_rmse} ")   
 ```
 
-I compiled all the data we have so far and did a 80% train, 20% test split. Normally I would do a 70/30 split, which you would know if you saw in the other repositories the way I go about my Kaggle competitions. But as we have limited image data that has been labelled with a congestion value, I chose to prioritise training data in this case. The code above is currently testing the model trained on data from the road to Johor, hence the y column selected for the split in Line 4 is 'y_column_jb'. But not to worry, we will change that and test the model for the road to Woodlands as well.
+I compiled all the data we have so far and did a 80% train, 20% test split. Normally I would do a 70/30 split ✂️, which you would know if you saw in the other repositories the way I go about my Kaggle competitions. But as we have limited image data that has been labelled with a congestion value, I chose to prioritise training data with an 80/20 split instead. 
+
+The code above currently tests the model trained on data from the road to Johor, hence the y_column passed for the split in Line 4 is 'y_column_jb'. But not to worry, we will change that later on ✍️ and test the model for the road to Woodlands as well.
 
 After testing both, here are the results, rounded off to 4dp:
 
@@ -1358,7 +1360,9 @@ After testing both, here are the results, rounded off to 4dp:
 
 Looks like the congestion on the road to JB is more predictable, with the MAE and RMSE being quite low (compared to the range of our values, 0-5). However, the RMSE being more than double the MAE implies there are some cases of large deviations in predicted values from the actual value. Overall, not too shabby for a first test 🤝.
 
-The model for the other side of the road does not look as promising 😔. While the RMSE to MAE ratio is less than the other model, meaning there are no 'abnormally larger than usual' errors, thats probably because the MAE is already so high (more than double the previous MAE value). The fact that the MAE in this case is about 13% of the max congestion value, 5, is a little concerning but not a huge problem. However, the RMSE is 1.26 arbitrary units, a quarter of the congestion value range, which is a big problem 🚩. This means that when predicting the congestion on the road to Woodlands based on user input data 🗓️🕝, the predicted value output back to the user may differ from the actual value by more than 1 au. Thats a lot, considering the max congestion value is 5au.
+The model for the other side of the road does not look as promising 😔. While the RMSE to MAE ratio is less than the other model, meaning there are no 'abnormally larger than usual' errors, thats probably because the MAE is already so high (more than double the previous MAE value). The fact that the MAE in this case is about 13% of the max congestion value, 5, is a little concerning but not a huge problem. 
+
+However, the RMSE is 1.26 arbitrary units, a quarter of the congestion value range, which is a big problem 🚩. This means that when predicting the congestion on the road to Woodlands based on user input data 🗓️🕝, the predicted value output back to the user may differ from the actual value by more than 1 au. Thats a lot, considering the max congestion value is 5au.
 
 Based on the EDA I did in [Chapter 3.2](#32-exploratory-data-analysis-eda), the congestion patterns for the road to Woodlands is certainly more inconsistent. The JB road model is nearly there but the Woodlands one needs some serious tinkering 🔧, and perhaps more training data for it to better generalise to the unpredictable nature of the traffic jams coming into Woodlands Checkpoint from JB.
 
@@ -1500,20 +1504,23 @@ Here are the results:
 
 Fig 4.7: Heatmap showing correlation values between features, as well as between features and the two y-columns.
 
-A good rule of thumb I learned is that if the correlation value is < 0.3, there is no multicollinearity. As we can see, a large majority of the squares are whitish in colour (⬜ = 👍) with correlation values not surpassing 0.3. However, there are a few bad eggs here and there.
+A good rule of thumb I learned is that if the correlation value is < 0.4, there is no multicollinearity. As we can see, a large majority of the squares are whitish in colour (⬜ = 👍) with correlation values not surpassing 0.4. However, there are a few bad eggs here and there.
 
-- First off, the pale orange squares 🟧 of value -0.47. Those show the correlation between 'hour_cos', an independent variable (x), and 'congestion_value_wdlands', a dependent variable (y).
+- First off, the pale orange squares 🟧 of value -0.47. Those show the correlation between `hour_cos`, an independent variable (x), and `congestion_value_wdlands`, a dependent variable (y).
 
-Since the correlation is not between two independent variables, there is no multicollinearity, so no cause for alarm 😮‍💨. 
+    Since the correlation is not between two independent variables, there is no multicollinearity, so no cause for alarm 😮‍💨. 
 
-In fact, this is actually good news, because it means the feature 'hour_cos' is a good indicator of the congestion condition on the road to woodlands.
+    In fact, this is actually good news, because it means the feature 'hour_cos' is a good indicator of the congestion condition on the road to woodlands.
 
-- Next, a 
+- Next, a slightly paler orange square of value 0.42, slightly higher than the multicollinearity threshold. This square involves the features `day_of_year_cos` and `public_hol_period`. 0.42 is not very alarming, but still good to take a mental note of.
+  
+- This next one is pretty alarming. The feature `week_value` has very high modulus correlation values of -0.92 🟥, 0.97 🟦 and -0.85 🟥 with the features `day_of_year_cos`, `day_of_year_sin`, and `date_sin` respectively. Theres a high chance I'll remove the `week_value` feature later on, its just too correlated with too many other features.
 
+- Another blue square of value 0.95 🟦 representing the correlation value between the features `day_of_year` and `sch_hol_period`.
 
+- Lastly, the feature `date_sin` is highly correlated with the features `day_of_year_cos` and `day_of_year_sin`. The correlation values are 0.80 🟦 and -0.82 🟥 respectively.
 
-*talk abt heatmap values*
-
+    There is a chance I might remove `date_sin`. But since it comes as a pair with `date_cos`, I'm debating whether I should remove both or keep `date_cos` only.
 
 Moving on, lets check out the loss values when y-column = y_column_wdlands:
 ```
