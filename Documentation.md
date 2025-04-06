@@ -1759,16 +1759,16 @@ That concludes the feature engineering and testing for this model 🤝.
 In the next chapter, let's see if we can improve the accuracy of our model even more than we already have, this time by adjusting the model's hyperparameters ⚙️.
 
 ### 4.5 Hyperparameter Tuning (tbc)
-There are numerous hyperparameters that can be tweaked in the RFR model to further improve our loss metrics, even if just by a little. 
+There are numerous hyperparameters that can be tweaked in the RFR model to further improve our loss metrics 📉, even if by just a little. 
 
-I'm not an expert, so I'll only be looking into the more basic hyperparameters, such as the following:
+I'm not an expert, so I'll only be looking into the more basic hyperparameters 😁, such as the following:
 
-- `max_depth`, lets us choose how deep a tree in the forest is allowed to grow
-- `n_estimators`, allows us to change the number of trees in the forest
-- `criterion`, this allows us to choose which loss metric to consider when splitting at a node
-- `bootstrap`, this lets us choose whether we want to reuse rows when training the model
-- `max_features`, (RMore)
-- `min_samples_leaf`, this allows us to decide the minimum number of rows required in a leaf
+- `max_depth`, lets us choose how deep a tree in the forest is allowed to grow 𖣂
+- `n_estimators`, allows us to change the number of trees in the forest 🌲
+- `criterion`, this allows us to choose which loss metric to consider when splitting at a node ⚙️
+- `bootstrap`, this lets us choose whether we want to reuse rows when training the model 🔄
+- `max_features`, this lets us choose the number of features the model randomly chooses from when splitting a node 🔢 *(use k folds to test dis)*
+- `min_samples_leaf`, this allows us to decide the minimum number of rows required in a leaf 🌱
 
 Let's get into it 💪.
 
