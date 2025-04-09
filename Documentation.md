@@ -1803,7 +1803,9 @@ Since we are using them together 🤝, they should be performing better than the
 
 As of right now, these are the best models I can come up with 😖. But there is definitely a specific subset of the features, both new and old, that when used will yield a lower mae than 0.66 for when y_column = y_column_jb and < 1.3 for when y_column = y_column_wdlands 👍.
 
-Unfortunately, aside from 'for' looping 🔄 through every single combination of features, I am not sure how to find that combination at the moment. For now, I'll just implement all the features 📝, as well as the one-hot encoded quartered month columns, into the webapp ML model 💻.
+Unfortunately, aside from 'for' looping 🔄 through every single combination of features, I am not sure how to find that combination at the moment. 
+
+For now, I'll just implement all the features 📝, as well as the one-hot encoded quartered month columns, into another model and save it as a joblib file as well 💻 for future implementation into the webapp in [chapter 5.4](#54-creating-mainpy-v2-and-appyaml).
 
 That concludes the feature engineering and testing for this model 🤝, for now at least 😤.
 
@@ -2095,6 +2097,10 @@ And here it is with the image included 🖼️
 Fig 5.9: Test run with both prediction value and jam image included
 
 Looks like the base structure of the website is complete! Now we can finally move on to deploying this thing for real 🚀 on Google App Engine (GAE) so that everyone can use it. This does not mean that the development of the website HTML and CSS will be halted though, I will continue to improve the visuals ✨ and overall performance of the website as inspiration strikes and my skills continue to improve.
+
+**Implementing new joblib 2.0 files**
+
+(Update) If you refer to [Chapter 4.4](#44-feature-selection-testing-in-progress), you will notice that new features have been introduced. A new model joblib file has been created, and that means extra steps to implement it into the webapp. Since the number of columns in a row required by this model is different compared to the first joblib file I made, we will have to make some changes to [main.py](python_scritps/main.py)
 
 #### app.yaml
 To run the website on GAE, we need an app.yaml file, as mentioned before when showcasing the project folder structure. We already have one, but its still empty, so let's change that 😎.
