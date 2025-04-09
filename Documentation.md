@@ -2100,7 +2100,7 @@ Looks like the base structure of the website is complete! Now we can finally mov
 
 **Implementing new joblib 2.0 files**
 
-(Update) If you refer to [Chapter 4.4](#44-feature-selection-testing-in-progress), you will notice that new features have been introduced. A new model joblib file has been created, and that means extra steps to implement it into the webapp. Since the number of columns in a row required by this model is different compared to the first joblib file I made, we will have to make some changes to [main.py](python_scripts/main.py)
+(Update) If you refer to [Chapter 4.4](#44-feature-selection-testing-in-progress), you will notice that new features have been introduced. A new model joblib file has been created, and that means extra steps to implement it into the webapp. Since the number of columns in a row required by this model is different compared to the first joblib file I made, we will have to make some changes to main.py in GCloud.
 
 #### app.yaml
 To run the website on GAE, we need an app.yaml file, as mentioned before when showcasing the project folder structure. We already have one, but its still empty, so let's change that 😎.
