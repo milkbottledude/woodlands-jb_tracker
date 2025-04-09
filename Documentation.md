@@ -1630,8 +1630,15 @@ The following code can be found in this [python file](python_scripts/Predicting_
 
 7    cross_val()
 ```
+(Lines 1-3)
 
-*explain k folds code, for simplicity sake using only mae (line 2), no rmse*
+I create a cross_val_score object called 'losses' which will store all the loss values 📝. In this case, it will just be 'negative MAE', which I defined together with the number of folds I want (cv=8). Regular MAE would be more straightforward, but the cross_val_score function only does not have it 😔. 
+
+Afterwards, I converted all the negative MAE values into positive ➕ using numpy's absolute function.
+
+(Lines 4-7)
+
+Due to there being 8 folds, the model was trained 8 times, hence there are 8 loss values obtained. I used a 'for' loop 🔄 to print out the fold number together with its corresponding MAE loss value, before calculating and printing the average of the 8 losses using numpy's mean function. Lastly, I called the function.
 
 ```
 fold 0: 0.8011698113207547
@@ -1644,6 +1651,10 @@ fold 6: 0.5869056603773585
 fold 7: 1.018598484848485
 average mae: 0.8255842445683248
 ```
+
+As we can see, the MAE is quite inconsistent, with values ranging from a low 0.6 👍 to as high as 1.0 👎. This means there are some row instances that the model cannot predict well. Those rows may be rows that fall within the public holiday period, or it could be a another specific combination of column values that puzzles the model 😵‍💫. 
+
+Unfortunately, I am unable to pinpoint what rows is giving the model a hard time as of this moment.
 
 *explain k folds results n elab*
 
@@ -1660,7 +1671,7 @@ Let's try a different approach, one-hot encoding the month values instead of hav
 1    month = final_df.pop('month')
 2    df['month'] = month
 3    df = pd.get_dummies(df, columns=['month'])
-4    df = df.drop(['month_1', 'month'], axis=1)
+4    df = df.drop(['month_1'], axis=1)
 5    print(df.head(5))
 
 # testing without the new features first
@@ -1673,7 +1684,7 @@ First, I transfer the `month` column from the df with all the new features to th
 
 (Lines 3-5)
 
-Next, I call get_dummies from the pandas library on the month column to get 12 'month columns'. Then, I drop one of the encoded month columns to prevent multicollinearity, as well as the actual 'month' column.
+Next, I call get_dummies from the pandas library on the month column to get 12 'month columns'. Then, I drop one of the encoded month columns to prevent multicollinearity.
 
 Where is the multicollinearity you may ask? Well, if 11 of the 12 one-hot encoded `month` columns were 'False' ❌, Then you would instantly know that the last one was 'True' ✅. That is a prime example of multicollinearity betweem features.
 
@@ -1792,7 +1803,7 @@ Since we are using them together 🤝, they should be performing better than the
 
 As of right now, these are the best models I can come up with 😖. But there is definitely a specific subset of the features, both new and old, that when used will yield a lower mae than 0.66 for when y_column = y_column_jb and < 1.3 for when y_column = y_column_wdlands 👍.
 
-Unfortunately, aside from 'for' looping 🔄 through every single combination of features, I am not sure how to find that combination at the moment.
+Unfortunately, aside from 'for' looping 🔄 through every single combination of features, I am not sure how to find that combination at the moment. For now, I'll just implement all the features 📝, as well as the one-hot encoded quartered month columns, into the webapp ML model 💻.
 
 That concludes the feature engineering and testing for this model 🤝, for now at least 😤.
 
