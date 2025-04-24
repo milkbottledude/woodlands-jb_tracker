@@ -142,7 +142,7 @@ If you are still interested and would like to know more, here is a [detailed doc
 
 I will be going more in depth on setting up of the code and dockerized container 📦 for the GCloud functions, the headaches and setbacks 🤕, processing of the image data into clear readable data, and more. 
 
-I also added screenshots and pictures 🖼️ of the processes in the documentation below if you like visual learning 👁️, from boring things like manually drawing bounding boxes to more cool stuff such as experimenting with object detection ML models.
+I also added screenshots and pictures 🖼️ of the processes in the documentation below if you like visual learning 👁️, from boring things like manually drawing bounding boxes to more cool stuff such as experimenting with different regression ML models.
 
 - All pictures of the project can be found in the [progress_pics](progress_pics/) folder
 
