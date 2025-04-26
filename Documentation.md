@@ -1822,10 +1822,14 @@ I'm not an expert, so I'll only be looking into the more basic hyperparameters ð
 Let's get into it ðŸ’ª, starting off with the first hyperparameter: max_depth
 
 ```
-insert code here
+max_depth_list = [5, 7, 9, 11, 13]
+for x in range(len(max_depth_list)):
+    rfr_model = RandomForestRegressor(random_state=0, max_depth=max_depth_list[x])
 ```
 
-To see which depth will obtain the smallest loss values, i will 'for' loop through a list of depth values: [3, 5, 7, 9]. A reminder to all of us that the loss values of the base model when all the variables are used, without hyperparameter tuning, are the following:
+This is the portion of [Predicting_with_RFR.py](python_scripts/Predicting_with_RFR.py) which I changed to accomodate the change in max_depth. To see which depth will obtain the smallest loss values, i will 'for' loop through a list of depth values ranging from 5 to 13. 
+
+A reminder to all of us that the loss values of the base model when all the variables are used, without hyperparameter tuning, are the following:
 
 ```
 rfr mae: 0.6705896226415093 
@@ -1843,11 +1847,14 @@ ratio: 1.3235173105501223
 Keeping these values in mind, lets take a look at the loss values when each of the max_depth values are used. For time and simplicity's sake, I will only show the MAE.
 
 ```
-max_depth = 3, rfr mae = 
-max_depth = 5, rfr mae = 
-max_depth = 7, rfr mae = 
-max_depth = 9, rfr mae = 
+max_depth = 5, rfr mae = 0.7753075810098717
+max_depth = 7, rfr mae = 0.7056996666853149
+max_depth = 9, rfr mae = 0.6790014702090215
+max_depth = 11, rfr mae = 0.6668108065716118
+max_depth = 13, rfr mae = 0.6762115775747611
 ```
+
+*elab on results*
 
 
 (TBC!)
