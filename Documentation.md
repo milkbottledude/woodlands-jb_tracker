@@ -1652,11 +1652,7 @@ fold 7: 1.018598484848485
 average mae: 0.8255842445683248
 ```
 
-As we can see, the MAE is quite inconsistent, with values ranging from a low 0.6 👍 to as high as 1.0 👎. This means there are some row instances that the model cannot predict well. Those rows may be rows that fall within the public holiday period, or it could be a another specific combination of column values that puzzles the model 😵‍💫. 
-
-Unfortunately, I am unable to pinpoint what rows is giving the model a hard time as of this moment.
-
-*explain k folds results n elab*
+As we can see, the MAE is quite inconsistent, with values ranging from a low 0.6 👍 to as high as 1.0 👎. This means there are some row instances that the model cannot predict well. Those rows may be rows that fall within the public holiday period, or it could be a another specific combination of column values that puzzles the model 😵‍💫. Unfortunately, I am unable to pinpoint what rows is giving the model a hard time as of this moment.
 
 Now that I think about it, it seems quite a waste to not use the 'month' column. 
 
@@ -1823,7 +1819,36 @@ I'm not an expert, so I'll only be looking into the more basic hyperparameters �
 - `max_features`, this lets us choose the number of features the model randomly chooses from when splitting a node 🔢 *(use k folds to test dis)*
 - `min_samples_leaf`, this allows us to decide the minimum number of rows required in a leaf 🌱
 
-Let's get into it 💪.
+Let's get into it 💪, starting off with the first hyperparameter: max_depth
+
+```
+insert code here
+```
+
+To see which depth will obtain the smallest loss values, i will 'for' loop through a list of depth values: [3, 5, 7, 9]. A reminder to all of us that the loss values of the base model when all the variables are used, without hyperparameter tuning, are the following:
+
+```
+rfr mae: 0.6705896226415093 
+rfr rmse: 1.2117450966458594
+ratio: 1.8069845636332587
+```
+When y_column = y_column_wdlands:
+
+```
+rfr mae: 1.2999056603773587 
+rfr rmse: 1.7204476435915226 
+ratio: 1.3235173105501223
+```
+
+Keeping these values in mind, lets take a look at the loss values when each of the max_depth values are used. For time and simplicity's sake, I will only show the MAE.
+
+```
+max_depth = 3, rfr mae = 
+max_depth = 5, rfr mae = 
+max_depth = 7, rfr mae = 
+max_depth = 9, rfr mae = 
+```
+
 
 (TBC!)
 
