@@ -1827,14 +1827,12 @@ for x in range(len(max_depth_list)):
     rfr_model = RandomForestRegressor(random_state=0, max_depth=max_depth_list[x])
 ```
 
-This is the portion of [Predicting_with_RFR.py](python_scripts/Predicting_with_RFR.py) which I changed to accomodate the change in max_depth. To see which depth will obtain the smallest loss values, i will 'for' loop through a list of depth values ranging from 5 to 13. 
-
-A reminder to all of us that the loss values of the base model when all the variables are used, without hyperparameter tuning, are the following:
+To see which depth will obtain the smallest loss values, i will 'for' loop through a list of depth values: [6, 8, 10, 12, 14]. A reminder to all of us that the loss values of the base model when all the variables are used, without hyperparameter tuning, are the following (after setting random_state=0, mb I forgot earlier):
 
 ```
-rfr mae: 0.6705896226415093 
-rfr rmse: 1.2117450966458594
-ratio: 1.8069845636332587
+rfr mae: 0.6731839622641508 
+rfr rmse: 1.209741415531778
+ratio: 1.7970443197473076
 ```
 When y_column = y_column_wdlands:
 
@@ -1847,14 +1845,32 @@ ratio: 1.3235173105501223
 Keeping these values in mind, lets take a look at the loss values when each of the max_depth values are used. For time and simplicity's sake, I will only show the MAE.
 
 ```
-max_depth = 5, rfr mae = 0.7753075810098717
-max_depth = 7, rfr mae = 0.7056996666853149
-max_depth = 9, rfr mae = 0.6790014702090215
-max_depth = 11, rfr mae = 0.6668108065716118
-max_depth = 13, rfr mae = 0.6762115775747611
+max_depth = 6, rfr mae = 0.7412137978905754
+max_depth = 8, rfr mae = 0.6896147016265989
+max_depth = 10, rfr mae = 0.6684006708449132
+max_depth = 12, rfr mae = 0.670419573641038
+max_depth = 14, rfr mae = 0.6705209665849877
 ```
 
-*elab on results*
+*talk abt obtained values frm diff max_depths*
+
+For the next hyperparameter, `n_estimators`, similar to `max_depth`, I'll be iterating through a list of values to see which results in the lowest MAE.
+
+```
+n_estimators_list = [15, 17, 19, 21, 23]
+for x in range(len(n_estimators_list)):
+    rfr_model = RandomForestRegressor(random_state=0, n_estimators=n_estimators_list[x])
+```
+
+MAE for each value of `n_estimator`:
+
+```
+n_estimator = 15, rfr mae = 0.6803459119496856
+n_estimator = 17, rfr mae = 0.678274139844617
+n_estimator = 19, rfr mae = 0.6740317775571003
+n_estimator = 21, rfr mae = 0.6698113207547169
+n_estimator = 23, rfr mae = 0.6734003281378178
+```
 
 
 (TBC!)

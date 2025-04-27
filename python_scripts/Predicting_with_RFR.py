@@ -21,8 +21,9 @@ remove_holperiods_first = df_to_attach.drop(['sch_hol_period', 'public_hol_perio
 
 df_loss = pd.DataFrame(columns=['feature', 'mae', 'rmse', 'mae_to_rmse ratio'])
 
-max_depth_list = [5, 7, 9, 11, 13]
-rfr_model = RandomForestRegressor(random_state=0, max_depth=max_depth_list[3])
+max_depth_list = [6, 8, 10, 12, 14]
+n_estimators_list = [15, 17, 19, 21, 23]
+rfr_model = RandomForestRegressor(random_state=0, n_estimators=23)
 # Random Forest Regressor model
 def train_test_rfr(X, y, model=rfr_model, column_name=None, save_model=False, joblib_jb=True):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
