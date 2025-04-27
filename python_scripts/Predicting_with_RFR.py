@@ -7,13 +7,13 @@ from sklearn.ensemble import RandomForestRegressor
 import joblib
 
 
+# C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\new_data.csv
 
+df = pd.read_csv(r"newdata.csv")
+df_to_attach = pd.read_csv(r"data_to_attach.csv")
 
-df = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\newdata.csv")
-df_to_attach = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\data_to_attach.csv")
-
-# final_data_df = pd.concat([df, df_to_attach], axis=1)
-# final_data_df.to_csv('final_data.csv', index=False)
+final_data_df = pd.concat([df, df_to_attach], axis=1)
+final_data_df.to_csv('final_data.csv', index=False)
 
 dontneedtime = df.pop('Time of Day')
 dontneedfulldate = df_to_attach.pop('full_date_ymd')
@@ -21,7 +21,8 @@ remove_holperiods_first = df_to_attach.drop(['sch_hol_period', 'public_hol_perio
 
 df_loss = pd.DataFrame(columns=['feature', 'mae', 'rmse', 'mae_to_rmse ratio'])
 
-rfr_model = RandomForestRegressor()
+max_depth_list = [5, 7, 9, 11, 13]
+rfr_model = RandomForestRegressor(random_state=0, max_depth=max_depth_list[3])
 # Random Forest Regressor model
 def train_test_rfr(X, y, model=rfr_model, column_name=None, save_model=False, joblib_jb=True):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
@@ -50,8 +51,6 @@ new_features = []
 # for feature_name in df_to_attach:
 #     new_features.append(feature_name)
 
-y_column_jb = df.pop('congestion_scale_jb')
-y_column_wdlands = df.pop('congestion_scale_wdlands')
 
 def testing_new_features(to_csv=False):
     for feature_name in new_features:
@@ -64,8 +63,11 @@ def testing_new_features(to_csv=False):
     if to_csv:
         df_loss.to_csv('loss_data_wdlands.csv', index=False)
 
-final_df = pd.read_csv(r"C:\Users\Yu Zen\OneDrive\Coding\Project-JBridge\python_scripts\final_data.csv")
-final_df = final_df.drop(['exact_date_value', 'Time of Day', 'full_date_ymd', 'congestion_scale_jb', 'congestion_scale_wdlands'], axis=1)
+final_df = pd.read_csv(r"final_data.csv")
+final_df = final_df.drop(['exact_date_value', 'Time of Day', 'full_date_ymd'], axis=1)
+
+y_column_jb = final_df.pop('congestion_scale_jb')
+y_column_wdlands = final_df.pop('congestion_scale_wdlands')
 
 # using k folds val to test generalization
 def cross_val(model=rfr_model, X=final_df, y=y_column_jb):
@@ -85,7 +87,7 @@ def one_hot_month(df=df):
     train_test_rfr(df, y_column_jb)
 
 # one-hot encoding for quarters of a year, using month column
-def one_hot_quarter(df=final_df):
+def one_hot_quarter(final_df=final_df):
     def quarter_col(month_value):
         if month_value <= 3:
             return 'Q1'
@@ -97,11 +99,15 @@ def one_hot_quarter(df=final_df):
             return 'Q4'
         
     # df['month'] = final_df['month']
-    df['year_quarter'] = df['month'].apply(quarter_col)
+    final_df['year_quarter'] = final_df['month'].apply(quarter_col)
     # df = df.drop(['month', 'week_value', 'day_of_year', 'date_sin', 'date_cos'], axis=1)
-    df = pd.get_dummies(df, columns=['year_quarter'])
-    print(df.columns)
-    df = df.drop(['year_quarter_Q4'], axis=1)
-    train_test_rfr(df, y_column_wdlands, save_model=True, joblib_jb=False)
+    final_df = pd.get_dummies(final_df, columns=['year_quarter'])
+    final_df = final_df.drop(['month', 'year_quarter_Q4'], axis=1)
+    final_df['year_quarter_Q2'] = False
+    final_df['year_quarter_Q3'] = False
+    print(final_df.columns)
+    final_df.to_csv('trainfinal_data.csv', index=False)
 
-print(one_hot_quarter())
+trainfinal_df = pd.read_csv('trainfinal_data.csv')
+
+print(train_test_rfr(trainfinal_df, y_column_jb))
