@@ -23,7 +23,10 @@ df_loss = pd.DataFrame(columns=['feature', 'mae', 'rmse', 'mae_to_rmse ratio'])
 
 max_depth_list = [6, 8, 10, 12, 14]
 n_estimators_list = [15, 17, 19, 21, 23]
-rfr_model = RandomForestRegressor(random_state=0, n_estimators=23)
+max_features_list = [4, 7, 10, 13, 16]
+min_samples_leaf_list = [2, 4, 7, 12]
+rfr_model = RandomForestRegressor(random_state=0, min_samples_leaf=min_samples_leaf_list[3])
+
 # Random Forest Regressor model
 def train_test_rfr(X, y, model=rfr_model, column_name=None, save_model=False, joblib_jb=True):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)

@@ -1874,15 +1874,76 @@ n_estimator = 23, rfr mae = 0.6734003281378178
 
 *21 is best talk abt that*
 
-As for the `criterion` hyperparameter, I will be testing the only 2 avaliable values, 'MAE' and 'MSE' to see which yields the best MAE as well as RMSE values. This hyperparameter determines whether the model trains to reduce MAE or MSE. The default is MSE (loss metrics are listed above, when no hyperparams are applied), so I'll only test MAE and see if its any better.
+As for the `criterion` hyperparameter, I will be testing the 2 basic values out of the 4, 'absolute_error' and 'squared_error' to see which yields the best MAE as well as RMSE values. This hyperparameter determines whether the model trains to reduce MAE or MSE.
 
-When `criterion` == 'mae':
+The default value is 'squared_error' (MSE loss metrics are listed above, when no hyperparams are applied), so I'll only test MAE and see if its any better.
+
+`rfr_model = RandomForestRegressor(random_state=0, criterion='mae')`
+
+When `criterion` == 'absolute_error':
 
 ```
-rfr mae:
-rfr rmse:
-ratio:
+rfr mae: 0.7686084905660377 
+rfr rmse: 1.284930574073432 
+ratio: 1.6717621387803712
 ```
+
+Looks like criterion = 'absolute_error' not only results in a higher RMSE value, the MAE value is also higher. `criterion` = 'squared_error' is the clear winner here.
+
+For he `bootstrap` hyperparam, the default value is 'True', so I'll be testing the model when its 'False' and see if the loss values are better than that of the default model.
+
+When `bootstrap` == True, it basically means the same data can be sampled again when training the model, so they are essentially 'reused' when training the model.
+
+`rfr_model = RandomForestRegressor(random_state=0, bootstrap=False)`
+
+```
+rfr mae: 0.6334669811320754 
+rfr rmse: 1.4964108790261865 
+ratio: 2.3622555296440786
+```
+
+**Damn**, MAE decreased from 0.673 to 0.633. However, RMSE did increase by quite a bit, from 1.21 to 1.50. This means that while overall, the loss decreased, the larger losses became bigger. I'm not too sure what to do here.
+
+The increase in RMSE is significantly larger, so for now, I'll prioritize that and keep bootstrap = True. However, this may change.
+
+Moving on to `max_features`, the default value is 'n_features' which means all features are utilised. Well that may sound good, there are some pros to not using all 19 features. I'll be trying out the following values: [4, 7, 10, 13, 16], before only listing the MAE values for simplicity and time's sake, although I still do take a look at the RMSE.
+
+```
+max_features_list = [4, 7, 10, 13, 16]
+for x in range(len(max_features_list)):
+    rfr_model = RandomForestRegressor(random_state=0, max_features=max_features_list[x])
+```
+
+MAE results for variation of max_feature values:
+
+```
+max_features = 4, rfr mae = 0.6902122641509434
+max_features = 7, rfr mae = 0.6747405660377359
+max_features = 10, rfr mae = 0.6722169811320754
+max_features = 13, rfr mae = 0.6612971698113207 (btw the rmse here is 1.712, which is better than the default model rmse too)
+max_features = 16, rfr mae = 0.6631839622641508
+```
+
+*favourable results, elab*
+
+For the last hyperparameter we will be tampering with, `min_samples_leaf`, the values I will be experimenting with are: [2, 4, 7, 12]. The default value is 1.
+
+```
+min_samples_leaf_list = [2, 4, 7, 12]
+for x in range(len(min_samples__list)):
+    rfr_model = RandomForestRegressor(random_state=0, min_samples_leaf=min_samples_leaf_list[x])
+```
+
+Here are the results:
+
+```
+min_samples_leaf = 2, rfr mae = 0.6827621472474067
+min_samples_leaf = 4, rfr mae = 0.7185515207927632
+min_samples_leaf = 7, rfr mae = 0.7471483231193558
+min_samples_leaf = 12, rfr mae = 0.77560062027817
+```
+
+*talk abt results from the diff min_samples values, gna stick to the default 1*
 
 
 (TBC!)
