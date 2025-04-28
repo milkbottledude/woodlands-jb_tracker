@@ -1872,6 +1872,18 @@ n_estimator = 21, rfr mae = 0.6698113207547169
 n_estimator = 23, rfr mae = 0.6734003281378178
 ```
 
+*21 is best talk abt that*
+
+As for the `criterion` hyperparameter, I will be testing the only 2 avaliable values, 'MAE' and 'MSE' to see which yields the best MAE as well as RMSE values. This hyperparameter determines whether the model trains to reduce MAE or MSE. The default is MSE (loss metrics are listed above, when no hyperparams are applied), so I'll only test MAE and see if its any better.
+
+When `criterion` == 'mae':
+
+```
+rfr mae:
+rfr rmse:
+ratio:
+```
+
 
 (TBC!)
 
