@@ -114,4 +114,15 @@ def one_hot_quarter(final_df=final_df):
 
 trainfinal_df = pd.read_csv('trainfinal_data.csv')
 
-print(train_test_rfr(trainfinal_df, y_column_jb))
+# creating separate rfr models for both sides of causeway and saving using joblib
+
+rfr_model_jb = RandomForestRegressor(random_state=0, max_depth=14, n_estimators=30, max_features=12)
+rfr_model_jb.fit(trainfinal_df, y_column_jb)
+joblib.dump(rfr_model_jb, 'rfr_model_jb_3.joblib')
+print('jb done')
+
+rfr_model_wdlands = RandomForestRegressor(random_state=0, max_depth=16, n_estimators=15, max_features=10)
+rfr_model_wdlands.fit(trainfinal_df, y_column_wdlands)
+joblib.dump(rfr_model_wdlands, 'rfr_model_wdlands_3.joblib')
+print('jb done')
+print(len(trainfinal_df.columns))

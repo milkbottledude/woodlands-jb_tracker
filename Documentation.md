@@ -1842,7 +1842,7 @@ rfr rmse: 1.7204476435915226
 ratio: 1.3235173105501223
 ```
 
-Keeping these values in mind, lets take a look at the loss values when each of the max_depth values are used. For time and simplicity's sake, I will only show the MAE.
+Keeping these values in mind, lets take a look at the loss values when each of the max_depth values are used. For time and simplicity's sake, I will only show the MAE for the road to Johor.
 
 ```
 max_depth = 6, rfr mae = 0.7412137978905754
@@ -1852,7 +1852,9 @@ max_depth = 12, rfr mae = 0.670419573641038
 max_depth = 14, rfr mae = 0.6705209665849877
 ```
 
-*talk abt obtained values frm diff max_depths*
+The lowest MAE we got was from a max_depth value of 10, with the MAE dropping from 0.67318 to 0.66840. 
+
+We will use this max_depth value in the final model, but not for the next few models where we are further experimenting with the rest of the hyperparameters. This is to ensure that any improvements in MAE is purely due to the target hyperparameter being tuned.
 
 For the next hyperparameter, `n_estimators`, similar to `max_depth`, I'll be iterating through a list of values to see which results in the lowest MAE.
 
@@ -1862,7 +1864,7 @@ for x in range(len(n_estimators_list)):
     rfr_model = RandomForestRegressor(random_state=0, n_estimators=n_estimators_list[x])
 ```
 
-MAE for each value of `n_estimator`:
+MAE for each value of `n_estimators`:
 
 ```
 n_estimator = 15, rfr mae = 0.6803459119496856
@@ -1872,11 +1874,11 @@ n_estimator = 21, rfr mae = 0.6698113207547169
 n_estimator = 23, rfr mae = 0.6734003281378178
 ```
 
-*21 is best talk abt that*
+Another MAE below 0.67 has been obtained, this time from changing the `n_estimator` to 21.
 
 As for the `criterion` hyperparameter, I will be testing the 2 basic values out of the 4, 'absolute_error' and 'squared_error' to see which yields the best MAE as well as RMSE values. This hyperparameter determines whether the model trains to reduce MAE or MSE.
 
-The default value is 'squared_error' (MSE loss metrics are listed above, when no hyperparams are applied), so I'll only test MAE and see if its any better.
+The default value is 'squared_error' (MSE loss metrics are listed above, when no hyperparams are applied), so I'll only test 'absolute_error' and see if its any better.
 
 `rfr_model = RandomForestRegressor(random_state=0, criterion='mae')`
 
@@ -1888,9 +1890,9 @@ rfr rmse: 1.284930574073432
 ratio: 1.6717621387803712
 ```
 
-Looks like criterion = 'absolute_error' not only results in a higher RMSE value, the MAE value is also higher. `criterion` = 'squared_error' is the clear winner here.
+Looks like criterion = 'absolute_error' not only results in a higher RMSE value, the MAE value is also higher. `criterion` = 'squared_error' is the clear winner here, So I won't touch this hyperparameter in the final model.
 
-For he `bootstrap` hyperparam, the default value is 'True', so I'll be testing the model when its 'False' and see if the loss values are better than that of the default model.
+For the `bootstrap` hyperparam, the default value is 'True', so I'll be testing the model when its 'False' and see if the loss values are better than that of the default model.
 
 When `bootstrap` == True, it basically means the same data can be sampled again when training the model, so they are essentially 'reused' when training the model.
 
@@ -1904,9 +1906,11 @@ ratio: 2.3622555296440786
 
 **Damn**, MAE decreased from 0.673 to 0.633. However, RMSE did increase by quite a bit, from 1.21 to 1.50. This means that while overall, the loss decreased, the larger losses became bigger. I'm not too sure what to do here.
 
-The increase in RMSE is significantly larger, so for now, I'll prioritize that and keep bootstrap = True. However, this may change.
+The increase in RMSE is significantly larger, so for now, I'll prioritize that and keep bootstrap = True. However, this may change in the future.
 
-Moving on to `max_features`, the default value is 'n_features' which means all features are utilised. Well that may sound good, there are some pros to not using all 19 features. I'll be trying out the following values: [4, 7, 10, 13, 16], before only listing the MAE values for simplicity and time's sake, although I still do take a look at the RMSE.
+Moving on to `max_features`, the default value is 'n_features' which means all features are utilised for the training of all trees in the forest. Well that may sound good, there are some pros to not using all 19 features. 
+
+I'll be trying out the following values: [4, 7, 10, 13, 16], before only listing the MAE values when y_column == y_column_jb, for simplicity and time's sake. Don't worry, I still do look at the RMSE.
 
 ```
 max_features_list = [4, 7, 10, 13, 16]
@@ -1920,11 +1924,13 @@ MAE results for variation of max_feature values:
 max_features = 4, rfr mae = 0.6902122641509434
 max_features = 7, rfr mae = 0.6747405660377359
 max_features = 10, rfr mae = 0.6722169811320754
-max_features = 13, rfr mae = 0.6612971698113207 (btw the rmse here is 1.712, which is better than the default model rmse too)
+max_features = 13, rfr mae = 0.6612971698113207 (btw the rmse here is 1.712)
 max_features = 16, rfr mae = 0.6631839622641508
 ```
 
-*favourable results, elab*
+Excellent MAE from max_features == 13, with the MAE being the lowest we have seen so far. However, similar to when we turned off bootstrap sampling, the RMSE has skyrocketed from 1.210 to 1.712 unfortunately.
+
+The improvement in MAE is big, but the increase in RMSE is even bigger, so I'll leave `max_features` at its default value for now, using all the features.
 
 For the last hyperparameter we will be tampering with, `min_samples_leaf`, the values I will be experimenting with are: [2, 4, 7, 12]. The default value is 1.
 
@@ -1943,7 +1949,146 @@ min_samples_leaf = 7, rfr mae = 0.7471483231193558
 min_samples_leaf = 12, rfr mae = 0.77560062027817
 ```
 
-*talk abt results from the diff min_samples values, gna stick to the default 1*
+Looks like the MAE only increases with the `min_samples_leaf` value, so I'll stick to the default value and not touch this hyperparameter in the final model.
+
+Now lets set up the two hyperparameters that showed improvement and see the final MAE:
+
+`rfr_model = RandomForestRegressor(random_state=0, max_depth=10, n_estimators=21)`
+
+Here are the MAE and RMSE when y_column = y_column_jb:
+
+```
+rfr mae: 0.6646568578353077 (prev value = 0.6731839622641508)
+rfr rmse: 1.1976507344339455 (prev value = 1.209741415531778)
+```
+
+However, when y_column == y_column_wdlands:
+
+```
+rfr mae: 1.3922500431026001 (prev value = 1.2999056603773587)
+rfr rmse: 1.7841667460062003 (prev value = 1.7204476435915226)
+```
+
+We can see that while the loss metric values when predicting congestion on the road to JB has improved, the same hyperparameters has caused the MAE and RMSE to increase for the other side of the causeway. 
+
+Instead of testing all the hyperparameters again, for y_column == y_column_wdlands, I will use random search to find the optimal combination of hyperparameter values.
+
+### Finding optimal hyperparameter values using RandomizedSearchCV
+
+First, lets create a dictionary of all the hyperparameters we will be tuning, and their values:
+
+```
+param_dict = {
+    'max_depth': max_depth_list, # 5 values
+    'n_estimators': n_estimators_list, # 5 values
+    'max_features': max_features_list, # 5 values
+    'min_samples_leaf': min_samples_leaf_list # 4 values
+}
+```
+
+Now lets define the random search object and fit it to our training data, before printing out the best hyperparameter values and corresponding loss metrics when applied to the test data:
+
+```
+X_train, X_test, y_train, y_test = train_test_split(trainfinal_df, y_column_wdlands, test_size=0.2, random_state=0)
+
+random_search = RandomizedSearchCV(
+    estimator=rfr_model,
+    param_distributions=param_dict,
+    n_iter=60,  # Number of parameter combinations to try
+    scoring='neg_mean_squared_error',
+    cv=5,
+    verbose=2,
+    random_state=0,
+)
+
+random_search.fit(X_train, y_train)
+
+best_model = random_search.best_estimator_
+y_pred = best_model.predict(X_test)
+print(mean_absolute_error(y_test, y_pred))
+print(f'max_depth: {best_model.max_depth}')
+print(f'n_estimators: best_model.n_estimators')
+print(f'max_features: {best_model.max_features}')
+print(f'min_samples_leaf: best_model.min_samples_leaf')
+```
+
+The results are as follows.
+
+When y_column = y_column_jb:
+
+```
+0.6723551549271564
+max_depth: 12
+n_estimators: 23
+max_features: 13
+min_samples_leaf: 1
+```
+
+When y_column = y_column_wdlands:
+
+```
+1.3496258330542605
+max_depth: 12
+n_estimators: 23
+max_features: 13
+min_samples_leaf: 1
+```
+
+Using random search cross validation still cannot find us the optimal hyperparameters, as these MAE results are still slightly worse than what we have obtained before. 
+
+It will take more time and will stress my laptop abit, but I will try using grid search to find the optimal parameters.
+
+```
+grid_search = GridSearchCV(
+    estimator=rfr_model,
+    param_grid=param_dict,
+    cv=5,
+    verbose=1,
+    scoring='neg_mean_absolute_error',
+)
+```
+
+I also changed the param_dict, getting rid of some hyperparams which we already know the best values to so that we can reduce the number of permutations. 
+
+```
+max_depth_list = [10, 12, 14, 16]
+n_estimators_list = [15, 17, 19, 21, 23, 26, 30, 32, 35]
+max_features_list = [8, 10, 12, 15, 19]
+```
+
+I also added some extra values to `n_estimators_list` since the best value for that is the greatest value in the list, 23. That means that a larger number of trees in the forest than 23 might lead to better results.
+
+The results are as follows.
+
+When y_column = y_column_jb:
+
+```
+0.6643241902961728
+max_depth: 14
+n_estimators: 30
+max_features: 12
+min_samples_leaf: 1
+```
+
+Decent improvement, breaking the 0.67 MAE plateau. Looks like increasing the upper limit of the 'n_estimators' hyperparameter was the right call, as the best model has `n_estimators = 30`. 
+
+When y_column = y_column_wdlands:
+
+```
+1.2840808406542723
+max_depth: 16
+n_estimators: 15
+max_features: 10
+min_samples_leaf: 1
+```
+
+Marginally better MAE, but the difference is so small I'm not sure if it really matters or its just noise. 
+
+Regardless, doing a grid search, while more time consuming than random search, has allowed us to obtain hyperparameter values that, when used, surpass our previous MAE best scores.
+
+Currently, the model being deployed in the Johorscrape website is the old one, with the default hyperparameters and no new features. I will implement these hyperparameter values for their respective y_columns in GCloud, as well as the new hyperparameters, at the end of Chapter 5.4 [here](mainpy-v3).
+
+
 
 
 (TBC!)
@@ -2247,6 +2392,203 @@ A very basic app.yaml file, but necessary for GAE to deploy the website publicly
 
 Now, all we have to do is type `gcloud app deploy` in the terminal to get the website up and running. You can now use any device to access the website yourself [here!](https://sapient-metrics-436909-v6.appspot.com#1739003720204209127) 🎉.
 
+#### main.py v3
+
+Due to addition of new features and changes to hyperparameter values, it falls on me to create a new 'predict()' function in main.py, one that will extract the new features from the data, as well as change the hyperparameters to their optimal values depending on which side of the road is chosen.
+
+Here is the current 'predict()' function in main.py:
+
+```
+def predict():
+    date = request.form.get('date')
+    if date:
+        date_value = request.form.get('date')
+        time_hour = request.form.get('hour')
+        time24 = time_hour
+        ampm = request.form.get('ampm')
+        road_to = request.form.get('road_to')
+        input_df = pd.DataFrame(np.zeros((1, 8)), columns=cols)
+        date_obj = datetime.strptime(date_value, '%Y-%m-%d')
+        day_abbr = date_obj.weekday()
+        roadfrom = None
+        dark_hours = [20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6]
+        condition = 'light'
+        if day_abbr < 6:
+            input_df.iloc[0, day_abbr] = 1
+        if ampm == 'PM':
+            time24 = float(time_hour) + 12
+        if int(time24) in dark_hours:
+            condition = 'dark'
+        if road_to == 'Johor':
+            # rfr_model = rfr_model_jb_2
+            rfr_model = rfr_model_jb
+            roadfrom = 'Woodlands'
+        if road_to == "Woodlands":
+            # rfr_model = rfr_model_wdlands_2
+            rfr_model = rfr_model_wdlands
+            roadfrom = 'Johor'
+        input_df['hour_sin'] = np.sin(2 * np.pi * float(time24) / 24)
+        input_df['hour_cos'] = np.cos(2 * np.pi * float(time24) / 24)
+        prediction = rfr_model.predict(input_df)
+        prediction = round(prediction[0], 1)
+        needle_angle = prediction * 0.2 * 244 + 233
+        pic_no = int(round(prediction, 0))
+        if road_to == 'Woodlands':
+            folder_name = 'wdlands_pics'
+        else:
+            folder_name = 'jb_pics'
+        pic_name = f'{folder_name}/{pic_no}_{condition}'
+        estimated_duration = '5-10 mins'
+        if prediction > 4.5:
+            estimated_duration = '> 2 hours'
+        elif prediction > 3.5:
+            estimated_duration = '1-2 hours'
+        elif prediction > 2.5:
+            estimated_duration = '40-60 mins'
+        elif prediction > 1.5:
+            estimated_duration = '20-40 mins'
+        elif prediction > 0.5:
+            estimated_duration = '10-15 mins'
+        return render_template("output.html", date=': ' + date_value, time=': ' + time_hour, ampm=ampm, pred=prediction, pic_name=pic_name, needle_angle=needle_angle, road_to=': ' + road_to, roadto = road_to, roadfrom = roadfrom, estimated_duration=estimated_duration)
+    else:
+        return render_template("indextest.html")
+```
+
+There has been a couple of changes since you last saw it in [main.py v2](#mainpy-v2), such as addition of a waiting time prediction, a picture name to choose the right picture to illustrate a rough idea of how crowded the causeway is, as well as a needle angle which shows the severity of the congestion from green to red on a semi-circle meter.
+
+But now we are going to make even more changes. Lets first take a look at the new features added:
+
+```
+1    week_value
+2    date_sin
+3    date_cos
+4    day_of_year
+5    day_of_year_sin
+6    day_of_year_cos
+7    sch_hol_period
+8    public_hol_period
+9    year_quarter_Q1
+10   year_quarter_Q2
+11   year_quarter_Q3
+```
+
+Excluding the original features, we have 11 new features to add, so thats 11 more pieces of data we need to extract from the data. Should be a piece of cake, since we did it [before](python_scripts/feature_engineered_data_prep.py). Now we just need to copy paste to GCloud App Engine, with some minor tweaks.
+
+The following code for each new feature will be slot into the code above, updating the `predict()` function to create main.py v3.
+
+First, we gotta add the new features as columns, so I'll be editing the 'cols' list in the original `predict()` function:
+
+```
+cols = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'hour_sin', 'hour_cos', 'week_value', 'date_sin', 'date_cos', 'day_of_year', 'day_of_year_sin', 'day_of_year_cos']
+```
+
+I excluded the last 5 features, as they are boolean columns and need to be set up differently, so I'll define the column later on below.
+
+**1) week_value**
+
+For this feature, I'll do a simple counter to see if the date value is > than a certain multiple of 7, up till the number 4.
+
+```
+exact_date = int(date_value[-1])
+week_no = 1
+for m in range(1, 4):
+    if exact_date < m * 7:
+        break
+    else:
+        week_no += 1
+input_df['week_value'] = week_no
+```
+
+**2) date_sin & 3) date_cos**
+
+Quite straightforward, just calculating sin and cosine of exact_date using numpy.
+
+```
+date_sined = np.sin(2 * np.pi * exact_date / 31)
+date_cosed = np.cos(2 * np.pi * exact_date / 31)
+input_df['date_sin'] = date_sined
+input_df['date_cos'] = date_cosed
+```
+
+**4) day_of_year, 5) day_of_year_sin, & 6) day_of_year_cos**
+
+Similar to date_sin and cos, just apply numpy's sin and cos functions, as well as the datetime package.
+
+```
+datetime_object = pd.to_datetime(exact_date, format='%Y-%m-%d')
+day_of_year = datetime_object.dayofyear
+day_of_year_sined = np.sin(2 * np.pi * exact_date / 365)
+day_of_year_cosed = np.cos(2 * np.pi * exact_date / 365)
+input_df['day_of_year'] = day_of_year
+input_df['day_of_year_sin'] = day_of_year_sined
+input_df['day_of_year_cos'] = day_of_year_cosed
+```
+
+**7) sch_hol_period & 8) public_hol_period**
+
+I start with defining the holiday periods in lists within a list, then use for loops to check if the datetime object falls within the ranges.
+
+```
+sch_hols_periods = [['2024-11-23', '2024-12-31'], ['2025-3-15', '2025-3-23'], ['2025-5-31', '2025-6-29'], ['2025-9-6', '2025-9-14'], ['2025-11-22', '2026-1-1']]
+public_hols_periods = [['2025-1-28', '2025-1-31'], ['2025-3-29', '2025-3-31'], ['2025-6-9', '2025-6-12'], ['2025-6-5', '2025-6-8'], ['2025-10-17', '2025-10-20'], ['2025-12-23', '2025-12-26']]
+
+sch_hol_period = False
+for sch_period in sch_hols_periods:
+    start = pd.to_datetime(sch_period[0])
+    end = pd.to_datetime(sch_period[1])
+    if datetime_object > start:
+        if datetime_object < end:
+            sch_hol_period = True
+            break
+
+public_hol_period = False
+for public_period in public_hols_periods:
+    start = pd.to_datetime(public_period[0])
+    end = pd.to_datetime(public_period[1])
+    if datetime_object > start:
+        if datetime_object < end:
+            public_hol_period = True
+            break
+
+input_df['sch_hol_period'] = sch_hol_period
+input_df['public_hol_period'] = public_hol_period
+```
+
+**9) year_quarter_Q1, 10) year_quarter_Q2, & 11) year_quarter_Q3**
+
+The last few features to sort out, just a simple case of adding in the 'quarter' columns to the input_df row, then checking the month value to assign the right quarter value to it.
+
+```
+input_df['year_quarter_Q1'] = False
+input_df['year_quarter_Q2'] = False
+input_df['year_quarter_Q3'] = False
+
+month_value = int(date_value[1])
+if month_value <= 3:
+    input_df['year_quarter_Q1'] = True
+elif month_value <= 6:
+    input_df['year_quarter_Q2'] = True
+elif month_value <= 9:
+    input_df['year_quarter_Q3'] = True
+```
+
+Lastly, we gotta define a random forest regressor model for both sides of the causeway, with their respective optimal hyperparameters.
+
+For y = y_column_jb,
+
+```
+rfr_model_jb = RandomForestRegressor(random_state=0, max_depth=14, n_estimators=30, max_features=12)
+rfr_model_jb.fit(trainfinal_df, y_column_jb)
+joblib.dump(rfr_model_jb, 'rfr_model_jb_3.joblib')
+```
+
+For y = y_column_wdlands,
+
+```
+rfr_model_wdlands = RandomForestRegressor(random_state=0, max_depth=16, n_estimators=15, max_features=10)
+rfr_model_wdlands.fit(trainfinal_df, y_column_wdlands)
+joblib.dump(rfr_model_wdlands, 'rfr_model_wdlands_3.joblib')
+```
 
 
 #### 5.5:
