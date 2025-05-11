@@ -23,8 +23,8 @@ Chapter 4: Machine Learning
 - 4.1: [One-hot encoding, sin-cos encoding, and Linear Regression model](#41-one-hot-encoding-sin-cos-encoding-and-linear-regression-model)
 - 4.2: [Random Forest + Decision Tree Regression](#42-random-forest-and-decision-tree-regression)
 - 4.3: [Feature Engineering](#43-feature-engineering)
-- 4.4: [Feature Selection Testing (in progress)](#44-feature-selection-testing-in-progress) (delete when done)
-- 4.5: [Hyperparameter Tuning (tbc!)](#45-hyperparameter-tuning-tbc) (delete when done)
+- 4.4: [Feature Selection Testing](#44-feature-selection-testing)
+- 4.5: [Hyperparameter Tuning](#45-hyperparameter-tuning)
 
 Chapter 5: Deploying Code to Website
 - 5.1: [Making HTML & CSS for Frontend (in progress)](#51-making-html-and-css-for-frontend) (delete when done)
@@ -1320,7 +1320,7 @@ I then compile all the new data into a list called 'new_row' and add it to the d
 
 In the next chapter, we will be using testing the loss values for each newly engineered feature to see which ones to keep, and which to discard.
 
-### 4.4: Feature Selection Testing (in progress)
+### 4.4: Feature Selection Testing
 First, lets see how good our RFR model is without the extra features from feature engineering. I labelled the rest of the pictures 🖼️ (snaps 4, 5, 6 & 7) and trained the model on those too. However, I labelled the last 4 'snaps' folder pictures differently, straight up rating the congestion on either side of the causeway on a scale of 0-5 instead of using CVAT bounding boxes. 
 
 Drawing them for every image takes too long ⌛, and the bounding box areas are not consistent.
@@ -1807,7 +1807,7 @@ That concludes the feature engineering and testing for this model 🤝, for now 
 
 In the next chapter, let's see if we can improve the accuracy of our model even more than we already have, this time by adjusting the model's hyperparameters ⚙️.
 
-### 4.5 Hyperparameter Tuning (tbc)
+### 4.5 Hyperparameter Tuning
 There are numerous hyperparameters that can be tweaked in the RFR model to further improve our loss metrics 📉, even if by just a little. 
 
 I'm not an expert, so I'll only be looking into the more basic hyperparameters 😁, such as the following:
@@ -1827,7 +1827,9 @@ for x in range(len(max_depth_list)):
     rfr_model = RandomForestRegressor(random_state=0, max_depth=max_depth_list[x])
 ```
 
-To see which depth will obtain the smallest loss values, i will 'for' loop through a list of depth values: [6, 8, 10, 12, 14]. A reminder to all of us that the loss values of the base model when all the variables are used, without hyperparameter tuning, are the following (after setting random_state=0, mb I forgot earlier):
+To see which depth will obtain the smallest loss values, I will 'for' loop through a list of depth values: `[6, 8, 10, 12, 14]`. 
+
+A reminder to all of us that the loss values of the base model when all the variables are used, without hyperparameter tuning 🔧 , are the following (after setting random_state=0, mb I forgot earlier):
 
 ```
 rfr mae: 0.6731839622641508 
@@ -1842,7 +1844,7 @@ rfr rmse: 1.7204476435915226
 ratio: 1.3235173105501223
 ```
 
-Keeping these values in mind, lets take a look at the loss values when each of the max_depth values are used. For time and simplicity's sake, I will only show the MAE for the road to Johor.
+Keeping these values in mind, lets take a look at the loss values when each of the max_depth values are used. For time and simplicity's sake ⌛, I will only show the MAE for the road to Johor.
 
 ```
 max_depth = 6, rfr mae = 0.7412137978905754
@@ -1852,9 +1854,9 @@ max_depth = 12, rfr mae = 0.670419573641038
 max_depth = 14, rfr mae = 0.6705209665849877
 ```
 
-The lowest MAE we got was from a max_depth value of 10, with the MAE dropping from 0.67318 to 0.66840. 
+The lowest MAE we got was from a max_depth value of 10, with the MAE dropping from 0.67318 to 0.66840 👍. 
 
-We will use this max_depth value in the final model, but not for the next few models where we are further experimenting with the rest of the hyperparameters. This is to ensure that any improvements in MAE is purely due to the target hyperparameter being tuned.
+We will use this max_depth value in the final model, but not for the next few models where we are further experimenting with the rest of the hyperparameters 👩🏻‍🔬. This is to ensure that any improvements in MAE is purely due to the target hyperparameter being tuned.
 
 For the next hyperparameter, `n_estimators`, similar to `max_depth`, I'll be iterating through a list of values to see which results in the lowest MAE.
 
@@ -1876,7 +1878,7 @@ n_estimator = 23, rfr mae = 0.6734003281378178
 
 Another MAE below 0.67 has been obtained, this time from changing the `n_estimator` to 21.
 
-As for the `criterion` hyperparameter, I will be testing the 2 basic values out of the 4, 'absolute_error' and 'squared_error' to see which yields the best MAE as well as RMSE values. This hyperparameter determines whether the model trains to reduce MAE or MSE.
+As for the `criterion` hyperparameter, I will be testing only the 2 basic values out of the 4, 'absolute_error' and 'squared_error', to see which yields the best MAE as well as RMSE values 🧐. This hyperparameter determines whether the model trains to reduce MAE or MSE.
 
 The default value is 'squared_error' (MSE loss metrics are listed above, when no hyperparams are applied), so I'll only test 'absolute_error' and see if its any better.
 
@@ -1904,13 +1906,13 @@ rfr rmse: 1.4964108790261865
 ratio: 2.3622555296440786
 ```
 
-**Damn**, MAE decreased from 0.673 to 0.633. However, RMSE did increase by quite a bit, from 1.21 to 1.50. This means that while overall, the loss decreased, the larger losses became bigger. I'm not too sure what to do here.
+**Damn**, MAE decreased from 0.673 to 0.633. However, RMSE did increase by quite a bit, from 1.21 to 1.50. This means that while overall, the loss decreased, the larger losses became bigger. I'm not too sure what to do here 😵‍💫.
 
 The increase in RMSE is significantly larger, so for now, I'll prioritize that and keep bootstrap = True. However, this may change in the future.
 
 Moving on to `max_features`, the default value is 'n_features' which means all features are utilised for the training of all trees in the forest. Well that may sound good, there are some pros to not using all 19 features. 
 
-I'll be trying out the following values: [4, 7, 10, 13, 16], before only listing the MAE values when y_column == y_column_jb, for simplicity and time's sake. Don't worry, I still do look at the RMSE.
+I'll be trying out the following values: `[4, 7, 10, 13, 16]`, before only listing the MAE values when y_column == y_column_jb, for simplicity and time's sake. Don't worry, I still do look at the RMSE 👌.
 
 ```
 max_features_list = [4, 7, 10, 13, 16]
@@ -1928,11 +1930,11 @@ max_features = 13, rfr mae = 0.6612971698113207 (btw the rmse here is 1.712)
 max_features = 16, rfr mae = 0.6631839622641508
 ```
 
-Excellent MAE from max_features == 13, with the MAE being the lowest we have seen so far. However, similar to when we turned off bootstrap sampling, the RMSE has skyrocketed from 1.210 to 1.712 unfortunately.
+Excellent MAE from max_features == 13, with the MAE being the lowest we have seen so far. However, similar to when we turned off bootstrap sampling, the RMSE skyrocketed from 1.210 to 1.712 unfortunately.
 
-The improvement in MAE is big, but the increase in RMSE is even bigger, so I'll leave `max_features` at its default value for now, using all the features.
+The improvement in MAE is big, but the increase in RMSE is even bigger 😵, so I'll leave `max_features` at its default value for now, using all the features.
 
-For the last hyperparameter we will be tampering with, `min_samples_leaf`, the values I will be experimenting with are: [2, 4, 7, 12]. The default value is 1.
+For the last hyperparameter we will be tampering with, `min_samples_leaf`, the values I will be experimenting with are: `[2, 4, 7, 12]`. The default value is 1.
 
 ```
 min_samples_leaf_list = [2, 4, 7, 12]
@@ -1969,9 +1971,9 @@ rfr mae: 1.3922500431026001 (prev value = 1.2999056603773587)
 rfr rmse: 1.7841667460062003 (prev value = 1.7204476435915226)
 ```
 
-We can see that while the loss metric values when predicting congestion on the road to JB has improved, the same hyperparameters has caused the MAE and RMSE to increase for the other side of the causeway. 
+We can see that while the loss metric values when predicting congestion on the road to JB has improved 🚀, the same hyperparameters has caused the MAE and RMSE to increase for the other side of the causeway 📈. 
 
-Instead of testing all the hyperparameters again, for y_column == y_column_wdlands, I will use random search to find the optimal combination of hyperparameter values.
+Instead of testing all the model hyperparameters again for y_column == y_column_wdlands, I will use **random search** to find the optimal combination of hyperparameter values 🌟.
 
 ### Finding optimal hyperparameter values using RandomizedSearchCV
 
