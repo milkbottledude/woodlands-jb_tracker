@@ -136,9 +136,6 @@
 04-24_05-00_Thu.jpg 00
 04-24_06-00_Thu.jpg 02
 04-24_07-00_Thu.jpg 02
-04-24_08-00_Thu.jpg (remove)
-04-24_09-00_Thu.jpg (remove)
-04-24_10-00_Thu.jpg (remove)
 04-24_11-00_Thu.jpg 00
 04-24_12-00_Thu.jpg 01
 04-24_13-00_Thu.jpg 04
