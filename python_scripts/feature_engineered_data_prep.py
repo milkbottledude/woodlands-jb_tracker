@@ -76,8 +76,8 @@ def part_two():
                         year = '2024-'
                     datetime_object = pd.to_datetime(year + str(parts[0]), format='%Y-%m-%d')
                     day_of_year = datetime_object.dayofyear
-                    day_of_year_sined = np.sin(2 * np.pi * exact_date / 365)
-                    day_of_year_cosed = np.cos(2 * np.pi * exact_date / 365)
+                    day_of_year_sined = np.sin(2 * np.pi * day_of_year / 365) # bigass blunder bruh, putting 'exact_date' instead of 'day_of_year'
+                    day_of_year_cosed = np.cos(2 * np.pi * day_of_year / 365) # blunder
                     datetime_object = str(datetime_object)[:-9]
                     new_row = [month, exact_date, week_no, date_sined, date_cosed, day_of_year, day_of_year_sined, day_of_year_cosed, datetime_object]
                     df_to_attach.loc[len(df_to_attach)] = new_row
