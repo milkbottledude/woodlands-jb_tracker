@@ -138,7 +138,7 @@ def test2(test1_result):
 
 test_results_csv_path = 'modeltest_results.csv'
 # 'csv_to_joblib' function
-def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path=csv_path, results_csv_path = 'modeltest_results.csv', joblibb=False):
+def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, version, results_csv_path = 'modeltest_results.csv', joblibb=True):
     # splitting up csv into x & y variables
     trainfinal_df = pd.read_csv(data_csv_path)
     print(trainfinal_df.columns)
@@ -186,38 +186,26 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path=csv_pa
             hyperparams = rfr_model_jb_hyperparams
             model = RandomForestRegressor(**hyperparams)
             model.fit(trainfinal_df, y_column_jb)
-            joblib.dump(model, 'rfr_model_jb_v4.joblib')
+            joblib.dump(model, f'rfr_model_jb_v{str(version)}.joblib')
             print('jb joblibbed')
         else:
             hyperparams = rfr_model_wdlands_hyperparams
             model = RandomForestRegressor(**hyperparams)
             model.fit(trainfinal_df, y_column_wdlands)
-            joblib.dump(model, 'rfr_model_wdlands_v4.joblib')
+            joblib.dump(model, f'rfr_model_wdlands_v{str(version)}.joblib')
             print('wdlands joblibbed')
 
 
 # test run 'csv_to_modeltest_or_joblib' function (SUCCESS: 8, 9, 10)
-def test3(ratings_range, jb_or_wdlands):
-    csv_to_modeltest_or_joblib(ratings_range, jb_or_wdlands)
+def test3(ratings_range, jb_or_wdlands, data_csv_path, version):
+    csv_to_modeltest_or_joblib(ratings_range, jb_or_wdlands, data_csv_path, version)
 
-test3('8-19', 'wdlands')
+# test3('8-19', 'wdlands')
+test3('4-19', 'wdlands', 'data_v4.csv', 5)
 
-# 4TH JULY 2025 TASK:  MAKE 'final_data_tillratings7.csv's columns headers the same as that of 'REAL_finaldataFULL.csv'S.
 
 
-final_part1_csv = pd.read_csv('final_data_tillratings7.csv')
-# final_part1_csv['year_quarter_Q1'] = final_part1_csv['mponth']
-# final_part1_csv['year_quarter_Q2'] = final_part1_csv
-# final_part1_csv['year_quarter_Q3'] = final_part1_csv
-
-final_part2_csv = pd.read_csv('python_scripts\REAL_finaldataFULL.csv')
-# final_part1_csv.pop('full_date_ymd')
-print(final_part1_csv.columns)
-print(final_part2_csv.columns)
-# data_v4 = pd.concat([final_part1_csv, final_part2_csv], ignore_index=True)
-# print(data_v4)
-# print(len(data_v4))
-# data_v4.to_csv('data_v4.csv', index=False, header=True)
+# in data_v4.csv, ratings 4-7 is till line 752, lines 753-3163 is ratings 8-19
 
 
 
@@ -228,8 +216,3 @@ print(final_part2_csv.columns)
 # ['03-02', '22-00', 'Sun']
 
 
-# for x in range(15, 20):
-#     rating_path_template = fr"C:\Users\cheah\OneDrive\Documents\Coding\Project-JBridge\GCloud\rating_{x}.txt"
-#   csv_path = 'REAL_finaldataFULL.csv'
-#     rating_to_csv(rating_path_template)
-#     break
