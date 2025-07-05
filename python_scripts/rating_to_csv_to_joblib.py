@@ -5,6 +5,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error, mean_squared_error
+import xgboost as xgb
 
 
 # currently making rfr_model_v4
@@ -138,7 +139,7 @@ def test2(test1_result):
 
 test_results_csv_path = 'modeltest_results.csv'
 # 'csv_to_joblib' function
-def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, version, results_csv_path = 'modeltest_results.csv', joblibb=True):
+def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, version, results_csv_path = 'modeltest_results.csv', joblibb=False, xgboosttt=False):
     # splitting up csv into x & y variables
     trainfinal_df = pd.read_csv(data_csv_path)
     print(trainfinal_df.columns)
@@ -158,12 +159,22 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
     if joblibb == False:
         if jb_or_wdlands == 'jb':
             hyperparams = rfr_model_jb_hyperparams
-            model = RandomForestRegressor(**hyperparams)
+            if xgboosttt:
+                model = xgb.XGBRegressor(**hyperparams)
+                model_type = 'xgb'
+            else:
+                model = RandomForestRegressor(**hyperparams)
+                model_type = 'rfr'
             y = y_column_jb
             print('jb selected for testing')
         else:
             hyperparams = rfr_model_wdlands_hyperparams
-            model = RandomForestRegressor(**hyperparams)
+            if xgboosttt:
+                model = xgb.XGBRegressor(**hyperparams)
+                model_type = 'xgb'
+            else:
+                model = RandomForestRegressor(**hyperparams)
+                model_type = 'rfr'
             y = y_column_wdlands
             print('wdlands selected for testing')
 
@@ -176,8 +187,8 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
         print(f"rfr rmse: {rmse} ")
         date_time = datetime.now()
         date_time = date_time.strftime('%Y-%m-%d %H:%M')
-        test_results_df = pd.DataFrame(columns=['datetime', 'road_to', 'ratings_used', 'custom_hyperparameters', 'mae', 'rmse'])
-        test_results_df.loc[0] = [date_time, jb_or_wdlands, rating_range, hyperparams, mae, rmse]
+        test_results_df = pd.DataFrame(columns=['datetime', 'road_to', 'ratings_used', 'custom_hyperparameters', 'mae', 'rmse', 'model'])
+        test_results_df.loc[0] = [date_time, jb_or_wdlands, rating_range, hyperparams, mae, rmse, model_type]
         test_results_df.to_csv(results_csv_path, mode='a', header=False, index=False) # disable header=True
 
 
