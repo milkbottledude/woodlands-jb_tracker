@@ -31,6 +31,6 @@ folder_name = "snapshots/"  # Ensure it ends with a slash
 # Path to laptop folder
 # local_destination = r"C:\Users\Yu Zen\Documents\Coding\Project-JBridge\GCloud\blahblah"
 # to dekstop folder
-local_destination = r"E:\05_05_11_snaps_n_more"
+local_destination = r"C:\Users\cheah\OneDrive\Documents\Coding\Project-JBridge\GCloud\all_snaps\06-28_11-00_Sat_MOREEEE"
 
 download_folder(bucket_name, folder_name, local_destination)
