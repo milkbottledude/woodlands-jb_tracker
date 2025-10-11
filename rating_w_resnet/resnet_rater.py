@@ -16,7 +16,15 @@ from tensorflow.data import Dataset
 
 # prepping training data (imma combine multiple snaps folders into 1 big dataset)
 
-folders_no = [4, 30] # snaps 4 to 29, 15 snaps_ folders, 4951 images
+folders_no = [7, 30] # snaps 7 to 29, 12 snaps_ folders, 
+# 4951 images - 5 corrupted:
+# snaps_5/12-03_10-00_Tue.jpg
+# snaps_5/12-04_12-00_Wed.jpg
+# snaps_5/12-07_00-00_Sat.jpg
+# snaps_5/12-07_08-00_Sat.jpg
+# snaps_5/12-07_20-00_Sat.jpg
+# nvm 4391 images, not using snaps4, 5, 6 anym. different labelling preference back then, was more lenient. 
+# but ns has hardened me into a tuf guy, and with that comes stricter labelling. *grunts*
 snaps_folder_template = rf"C:/Coding/Project-JBridge/GCloud/all_snaps/snaps_"
 ratings_file_template = rf"C:/Coding/Project-JBridge/GCloud/rating_"
 
@@ -38,7 +46,23 @@ for x in range(folders_no[0], folders_no[1]):
         for line in f:
             to_jb_ratings.append(float(line[-3]))
             to_wdlands_ratings.append(float(line[-2]))
-    print(f'length of snaps_{x} and ratings_{x}: {str(len(all_snaps_filepaths))} and {str(len(to_jb_ratings))}, {str(len(to_wdlands_ratings))}')
+    # print(f'length of snaps_{x} and ratings_{x}: {str(len(all_snaps_filepaths))} and {str(len(to_jb_ratings))}, {str(len(to_wdlands_ratings))}')
+
+# # checking for corrupted jpegs
+# corrupted = []
+# print("Checking all images...")
+# for i, filepath in enumerate(all_snaps_filepaths):
+#     try:
+#         img = tf.io.read_file(filepath)
+#         img = tf.image.decode_jpeg(img, channels=3)
+#         print(f"✓ {i+1}/{len(all_snaps_filepaths)}")
+#     except Exception as e:
+#         print(f"✗ CORRUPTED: {filepath[26:]}")
+#         corrupted.append(filepath[26:])
+# print(len(corrupted))
+# for c in corrupted:
+#     print(c)
+
 
 # preprocessing function from claude
 def load_and_preprocess_image(filename, label):
@@ -64,9 +88,10 @@ target_array = to_jb_array
 full_dataset = Dataset.from_tensor_slices((all_snaps_filepaths, target_array))
 full_dataset = full_dataset.map(load_and_preprocess_image, num_parallel_calls=10) # cuz i got 12 cores
 full_dataset = full_dataset.shuffle(buffer_size=1000) # size of shuffle
+full_dataset = full_dataset.batch(32) 
 
 # train test spleet
-split_number = len(target_array) * 0.8
+split_number = int(len(target_array) * 0.8)
 train_dataset = full_dataset.take(split_number) # cant use [:split_number] cos tf datasets dont support
 val_dataset = full_dataset.skip(split_number)
     
@@ -100,3 +125,4 @@ results = full_regression_model.fit(
     validation_data=val_dataset,
     epochs=20
 )
+
