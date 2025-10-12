@@ -82,47 +82,57 @@ def load_and_preprocess_image(filename, label):
 to_jb_array = np.array(to_jb_ratings, dtype=np.float32)
 to_wdlands_array = np.array(to_wdlands_ratings, dtype=np.float32)
 
+# to see snaps rating distribution
+unique, counts = np.unique(to_jb_array, return_counts=True)
+for val, count in zip(unique, counts):
+    print(f"Label {val}: {count} images")
+
+
+
 # creating dataset (start w to_jb, can do to_wdlands later)
 target_array = to_jb_array
-
+print(len(all_snaps_filepaths), len(target_array))
 full_dataset = Dataset.from_tensor_slices((all_snaps_filepaths, target_array))
 full_dataset = full_dataset.map(load_and_preprocess_image, num_parallel_calls=10) # cuz i got 12 cores
-full_dataset = full_dataset.shuffle(buffer_size=1000) # size of shuffle
-full_dataset = full_dataset.batch(32) 
+full_dataset = full_dataset.shuffle(buffer_size=1000, seed=7) # size of shuffle
 
 # train test spleet
 split_number = int(len(target_array) * 0.8)
 train_dataset = full_dataset.take(split_number) # cant use [:split_number] cos tf datasets dont support
 val_dataset = full_dataset.skip(split_number)
+train_dataset = train_dataset.batch(32) # train 32 images at a time, reduces overfitting
+val_dataset = val_dataset.batch(32)
+print(len(train_dataset))
+print(len(val_dataset))
     
+
 # data prep done, now prepping rezzy model
 base_model = resnet50.ResNet50(weights="imagenet", include_top=False, input_shape=(224, 224, 3)) # without top output layer
 base_model.trainable = False # determines if base weights frm imagenet r updated frm my own data or not
 
+tf.random.set_seed(7)
 full_regression_model = tf.keras.Sequential([
     base_model,
     # base_model without the top outputs a high rank tensor, this layer converts it to a rank 2 tensor (vector) for the dense layer to nom
     layers.GlobalAveragePooling2D(), 
     # takes the general purpose features from base_model and molds them to our input
-    layers.Dense(128, activation='relu'), # not too sure whats relu, just that it adds non-linearity to learn 'complex r'ships' wtv that means
+    layers.Dense(256, activation='relu'), # not too sure whats relu, just that it adds non-linearity to learn 'complex r'ships' wtv that means
     layers.Dropout(0.4), # silences 40% units in the dense layer
     layers.Dense(1)  # regression layer outputs continuous value (0-5)
 ])
 
-# rmse func
-def tf_rmse(y_true, y_pred):
-    return tf.sqrt(tf.reduce_mean(tf.square(y_true - y_pred)))
-
 full_regression_model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=0.001), # optimizer decides how model weights are updated during trng, have no idea how it works
     loss='mse',  # Mean Squared Error
-    metrics=['mae', tf_rmse]  # Mean Absolute Error
+    metrics=['mae']  # Mean Absolute Error
 )
 
 # Training
 results = full_regression_model.fit(
     train_dataset,
     validation_data=val_dataset,
-    epochs=20
+    epochs=20 
 )
+
+# just run it and watch anime, but b4 that do some js work so u dont start the day with ramune anime
 

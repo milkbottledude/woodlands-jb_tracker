@@ -1,0 +1,5 @@
+,layer_trainable_YES,layer_trainable_NO,output_continuous,output_classes,dropout_0.4,dropout_0.3,128_units,256_units
+trng_mse,,,,,,,0.6036,0.525
+trng_mae,,,,,,,0.4022,0.3896
+val_mse,,,,,,,0.5332,0.6381
+val_mae,,,,,,,0.4663,0.4368
