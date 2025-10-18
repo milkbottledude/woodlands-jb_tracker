@@ -31,7 +31,11 @@ Chapter 5: Deploying Code to Website
 - 5.2: [Creating Backend with Flask, main.py, and then app.yaml](#52-creating-backend-with-flask-mainpy-and-then-appyaml)
 - 5.3: [.joblib file & Project Folder structure](#53-joblib-file-and-project-folder-structure)
 - 5.4: [Creating main.py v2 & app.yaml](#54-creating-mainpy-v2-and-appyaml)
-- 5.5: 
+
+Chapter 6: ResNet Neural Network for Labelling Traffic Images
+- 6.1: [Prepping Input Data (in progress)](#61-prepping-input-data) (delete when done)
+- 6.2: [Experimenting with Different Hyperparameters (in progress)](#62-experimenting-with-different-hyperparameters) (delete when done)
+- 6.3:
 
 
 [Conclusion](#conclusion)
@@ -2313,7 +2317,7 @@ As you can see, css that looks good for one device may not look as good for anot
 This is where mobile.css comes in. Its very similar to styles.css, except I changed the [background image](GAE/static/website_bg.jpg) to something more potrait friendly 🌃. I also edited the text sizes to make the words fit the screen sizes of mobile phones 📱.
 
 
-### 5.4; Creating main.py v2 and app.yaml
+### 5.4: Creating main.py v2 and app.yaml
 #### main.py v2
 After adding the joblib file to the project folder, we can now reference its weights ⚖️ in main.py and use it to properly output a prediction value 📲. Lets see the changes in main.py.
 ```
@@ -2591,4 +2595,196 @@ joblib.dump(rfr_model_wdlands, 'rfr_model_wdlands_3.joblib')
 ```
 
 
-#### 5.5:
+
+## Chapter 6 - ResNet Neural Network for Labelling Traffic Images
+### 6.1: Prepping Input Data
+Last time we tried to automate labelling of input data, it didn't go so hot (see [chapter 2](#21-opencv-and-yolov4) for that). Going at it again, fingers crossed that a ResNet model will do better. 
+
+Also, I've decided to drop the emojis, don't want people thinking this documentation is AI generated.
+
+As we are all should be familiar with by now, the most important part of any ML model is its data. To prep our snaps jpegs, we need to do a few things:
+
+1) collate the image file paths of all the images we will be using, as well as all the manual ratings in the txt files
+2) process the images into a format that can be passed into the tensorflow NN model
+3) combining the ratings and images into a TF dataset, then and randomizing and train-test splitting
+
+#### Collating data
+Simple python for loops and the os package does the trick:
+
+```
+folders_no = [7, 30] # 4391 images and rating pairs
+snaps_folder_template = rf"C:/Coding/Project-JBridge/GCloud/all_snaps/snaps_"
+ratings_file_template = rf"C:/Coding/Project-JBridge/GCloud/rating_"
+
+all_snaps_filepaths = []
+to_jb_ratings = []
+to_wdlands_ratings = []
+```
+Defining the range of snaps folder numbers we will be using, the template for the image folder paths and rating.txt file paths, as well as the lists which we will store the filepaths and ratings in.
+
+```
+for x in range(folders_no[0], folders_no[1]):
+    # sort out snaps first
+    snaps_folder_path = snaps_folder_template + str(x)
+    print(f'accessing {snaps_folder_path} for snaps...')
+    for snap_name in os.listdir(snaps_folder_path):
+        snap_path = snaps_folder_path + '/' + snap_name
+        print(snap_path)
+        all_snaps_filepaths.append(snap_path)
+```
+Looping through the folder numbers, I attach the number to the end of the folder template to get the full folder path, then use os to loop through the jpeg file names in the folder. For each file name, I combine it with the folder path to get the full image path, then add it to the filepaths list.
+
+```
+    # now to sort out ratings
+    ratings_file_path = ratings_file_template + str(x) + '.txt'
+    print(f'digging thru rating_{x} text file for ratings')
+    with open(ratings_file_path, 'r') as f:
+        for line in f:
+            to_jb_ratings.append(float(line[-3]))
+            to_wdlands_ratings.append(float(line[-2]))
+```
+Same deal with the ratings, except I dont have to use os to loop through lines in a text file. 
+
+I take the second and third last character in each line, which are the ratings for the roads towards Johor and Woodlands respectively. (The last character is actually the newline character, '\n')
+
+#### Process the images files
+This part I owe to Claude for telling me what image format and size is expected by the Tensorflow model, as well as providing me the code to carry out this process.
+
+```
+# preprocessing function from claude
+def load_and_preprocess_image(filename, label):
+    # Read image file
+    img = tf.io.read_file(filename)
+    # Decode image (use decode_jpeg or decode_png as appropriate)
+    img = tf.image.decode_jpeg(img, channels=3)
+    # Resize to expected input size
+    img = tf.image.resize(img, [224, 224])
+    # Preprocess for ResNet (normalizes to [-1, 1] range)
+    img = resnet50.preprocess_input(img)
+    
+    return img, label
+```
+
+The first 3 steps is probably quite easy to understand, but I'll explain the last one in greater detail.
+
+For every image, they have shades of red, blue and green in each pixel, represented something like this:
+
+img = [[R, G, B], [R, G, B], ...]
+
+The number for each RGB value can range from 0 to 255. But the resnet50 model weights were obtained from training 1.28 million images with RGB values centered around 0, apparently neural networks perform better with inputs normalized around zero.
+
+The `preprocess_input` function does exactly that, subtracting the mean R, G and B values of the 1.29 million dataset (123.68, 116.779, and 103.939 respectively) from all our input images.
+
+```
+to_jb_array = np.array(to_jb_ratings, dtype=np.float32)
+to_wdlands_array = np.array(to_wdlands_ratings, dtype=np.float32)
+```
+Lastly, I convert the rating lists into numpy arrays with numpy floats
+
+
+#### forming the TF dataset
+```
+target_array = to_jb_array
+print(len(all_snaps_filepaths), len(target_array))
+full_dataset = Dataset.from_tensor_slices((all_snaps_filepaths, target_array))
+full_dataset = full_dataset.map(load_and_preprocess_image, num_parallel_calls=10) # cuz i got 12 cores
+full_dataset = full_dataset.shuffle(buffer_size=1000, seed=7)
+```
+
+First, I define a variable 'target_array' and assign it to whichever rating array I'm working on, either jb or wdlands.
+
+Then I use the from_tensor_slices function to link the image filepaths and rating floats together in a dataset, before calling the image preprocessing file earlier on the images of the dataset. 
+
+Lastly, I shuffle the dataset a 1000 images at a time to randomize the rating order in the dataset, and set a seed for the shuffling so that its replicable when I shuffle next time.
+
+```
+split_number = int(len(target_array) * 0.8)
+train_dataset = full_dataset.take(split_number) # cant use [:split_number] cos tf datasets dont support
+val_dataset = full_dataset.skip(split_number)
+train_dataset = train_dataset.batch(32) # train 32 images at a time, reduces overfitting
+val_dataset = val_dataset.batch(32)
+```
+Can't forget the ol'train test split. This time we are using a 80% train 20% test split. We don't need to do a randomized split like in Chapter 4 because we already shuffled it before.
+
+And thats data prep done :)
+
+### 6.2: Experimenting With Different Hyperparameters
+With the data prepped, all thats left to do is feed it into the model and let it do its thing. For this first test run, the model will be going through 20 epochs (20 iterations of training), and the dropout rate is 0.4 (40% of neurons in each layer are randomly left out of the training for every epoch).
+
+Here are the results of the 20th epoch:
+
+![Fig 6.1](progress_pics/Fig-6.1-first_resnet_results.jpg)
+
+Fig 6.1: First loss results from resnet model on snaps
+
+Better than I expected for a first try. Then again, this is a model with weights obtained after training for months on millions of pictures, so it would obviously outperform my little yolov8 model. Furthermore, we are detecting 'areas of congestion' here, not 'number of cars' like with yolov8 which is a much harder task.
+
+Taking a look at val_loss = 0.5332 (which in rmse would be 0.5332^0.5 = 0.7302) and val_mae = 0.4663, I'd say automated labelling of snaps is definitely doable.
+
+On its first try, the resnet model is already producing ratings quite close to mine, averaging less than half an arbitrary unit in loss for each rating. Furthermore, the val RMSE, 0.7302, is not much greater than the MAE. RMSE punishes larger losses more severely, so this means there aren't massive individual losses either.
+
+A decent starting point, now lets see if the model can catch even more complex patterns without overfitting. I'm talking about increasing the number of units in the final dense layer from 128 to 256.
+
+#### Number of units in outer dense layer
+
+`    layers.Dense(256, activation='relu'), # increased from 128 to 256 `
+
+I've put the results in a pandas Dataframe to make it easier to compare the results against the 128 unit layer model
+
+![Fig 6.2](progress_pics/Fig-6.2-128_vs_256_neurons_results.jpg)
+
+Fig 6.2: Loss values of model with 256 units in outer dense layer vs 128 units
+
+Comparing them side by side, we can see that the 256 unit model does better, but only in training losses (and marginally in val_mae). Its val_mse is much greater than that of the 128 unit model, probably due to overfitting. 
+
+Now we know to stick with 128 units for the rest of this model.
+
+#### Dropout rate
+The dropout rate decides the fraction of units in a layer that 'go to sleep', essentially not participating in the training, for a particular epoch. It adds randomness and reduces likelihood of the model overfitting.
+
+Initially, the value was 0.4. Lets see how the loss values are like with dropout rate set to 0.3:
+
+```
+# Epoch 19/20
+# 110/110 ━━━━━━━━━━━━━━━━━━━━ 68s 609ms/step - loss: 0.3950 - mae: 0.3226 - val_loss: 0.3433 - val_mae: 0.3206
+# Epoch 20/20
+# 110/110 ━━━━━━━━━━━━━━━━━━━━ 67s 608ms/step - loss: 0.4237 - mae: 0.3403 - val_loss: 0.4001 - val_mae: 0.3835
+```
+
+If we compare the 20th epoch results with Fig 6.1, when dropout rate was 0.4, the val_loss (mse) and val_mae decreased from 0.5332 to 0.4001, and 0.4663 to 0.3835, respectively.
+
+This is a huge improvement in validation loss. Additionally, the training loss values are also much closer now, which suggests a more robust model. 
+
+On a side note, while the model is already doing stellar with 20 epochs, could probably do with more, as the decrease in val_loss over epochs does not seem to be slowing down much, even at the end.
+
+I'm inferring this from the best fit line I plotted for the last 12 epochs' mse values when dropout rate = 0.3:
+
+![Fig 6.3](progress_pics/Fig-6.3-val_loss_best_fit_epoch_9_to_20.jpg)
+
+Fig 6.3: Best fit line of val_loss against (epochs - 8)
+
+However, it already takes quite a long time to test each variable with 20 epochs. So for this chapter, I'll be testing each hyperparameter with only 10 epochs, before leaving the testing of best epoch number to last.
+
+Anyway, now let's try dropout rate 0.2:
+
+```
+# Epoch 19/20
+# 110/110 ━━━━━━━━━━━━━━━━━━━━ 62s 560ms/step - loss: 0.3483 - mae: 0.3091 - val_loss: 0.3792 - val_mae: 0.3271
+# Epoch 20/20
+# 110/110 ━━━━━━━━━━━━━━━━━━━━ 62s 563ms/step - loss: 0.3692 - mae: 0.3205 - val_loss: 0.4184 - val_mae: 0.3587
+```
+
+Very similar val loss to when dropout rate = 0.3, just a tad higher. That would not be a problem, if not for the fact that the training loss is so much lower than before. This implies overfitting to training data.
+
+I added the best fit line of val_loss against epoch number for dropout rate = 0.2 next to 0.3, as you can see below.
+
+![Fig 6.4](progress_pics/Fig-6.4-best_fit_dropout_0.2_vs_0.3.jpg)
+
+Fig 6.4: Best fit line for val_loss against (epoch-8) for dropout rates 0.2 (red) and 0.3 (purple).
+
+I removed an outlier at epoch 13 (0.8, abnormally high) and replaced it with a much lower value, yet the red line still hovers above the purple, showing a higher mean val_loss.
+
+After experimenting, I conclude, based on my 1 billion iq brain thinking, that we should go with a dropout rate of 0.3 moving forward.
+
+#### what hyperparam should we experiment with next
+maybe remove some rating 0 and 5s? cos of skewness, can try, see if it improves anyth or not

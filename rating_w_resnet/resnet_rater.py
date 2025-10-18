@@ -37,7 +37,7 @@ for x in range(folders_no[0], folders_no[1]):
     print(f'accessing {snaps_folder_path} for snaps...')
     for snap_name in os.listdir(snaps_folder_path):
         snap_path = snaps_folder_path + '/' + snap_name
-        print(snap_path)
+        # print(snap_path)
         all_snaps_filepaths.append(snap_path)
     # now to sort out ratings
     ratings_file_path = ratings_file_template + str(x) + '.txt'
@@ -47,6 +47,15 @@ for x in range(folders_no[0], folders_no[1]):
             to_jb_ratings.append(float(line[-3]))
             to_wdlands_ratings.append(float(line[-2]))
     # print(f'length of snaps_{x} and ratings_{x}: {str(len(all_snaps_filepaths))} and {str(len(to_jb_ratings))}, {str(len(to_wdlands_ratings))}')
+
+# change ratings lists into numpy arrays
+to_jb_array = np.array(to_jb_ratings, dtype=np.float32)
+to_wdlands_array = np.array(to_wdlands_ratings, dtype=np.float32)
+
+# to see snaps rating distribution (do for to_wdlands as well)
+unique, counts = np.unique(to_wdlands_array, return_counts=True)
+for val, count in zip(unique, counts):
+    print(f"Label {val}: {count} images")
 
 # # checking for corrupted jpegs
 # corrupted = []
@@ -69,24 +78,14 @@ def load_and_preprocess_image(filename, label):
     """Load image and preprocess for ResNet"""
     # Read image file
     img = tf.io.read_file(filename)
-    # Decode image (use decode_jpeg or decode_png as appropriate)
+    # Decode image 
     img = tf.image.decode_jpeg(img, channels=3)
     # Resize to expected input size
     img = tf.image.resize(img, [224, 224])
-    # Preprocess for ResNet (normalizes to [-1, 1] range)
+    # Preprocess for ResNet
     img = resnet50.preprocess_input(img)
     
     return img, label
-
-# change ratings lists into numpy arrays
-to_jb_array = np.array(to_jb_ratings, dtype=np.float32)
-to_wdlands_array = np.array(to_wdlands_ratings, dtype=np.float32)
-
-# to see snaps rating distribution
-unique, counts = np.unique(to_jb_array, return_counts=True)
-for val, count in zip(unique, counts):
-    print(f"Label {val}: {count} images")
-
 
 
 # creating dataset (start w to_jb, can do to_wdlands later)
@@ -116,8 +115,8 @@ full_regression_model = tf.keras.Sequential([
     # base_model without the top outputs a high rank tensor, this layer converts it to a rank 2 tensor (vector) for the dense layer to nom
     layers.GlobalAveragePooling2D(), 
     # takes the general purpose features from base_model and molds them to our input
-    layers.Dense(256, activation='relu'), # not too sure whats relu, just that it adds non-linearity to learn 'complex r'ships' wtv that means
-    layers.Dropout(0.4), # silences 40% units in the dense layer
+    layers.Dense(128, activation='relu'), # not too sure whats relu, just that it adds non-linearity to learn 'complex r'ships' wtv that means
+    layers.Dropout(0.3), # silences 20% units in the dense layer
     layers.Dense(1)  # regression layer outputs continuous value (0-5)
 ])
 
@@ -131,7 +130,7 @@ full_regression_model.compile(
 results = full_regression_model.fit(
     train_dataset,
     validation_data=val_dataset,
-    epochs=20 
+    epochs=10 # switching to 10 epochs instead, 20 takes way too long
 )
 
 # just run it and watch anime, but b4 that do some js work so u dont start the day with ramune anime
