@@ -2786,5 +2786,73 @@ I removed an outlier at epoch 13 (0.8, abnormally high) and replaced it with a m
 
 After experimenting, I conclude, based on my 1 billion iq brain thinking, that we should go with a dropout rate of 0.3 moving forward.
 
-#### what hyperparam should we experiment with next
-maybe remove some rating 0 and 5s? cos of skewness, can try, see if it improves anyth or not
+#### Managing Skew
+This next part is not exactly hyperparameter tuning, but it might make a small improvement to our model loss. Only one way to find out.
+
+From the countless hours I have spent labelling the snaps, I know that the proportion of snaps of ratings 0 and 5 are much greater than that of those with ratings 1 to 4. To confirm this, lets see the distribution of ratings across the snaps.
+
+```
+unique, counts = np.unique(to_jb_array, return_counts=True)
+for rating, count in zip(unique, counts):
+    print(f"{rating}: {count} images")
+```
+
+I use np.unique to get all the unique ratings (0, 1, 2, 4, and 5) as well as their counts, then zip them and use a for loop and print each unique label and its respective count. I do this for the to_jb_array first, then to_wdlands_array.
+
+Here are the results for jb (left) and wdlands (right):
+
+ 0: 3461 images, 2479 images
+ 1: 108 images, 227 images
+ 2: 79 images, 177 images
+ 3: 99 images, 211 images
+ 4: 98 images, 323 images
+ 5: 546 images, 974 images
+
+As you can see, the count for ratings 0 and 5 are much greater than the rest for both sides of the road. to_jb_array has more rating 0s, while to_wdlands_array has more ratings 5s.
+
+So my plan for the next training is to assign greater weights to snaps of the underepresented ratings, then train again with the most recent optimum hyperparameter values and see the results.
+
+It was to my understanding that the greater the weight, the more emphasis the model will put on snaps of that rating during training. While that is true, I also did not know that the weighted average had to equal to 1 (roughly). So I can't just take 1/count, I have to multiply by a constant as well, scaling_factor. 
+
+```
+scaling_factor = 731.83 # 4391/6
+custom_weights = {}
+
+# to see snaps rating distribution (do for to_wdlands as well) AND making weights
+unique, counts = np.unique(to_jb_array, return_counts=True)
+for rating, count in zip(unique, counts):
+    weight = scaling_factor/count
+    custom_weights[int(rating)] = float(weight)
+    print(f"{rating}: {count}")
+
+...
+...
+
+# Training
+results = full_regression_model.fit(
+    train_dataset,
+    validation_data = val_dataset,
+    epochs = 12, # switching to 12 epochs instead, 20 takes way too long
+    class_weight = custom_weights
+)
+
+```
+
+As the distribution code already loops through the rating counts, I used it to make the weight dictionary as well. The only extra code added is the weight scaling formula and adding the calculated weights into the weight dictionary, custom_weights. Then I add the dict to the model for training. Now we wait for the results.
+
+```
+Epoch 10/12
+110/110 ━━━━━━━━━━━━━━━━━━━━ 62s 560ms/step - loss: 1.0154 - mae: 0.9155 - val_loss: 1.8310 - val_mae: 0.9922
+Epoch 11/12
+110/110 ━━━━━━━━━━━━━━━━━━━━ 160s 1s/step - loss: 1.0843 - mae: 0.8648 - val_loss: 1.8250 - val_mae: 1.0388
+Epoch 12/12
+110/110 ━━━━━━━━━━━━━━━━━━━━ 71s 633ms/step - loss: 1.0308 - mae: 0.8307 - val_loss: 1.0805 - val_mae: 0.8338
+```
+
+Damn, the model is doing terribly, like really bad. Loss and MAE are more than doubled as compared to without weights, for both training and validation. Even if its only 12 epochs, the model was doing much better at epoch 12 without weights.
+
+I'm not an expert, but I think this could be due to the fact that my validation dataset has roughly the same ratings distribution as the training dataset, and so the disproportional distribution of data is actually an advantage. 
+
+As this model is not to predict ratings and is solely to rate snaps, since my snaps naturally skew towards 0 and 5 (might be cuz each snap is taken 1 hour apart), I will not be implementing custom weights. For now...
+
+#### TO THE NEXT HYPERPARAM

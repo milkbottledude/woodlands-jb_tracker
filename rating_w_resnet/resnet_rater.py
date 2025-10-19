@@ -50,12 +50,20 @@ for x in range(folders_no[0], folders_no[1]):
 
 # change ratings lists into numpy arrays
 to_jb_array = np.array(to_jb_ratings, dtype=np.float32)
-to_wdlands_array = np.array(to_wdlands_ratings, dtype=np.float32)
+# to_wdlands_array = np.array(to_wdlands_ratings, dtype=np.float32)
 
-# to see snaps rating distribution (do for to_wdlands as well)
-unique, counts = np.unique(to_wdlands_array, return_counts=True)
-for val, count in zip(unique, counts):
-    print(f"Label {val}: {count} images")
+scaling_factor = 731.83 # 4391/6
+custom_weights = {}
+
+# to see snaps rating distribution (do for to_wdlands as well) AND making weights
+unique, counts = np.unique(to_jb_array, return_counts=True)
+for rating, count in zip(unique, counts):
+    weight = scaling_factor/count
+    custom_weights[int(rating)] = float(np.sqrt(weight))
+    print(f"{rating}: {count}")
+
+print(custom_weights)
+
 
 # # checking for corrupted jpegs
 # corrupted = []
@@ -129,8 +137,9 @@ full_regression_model.compile(
 # Training
 results = full_regression_model.fit(
     train_dataset,
-    validation_data=val_dataset,
-    epochs=10 # switching to 10 epochs instead, 20 takes way too long
+    validation_data = val_dataset,
+    epochs = 12, # switching to 12 epochs instead, 20 takes way too long
+    class_weight = custom_weights
 )
 
 # just run it and watch anime, but b4 that do some js work so u dont start the day with ramune anime

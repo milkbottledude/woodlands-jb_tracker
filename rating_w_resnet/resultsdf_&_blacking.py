@@ -1,28 +1,74 @@
 import pandas as pd
-from PIL import Image # do i need to import this, theres no red line under...
+import tensorflow as tf
+import matplotlib.pyplot as plt
+columns = ['128_units', '256_units', 'dropout_0.3'] # , 'layer_trainable_YES'
 
-columns = ['layer_trainable_YES', 'layer_trainable_NO', 'output_classes', 'dropout_0.4', 'dropout_0.3', '128_units', '256_units']
-# for output classes, i will specify the specs at the time of training (eg dropout rate, neuron number in 2nd last layer, etc)
-index = ['trng_mse', 'trng_mae', 'val_mse', 'val_mae', 'wdl_trng_mse', 'wdl_trng_mae', 'wdl_val_mse', 'wdl_val_mae']
+# for output classes, will specify the specs at the time of training (eg dropout rate, neuron number in 2nd last layer, etc)
+
+index = ['trng_mse', 'trng_mae', 'val_mse', 'val_mae'] 
+# index_wdlands = ['wdl_trng_mse', 'wdl_trng_mae', 'wdl_val_mse', 'wdl_val_mae']
+
 # blank = pd.DataFrame(columns=columns, index=index)
 blank = pd.read_csv('rating_w_resnet/rn_results_unblacked.csv', index_col=0)
 
 
 # losses_for_today = [0.6036, 0.4022, 0.5332, 0.4663]
-# losses_for_today = [0.5250, 0.3896, 0.6381, 0.4368]
+losses_for_today = [1.0308, 0.8307, 1.0805, 0.8338]
 
-# for i, loss in enumerate(index):
-#     blank.at[loss, '256_units'] = str(losses_for_today[i])
-# print(blank)
+
+for i, metric in enumerate(index):
+    blank.at[metric, 'custom_weights'] = str(losses_for_today[i])
+print(blank)
 
 blank.to_csv('rating_w_resnet/rn_results_unblacked.csv', index=True)
+
+
+def TEST_load_and_preprocess_image(filename):
+    """Load image and preprocess for ResNet"""
+    # Read image file
+    img = tf.io.read_file(filename)
+    # Decode image 
+    img = tf.image.decode_jpeg(img, channels=3)
+    # Resize to expected input size
+    img = tf.image.resize(img, [224, 224])
+    
+    # Black out top 5 rows (set to 0)
+    mask = tf.concat([
+        tf.zeros([5, 224, 3]),      # Top 5 rows: all black
+        tf.ones([219, 224, 3])      # Remaining 219 rows: keep original
+    ], axis=0)
+    img_blacked = img * mask
+    
+    # showing img
+    plt.figure(figsize=(8, 8))
+    plt.imshow(img_blacked.numpy().astype('uint8'))  # .numpy() is a TensorFlow method
+    plt.title("Image with top 5 rows blacked out")
+    plt.axis('off')
+    plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # first results: Epoch 20/20 -> 110/110 ━━━━━━━━━━━━━━━━━━━━ 63s 569ms/step - loss: 0.6036 - mae: 0.4022 - val_loss: 0.5332 - val_mae: 0.4663
 # w 256 units in the top layer: 110/110 ━━━━━━━━━━━━━━━━━━━━ 62s 556ms/step - loss: 0.5250 - mae: 0.3896 - val_loss: 0.6381 - val_mae: 0.4368
 # mae is good and mse is not far off
 # however, data is heavily skewed to 0, there are many snaps of jb rating 0. maybe fixing this will improve performance
-# distribution of snaps ratings for jbn wdlands: 
+# distribution of snaps ratings for jb n wdlands: 
 # Label 0: 3461, 2479 images
 # Label 1: 108, 227 images
 # Label 2: 79, 177 images
