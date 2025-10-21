@@ -52,17 +52,17 @@ for x in range(folders_no[0], folders_no[1]):
 to_jb_array = np.array(to_jb_ratings, dtype=np.float32)
 # to_wdlands_array = np.array(to_wdlands_ratings, dtype=np.float32)
 
-scaling_factor = 731.83 # 4391/6
-custom_weights = {}
+# scaling_factor = 731.83 # 4391/6
+# custom_weights = {}
 
-# to see snaps rating distribution (do for to_wdlands as well) AND making weights
-unique, counts = np.unique(to_jb_array, return_counts=True)
-for rating, count in zip(unique, counts):
-    weight = scaling_factor/count
-    custom_weights[int(rating)] = float(np.sqrt(weight))
-    print(f"{rating}: {count}")
+# # to see snaps rating distribution (do for to_wdlands as well) AND making weights
+# unique, counts = np.unique(to_jb_array, return_counts=True)
+# for rating, count in zip(unique, counts):
+#     weight = scaling_factor/count
+#     custom_weights[int(rating)] = float(np.sqrt(weight))
+#     print(f"{rating}: {count}")
 
-print(custom_weights)
+# print(custom_weights)
 
 
 # # checking for corrupted jpegs
@@ -80,6 +80,11 @@ print(custom_weights)
 # for c in corrupted:
 #     print(c)
 
+# making mask
+mask = tf.io.read_file("..\progress_pics\Fig-6.4-jb_masked_full.jpg")
+mask = tf.image.decode_jpeg(mask, channels=3)
+mask = tf.image.resize(mask, [224, 224])          
+mask = mask / 255.0 # convert 255 in white regions to 1
 
 # preprocessing function from claude
 def load_and_preprocess_image(filename, label):
@@ -90,10 +95,12 @@ def load_and_preprocess_image(filename, label):
     img = tf.image.decode_jpeg(img, channels=3)
     # Resize to expected input size
     img = tf.image.resize(img, [224, 224])
+    # NEW! multiplying by mask EUGHRHHH
+    masked_img = img * mask
     # Preprocess for ResNet
-    img = resnet50.preprocess_input(img)
+    masked_img = resnet50.preprocess_input(img)
     
-    return img, label
+    return masked_img, label
 
 
 # creating dataset (start w to_jb, can do to_wdlands later)
@@ -107,8 +114,8 @@ full_dataset = full_dataset.shuffle(buffer_size=1000, seed=7) # size of shuffle
 split_number = int(len(target_array) * 0.8)
 train_dataset = full_dataset.take(split_number) # cant use [:split_number] cos tf datasets dont support
 val_dataset = full_dataset.skip(split_number)
-train_dataset = train_dataset.batch(32) # train 32 images at a time, reduces overfitting
-val_dataset = val_dataset.batch(32)
+train_dataset = train_dataset.batch(8) # train 32 images at a time, reduces overfitting
+val_dataset = val_dataset.batch(8)
 print(len(train_dataset))
 print(len(val_dataset))
     
@@ -129,7 +136,7 @@ full_regression_model = tf.keras.Sequential([
 ])
 
 full_regression_model.compile(
-    optimizer=tf.keras.optimizers.Adam(learning_rate=0.001), # optimizer decides how model weights are updated during trng, have no idea how it works
+    optimizer=tf.keras.optimizers.Adam(learning_rate=0.0005), # optimizer decides how model weights are updated during trng, have no idea how it works
     loss='mse',  # Mean Squared Error
     metrics=['mae']  # Mean Absolute Error
 )
@@ -138,8 +145,8 @@ full_regression_model.compile(
 results = full_regression_model.fit(
     train_dataset,
     validation_data = val_dataset,
-    epochs = 12, # switching to 12 epochs instead, 20 takes way too long
-    class_weight = custom_weights
+    epochs = 20, # switching to 12 epochs instead, 20 takes way too long
+    # class_weight = custom_weights
 )
 
 # just run it and watch anime, but b4 that do some js work so u dont start the day with ramune anime

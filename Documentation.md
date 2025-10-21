@@ -2706,16 +2706,80 @@ val_dataset = val_dataset.batch(32)
 ```
 Can't forget the ol'train test split. This time we are using a 80% train 20% test split. We don't need to do a randomized split like in Chapter 4 because we already shuffled it before.
 
+Thats most of the data prep done, but there is one more thing we can do to potentially improve our model value and reduce noise.
+
+#### Snaps Masking
+As you can see in the [snaps folders](gcloud/all_snaps), the images not only contain the road, but they also show the trees, guardrails, the occasional train, as well as the reservoir. These do not contribute to determining the congestion condition and can potentially confuse the model. The water body particularly, as it reflects the lit up buildings in Johor at night.
+
+To remedy this, I took to Canva to try and create a mask for the images.
+
+![Fig 6.1](progress_pics/Fig-6.1-masked_incomplete)
+
+Fig 6.1: Image mask (incomplete)
+
+As you can see, the pixels not consisting of road or congestion are relegated to RGB(0, 0, 0). However, some pixels in the image that make up the cars or road might also be black, so lets make it such that there is only 2 colours in the mask.
+
+![Fig 6.2](progress_pics/Fig-6.2-masked_full)
+
+Fig 6.2: Full image mask
+
+Keep in mind that this is NOT going to be the training data we are passing into the model. This is known as a 'mask'. 
+
+It has the same dimensions as the snaps, and it will essentially tell the model, 'the pixels of me that are black, turn the corresponding pixels on the training image black too. The pixels of me that are white, leave them as is', like so:
+
+```
+mask = tf.io.read_file(mask_path)
+mask = tf.image.decode_jpeg(mask, channels=3)
+mask = tf.image.resize(mask, [224, 224])          
+mask = mask / 255.0 # convert 255 in white regions to 1
+```
+
+Very similar to the `load_and_preprocess_image` function, except we only have to do this once. Now lets change the function slightly so we can carry out masking and display the masked image using matplotlib.
+
+```
+def TEST_load_and_preprocess_image(filename):
+    """Load image and preprocess for ResNet"""
+    # Read image file
+    img = tf.io.read_file(filename)
+    # Decode image 
+    img = tf.image.decode_jpeg(img, channels=3)
+    # Resize to expected input size
+    img = tf.image.resize(img, [224, 224])
+    
+    img_blacked = img * mask
+    
+    # showing img
+    plt.figure(figsize=(8, 8))
+    plt.imshow(img_blacked.numpy().astype('uint8'))  # .numpy() is a TensorFlow method
+    plt.title("Image with top 5 rows blacked out")
+    plt.axis('off')
+    plt.show()
+```
+
+Lets test out the masking on a random snap and see how it goes. If all goes according to plan, the output should look something like Fig 6.1.
+
+![Fig 6.3](progress_pics/Fig-6.3-snap_after_masking.jpg)
+
+Fig 6.3: Snap after applying mask
+
+Excellent, the masking is perfect. The image quality might be terrible compared to what we are used to, but this is because tensorflow's ResNet50 model only acccept 224x224 pixel images, thats why the quality is so potato. 
+
+While I'm at it, I might as well also try masking the non-target lane as well. Might seem like overkill, but I'll try anything once. In this case, since we are training for jb_rating, I masked the right side of the road.
+
+![Fig 6.4](progress_pics/Fig-6.4-jb_masked_full,jpg)
+
+Fig 6.5: Mask with non-target lane covered as well
+
 And thats data prep done :)
 
 ### 6.2: Experimenting With Different Hyperparameters
-With the data prepped, all thats left to do is feed it into the model and let it do its thing. For this first test run, the model will be going through 20 epochs (20 iterations of training), and the dropout rate is 0.4 (40% of neurons in each layer are randomly left out of the training for every epoch).
+With the data prepped, all thats left to do is feed it into the model and let it do its thing. For this first test run, I'll be using unmasked training data. The model will be going through 20 epochs (20 iterations of training), and the dropout rate will be 0.4 (40% of neurons in each layer are randomly left out of the training for every epoch).
 
 Here are the results of the 20th epoch:
 
-![Fig 6.1](progress_pics/Fig-6.1-first_resnet_results.jpg)
+![Fig 6.5](progress_pics/Fig-6.5-first_resnet_results.jpg)
 
-Fig 6.1: First loss results from resnet model on snaps
+Fig 6.5: First loss results from resnet model on snaps
 
 Better than I expected for a first try. Then again, this is a model with weights obtained after training for months on millions of pictures, so it would obviously outperform my little yolov8 model. Furthermore, we are detecting 'areas of congestion' here, not 'number of cars' like with yolov8 which is a much harder task.
 
@@ -2731,9 +2795,9 @@ A decent starting point, now lets see if the model can catch even more complex p
 
 I've put the results in a pandas Dataframe to make it easier to compare the results against the 128 unit layer model
 
-![Fig 6.2](progress_pics/Fig-6.2-128_vs_256_neurons_results.jpg)
+![Fig 6.6](progress_pics/Fig-6.6-128_vs_256_neurons_results.jpg)
 
-Fig 6.2: Loss values of model with 256 units in outer dense layer vs 128 units
+Fig 6.6: Loss values of model with 256 units in outer dense layer vs 128 units
 
 Comparing them side by side, we can see that the 256 unit model does better, but only in training losses (and marginally in val_mae). Its val_mse is much greater than that of the 128 unit model, probably due to overfitting. 
 
@@ -2759,9 +2823,9 @@ On a side note, while the model is already doing stellar with 20 epochs, could p
 
 I'm inferring this from the best fit line I plotted for the last 12 epochs' mse values when dropout rate = 0.3:
 
-![Fig 6.3](progress_pics/Fig-6.3-val_loss_best_fit_epoch_9_to_20.jpg)
+![Fig 6.7](progress_pics/Fig-6.7-val_loss_best_fit_epoch_9_to_20.jpg)
 
-Fig 6.3: Best fit line of val_loss against (epochs - 8)
+Fig 6.7: Best fit line of val_loss against (epochs - 8)
 
 However, it already takes quite a long time to test each variable with 20 epochs. So for this chapter, I'll be testing each hyperparameter with only 10 epochs, before leaving the testing of best epoch number to last.
 
@@ -2778,9 +2842,9 @@ Very similar val loss to when dropout rate = 0.3, just a tad higher. That would 
 
 I added the best fit line of val_loss against epoch number for dropout rate = 0.2 next to 0.3, as you can see below.
 
-![Fig 6.4](progress_pics/Fig-6.4-best_fit_dropout_0.2_vs_0.3.jpg)
+![Fig 6.8](progress_pics/Fig-6.8-best_fit_dropout_0.2_vs_0.3.jpg)
 
-Fig 6.4: Best fit line for val_loss against (epoch-8) for dropout rates 0.2 (red) and 0.3 (purple).
+Fig 6.8: Best fit line for val_loss against (epoch-8) for dropout rates 0.2 (red) and 0.3 (purple).
 
 I removed an outlier at epoch 13 (0.8, abnormally high) and replaced it with a much lower value, yet the red line still hovers above the purple, showing a higher mean val_loss.
 
@@ -2855,4 +2919,151 @@ I'm not an expert, but I think this could be due to the fact that my validation 
 
 As this model is not to predict ratings and is solely to rate snaps, since my snaps naturally skew towards 0 and 5 (might be cuz each snap is taken 1 hour apart), I will not be implementing custom weights. For now...
 
-#### TO THE NEXT HYPERPARAM
+#### Learning Rate
+
+Next we will be changing the learning rate, which basically decides how extreme the changes in weight are after each epoch when trying to adapt to the loss metrics.
+
+```
+full_regression_model.compile(
+    optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001), # optimizer decides how model weights are updated during trng, have no idea how it works
+    loss='mse',  # Mean Squared Error
+    metrics=['mae']  # Mean Absolute Error
+)
+```
+
+I was looking at Fig 6.3, which showcases the best model performance so far (128 units in dense layer and 0.3 dropout). While the loss gradient is negative and loss is definitely decreasing, the loss keeps jumping up, then going down, then up again, as epochs progress. This leads me to believe that the model can converge better with smaller steps at higher epochs.
+
+I'll only be testing values lower than our current LR, 0.001, as increasing it only saves time and compute but often times does not improve model performance and loss, starting with 0.008.
+
+```
+Epoch 18/20
+110/110 ━━━━━━━━━━━━━━━━━━━━ 62s 558ms/step - loss: 0.3622 - mae: 0.3200 - val_loss: 0.4629 - val_mae: 0.3610
+Epoch 19/20
+110/110 ━━━━━━━━━━━━━━━━━━━━ 62s 556ms/step - loss: 0.3799 - mae: 0.3256 - val_loss: 0.3533 - val_mae: 0.3517
+Epoch 20/20
+110/110 ━━━━━━━━━━━━━━━━━━━━ 62s 559ms/step - loss: 0.3889 - mae: 0.3361 - val_loss: 0.3843 - val_mae: 0.3487
+```
+
+Better than when LR = 0.001. Lets see how the best fit lines of their last 12 epochs' MSE compare.
+
+![Fig 6.9](progress_pics/Fig-6.9-best_fit_LR_0.001_vs_0.0008.jpg)
+
+Fig 6.9: LR = 0.001 vs LR = 0.0008
+
+The results and best fit lines are very similar, so the small LR is not underfitting. I know that with enough epochs, the smaller LR model will always triumph. 
+
+Because I don't want my laptop to explode, I'll try one last LR value, 0.0005. and plot the losses of the last 12 epochs so we can better compare with LR = 0.0008.
+
+```
+Epoch 18/20
+110/110 ━━━━━━━━━━━━━━━━━━━━ 273s 2s/step - loss: 0.3328 - mae: 0.3102 - val_loss: 0.4165 - val_mae: 0.3572
+Epoch 19/20
+110/110 ━━━━━━━━━━━━━━━━━━━━ 235s 2s/step - loss: 0.3751 - mae: 0.3301 - val_loss: 0.3289 - val_mae: 0.3290
+Epoch 20/20
+110/110 ━━━━━━━━━━━━━━━━━━━━ 273s 2s/step - loss: 0.3322 - mae: 0.3161 - val_loss: 0.3896 - val_mae: 0.3410
+```
+
+![Fig 6.10](progress_pics/Fig-6.10-best_fit_LR_0.0008_vs_0.0005.jpg)
+
+Fig 6.10: LR = 0.0008 vs LR = 0.0005
+
+It still looks like decreasing the LR decreases val_loss further, with the difference in loss between LR = 0.0008 and LR = 0.0005 potentially increasing as epoch number increases.
+
+Perhaps the next thing to do now would be to test even lower LR values, like 0.0003, but I think I'll stick with 0.0005, as I dont want to need to implement too many epochs for the model to converge to the optimal weights. Too much compute. I may come back in the future to try a lower LR, but for now lets move on to the next hyperparameter, batch size.
+
+#### Batch Size
+The batch size is exactly what it sounds like - how many images the model is trained on at a time before updating its weights. Too great a value and you risk underfitting, while too small a value can lead to overfitting. 
+
+As of now, the batch size we have been using thus far is 32. Looking at the losses from the past training results, the difference between training and validation losses is not high. This means overfitting is not a problem yet.
+
+Lets try and go as close to overfitting as possible, without actually overfitting, by halving batch size to 16.
+
+```
+Epoch 18/20
+220/220 ━━━━━━━━━━━━━━━━━━━━ 70s 314ms/step - loss: 0.3805 - mae: 0.3334 - val_loss: 0.4920 - val_mae: 0.3846
+Epoch 19/20
+220/220 ━━━━━━━━━━━━━━━━━━━━ 62s 280ms/step - loss: 0.4554 - mae: 0.3608 - val_loss: 0.3585 - val_mae: 0.3096
+Epoch 20/20
+220/220 ━━━━━━━━━━━━━━━━━━━━ 62s 280ms/step - loss: 0.4139 - mae: 0.3406 - val_loss: 0.4001 - val_mae: 0.3390
+```
+
+Thats really good, our best validation MAE so far. The val_loss (MSE) is slightly higher than the best score we have achieved. I may test this batch size value out at higher epochs.
+
+Out of curiosity, what if we try increasing it to 64?
+
+```
+Epoch 18/20
+55/55 ━━━━━━━━━━━━━━━━━━━━ 64s 1s/step - loss: 0.3669 - mae: 0.3405 - val_loss: 0.4732 - val_mae: 0.4189
+Epoch 19/20
+55/55 ━━━━━━━━━━━━━━━━━━━━ 64s 1s/step - loss: 0.3717 - mae: 0.3471 - val_loss: 0.4135 - val_mae: 0.3855
+Epoch 20/20
+55/55 ━━━━━━━━━━━━━━━━━━━━ 64s 1s/step - loss: 0.3554 - mae: 0.3372 - val_loss: 0.5269 - val_mae: 0.3896
+```
+
+Its training loss is very low but validation loss is higher than ever. I thought larger batch sizes were supposed to generalize better and overfit less. Odd...
+
+Either way, looks like batch_size 32 is the best option. Slightly annoyed that I spent all that time just to arrive at that conclusion.
+
+Regarding the results from when batch size = 16, while the smaller batch size model indeed does worse, my guess is that the model is learning more noise due to the small batch size, essentially 'fitting' to the noise. Hence making it perform worse than batch_size = 32 in training, even though its supposed to fit closer and potentially even overfit to training data.
+
+So my thinking is, with the masked snaps, theres less noise in the image, which might allow the model to fit closer without learning too much noise. To check this, I'll be comparing batch_size = 32 and 16 again, but this time while training on the masked training data. The other hyperparameter values will be the optimal values we have found out so far in this subchapter.
+
+First time training with the masked images, I'm quite excited.
+
+When batch size = 32:
+
+```
+Epoch 18/20
+110/110 ━━━━━━━━━━━━━━━━━━━━ 66s 595ms/step - loss: 0.3650 - mae: 0.3370 - val_loss: 0.3988 - val_mae: 0.3428
+Epoch 19/20
+110/110 ━━━━━━━━━━━━━━━━━━━━ 66s 592ms/step - loss: 0.3422 - mae: 0.3105 - val_loss: 0.4045 - val_mae: 0.3250
+Epoch 20/20
+110/110 ━━━━━━━━━━━━━━━━━━━━ 66s 594ms/step - loss: 0.3845 - mae: 0.3349 - val_loss: 0.4229 - val_mae: 0.3515
+```
+
+Slightly worse than unmasked with same hyperparam values. By the way, you can see most of the results from the 20th epoch for each test [here](rating_w_resnet/rn_results_unblacked).
+
+I believe in the potential of the masked snaps, I'm not giving up that easily. 
+
+Lets try using them again with batch size = 16:
+
+```
+Epoch 18/20
+220/220 ━━━━━━━━━━━━━━━━━━━━ 62s 279ms/step - loss: 0.3818 - mae: 0.3349 - val_loss: 0.6140 - val_mae: 0.3897
+Epoch 19/20
+220/220 ━━━━━━━━━━━━━━━━━━━━ 62s 281ms/step - loss: 0.3869 - mae: 0.3248 - val_loss: 0.3349 - val_mae: 0.3352
+Epoch 20/20
+220/220 ━━━━━━━━━━━━━━━━━━━━ 62s 278ms/step - loss: 0.4157 - mae: 0.3451 - val_loss: 0.4010 - val_mae: 0.3593
+```
+
+Very similar but still slightly off our best score, which was achieved with unmasked data and batch size = 16. Looks like the resnet model learnt that the pixels outside the road dont affect the congestion rating, which shows how good it is.
+
+These 2 configurations (masked AND unmasked + bs = 16) are quite good, so I'll be keeping them around for testing with higher epochs later on. The masked model is currently behind, but who knows it might converge better as epochs increase.
+
+Lets go again with batch_size = 16, but this time with mask v2 (covering non-target lane) and see if it does any better than its predecessor.
+
+```
+Epoch 18/20
+220/220 ━━━━━━━━━━━━━━━━━━━━ 66s 298ms/step - loss: 0.4020 - mae: 0.3419 - val_loss: 0.4700 - val_mae: 0.3421
+Epoch 19/20
+220/220 ━━━━━━━━━━━━━━━━━━━━ 64s 288ms/step - loss: 0.3813 - mae: 0.3220 - val_loss: 0.3672 - val_mae: 0.3244
+Epoch 20/20
+220/220 ━━━━━━━━━━━━━━━━━━━━ 64s 289ms/step - loss: 0.4002 - mae: 0.3429 - val_loss: 0.4012 - val_mae: 0.3731
+```
+The last epoch is average, but look at epoch 19. The best validation losses we have seen in Chapter 6 so far. Will be training with mask v2 on images moving forward.
+
+One last test, I'll be trying batch_size = 8. I'll be back with the results tomorrow, the desktop fan is making some disturbing noises now after the last training.
+
+```
+Epoch 18/20
+439/439 ━━━━━━━━━━━━━━━━━━━━ 66s 149ms/step - loss: 0.4437 - mae: 0.3649 - val_loss: 0.3800 - val_mae: 0.3478
+Epoch 19/20
+439/439 ━━━━━━━━━━━━━━━━━━━━ 67s 150ms/step - loss: 0.4071 - mae: 0.3380 - val_loss: 0.3784 - val_mae: 0.3570
+Epoch 20/20
+439/439 ━━━━━━━━━━━━━━━━━━━━ 75s 170ms/step - loss: 0.4318 - mae: 0.3554 - val_loss: 0.4554 - val_mae: 0.3638
+```
+
+Similar to when batch_size = 16, but batch size 8 takes a longer time to train, so I'll stick to 16 as the optimal value.
+
+#### Unfreezing base model
+
