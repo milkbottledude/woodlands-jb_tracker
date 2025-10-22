@@ -80,11 +80,11 @@ to_jb_array = np.array(to_jb_ratings, dtype=np.float32)
 # for c in corrupted:
 #     print(c)
 
-# making mask
-mask = tf.io.read_file("..\progress_pics\Fig-6.4-jb_masked_full.jpg")
-mask = tf.image.decode_jpeg(mask, channels=3)
-mask = tf.image.resize(mask, [224, 224])          
-mask = mask / 255.0 # convert 255 in white regions to 1
+# # making mask
+# mask = tf.io.read_file("..\progress_pics\Fig-6.4-jb_masked_full.jpg")
+# mask = tf.image.decode_jpeg(mask, channels=3)
+# mask = tf.image.resize(mask, [224, 224])          
+# mask = mask / 255.0 # convert 255 in white regions to 1
 
 # preprocessing function from claude
 def load_and_preprocess_image(filename, label):
@@ -96,11 +96,11 @@ def load_and_preprocess_image(filename, label):
     # Resize to expected input size
     img = tf.image.resize(img, [224, 224])
     # NEW! multiplying by mask EUGHRHHH
-    masked_img = img * mask
+    # masked_img = img * mask
     # Preprocess for ResNet
-    masked_img = resnet50.preprocess_input(img)
+    img = resnet50.preprocess_input(img)
     
-    return masked_img, label
+    return img, label
 
 
 # creating dataset (start w to_jb, can do to_wdlands later)
@@ -114,15 +114,15 @@ full_dataset = full_dataset.shuffle(buffer_size=1000, seed=7) # size of shuffle
 split_number = int(len(target_array) * 0.8)
 train_dataset = full_dataset.take(split_number) # cant use [:split_number] cos tf datasets dont support
 val_dataset = full_dataset.skip(split_number)
-train_dataset = train_dataset.batch(8) # train 32 images at a time, reduces overfitting
-val_dataset = val_dataset.batch(8)
+train_dataset = train_dataset.batch(16) # train 32 images at a time, reduces overfitting
+val_dataset = val_dataset.batch(16)
 print(len(train_dataset))
 print(len(val_dataset))
     
 
 # data prep done, now prepping rezzy model
 base_model = resnet50.ResNet50(weights="imagenet", include_top=False, input_shape=(224, 224, 3)) # without top output layer
-base_model.trainable = False # determines if base weights frm imagenet r updated frm my own data or not
+base_model.trainable = True # determines if base weights frm imagenet r updated frm my own data or not
 
 tf.random.set_seed(7)
 full_regression_model = tf.keras.Sequential([
@@ -136,7 +136,7 @@ full_regression_model = tf.keras.Sequential([
 ])
 
 full_regression_model.compile(
-    optimizer=tf.keras.optimizers.Adam(learning_rate=0.0005), # optimizer decides how model weights are updated during trng, have no idea how it works
+    optimizer=tf.keras.optimizers.Adam(learning_rate=0.00036), # optimizer decides how model weights are updated during trng, have no idea how it works
     loss='mse',  # Mean Squared Error
     metrics=['mae']  # Mean Absolute Error
 )
@@ -145,7 +145,7 @@ full_regression_model.compile(
 results = full_regression_model.fit(
     train_dataset,
     validation_data = val_dataset,
-    epochs = 20, # switching to 12 epochs instead, 20 takes way too long
+    epochs = 12, # switching to 12 epochs instead, 20 takes way too long
     # class_weight = custom_weights
 )
 

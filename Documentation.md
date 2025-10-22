@@ -3066,4 +3066,84 @@ Epoch 20/20
 Similar to when batch_size = 16, but batch size 8 takes a longer time to train, so I'll stick to 16 as the optimal value.
 
 #### Unfreezing base model
+Before, only the outer dense layer we created on top of the base model was being trained. `base_model.trainable = True` allows the base layer weights to be trained and updated as well.
 
+In my eyes, this could go either way. The base model weights could pick up useful patterns in the snaps and improve, or the already good resnet weights could learn useless noise from the snaps and get worse.
+
+Compared to resnet50s training data, ours is not exactly as high quality. Each car makes up a very small fraction of the pixels, and traffic congestion states can look very different despite having the same rating.
+
+As a baseline, I'll use the unmasked data first, with batch_size = 16 together with the trainable base layers option set to TRUE.
+
+```
+Epoch 10/20
+220/220 ━━━━━━━━━━━━━━━━━━━━ 694s 3s/step - loss: 0.1466 - mae: 0.1694 - val_loss: 0.0549 - val_mae: 0.1051
+Epoch 11/20
+220/220 ━━━━━━━━━━━━━━━━━━━━ 424s 2s/step - loss: 0.1212 - mae: 0.1556 - val_loss: 0.1321 - val_mae: 0.1852
+Epoch 12/20
+220/220 ━━━━━━━━━━━━━━━━━━━━ 237s 1s/step - loss: 0.1556 - mae: 0.1755 - val_loss: 0.2274 - val_mae: 0.2125
+```
+
+GSYDFGWFGEYWIFGUERSG
+
+Before we apply mask v2 to the training data, I will try using the unmasked data again, but this time with batch_size = 8. Don't wanna leave any stones unturned. 
+
+For time's sake, I'll set epochs = 12 only.
+
+```
+Epoch 10/20
+439/439 ━━━━━━━━━━━━━━━━━━━━ 227s 516ms/step - loss: 0.1480 - mae: 0.1748 - val_loss: 0.2113 - val_mae: 0.1972
+Epoch 11/20
+439/439 ━━━━━━━━━━━━━━━━━━━━ 229s 520ms/step - loss: 0.1762 - mae: 0.1961 - val_loss: 0.0549 - val_mae: 0.0920
+Epoch 12/20
+439/439 ━━━━━━━━━━━━━━━━━━━━ 230s 523ms/step - loss: 0.1617 - mae: 0.1785 - val_loss: 0.0712 - val_mae: 0.1155
+```
+Both batch size 8 and 16 were able to achieve new validation loss lows, so I'll again be sticking to bs = 16 for time and compute sake. 
+
+Now lets see how training with mask v2, bs = 16, and trainable base layers does:
+
+```
+Epoch 10/12
+220/220 ━━━━━━━━━━━━━━━━━━━━ 235s 1s/step - loss: 0.1793 - mae: 0.2085 - val_loss: 0.3622 - val_mae: 0.3316
+Epoch 11/12
+220/220 ━━━━━━━━━━━━━━━━━━━━ 235s 1s/step - loss: 0.2589 - mae: 0.2340 - val_loss: 0.1191 - val_mae: 0.2008
+Epoch 12/12
+220/220 ━━━━━━━━━━━━━━━━━━━━ 236s 1s/step - loss: 0.2273 - mae: 0.2250 - val_loss: 3.0835 - val_mae: 1.4428
+```
+
+Decent validation losses on the second last epoch but just not enough to best the unmasked training, also what the balls is going on in epoch 12 I have no idea.
+
+Its sad, but it looks like I'll have to abandon the masks. Although I'm still confused as to how showing the reservoir and the other side of the bridge can influence loss values so much. 
+
+Overfitting is a suspect, but the unmasked snaps also have the same pixels as the masked, so that doesnt make sense to me. 
+
+If you guys have an inkling, do telegram me.
+
+#### Optimizing Hyperparameter Mix 
+So far, we have determined the optimal values for the following hyperparameters:
+
+- outer dense layer unit number: 128 units
+- dropout rate = 0.3
+- learning rate: 0.005
+- batch size: 16
+- trainable base model: True
+
+Call me kiasu, but while these values proved to be the best when tested alone, a different combination of hyperparameter values might do better.
+
+For example, when testing dense layer unit numbers, 128 did the best. But that was when dropout rate had not been optimized from 0.4 to 0.3. Who knows, a higher unit number might do better with a lower dropout rate. 
+
+This is just an example, I have 1 or 2 real suspicions which I will discuss below.
+
+1) Learning rate not low enough after I set trainable base model to True. 
+
+After quickly converging and getting stellar val_MAE of 0.12 and 0.15 in epoch 3 and 4, the loss kept hovering around the same minimum for the rest of the epochs. You can see for yourself in lines 303 to 327 [here](full_epoch_losses.txt)
+
+I have a feeling that with a lower learning rate combined with trainable base layers, the weights can converge better and reduce loss further. Lets test this with a lower learning rate of 0.00036.
+
+```
+Epoch 10/12
+220/220 ━━━━━━━━━━━━━━━━━━━━ 242s 1s/step - loss: 0.1615 - mae: 0.1795 - val_loss: 0.0724 - val_mae: 0.1367
+Epoch 11/12
+220/220 ━━━━━━━━━━━━━━━━━━━━ 235s 1s/step - loss: 0.1242 - mae: 0.1609 - val_loss: 0.0871 - val_mae: 0.1434
+Epoch 12/12
+220/220 ━━━━━━━━━━━━━━━━━━━━ 235s 1s/step - loss: 0.1205 - mae: 0.1560 - val_loss: 0.0498 - val_mae: 0.1136
+```
