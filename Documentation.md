@@ -3171,3 +3171,63 @@ results.model.save("rn_rater_v1.keras")
 
 to save it as a keras file.
 
+I just finished labelling rating_32.txt, lets call our saved model and see how different each label is compared to my own ratings.
+
+```
+# testing rater model with just rating32
+rater_model = keras.models.load_model("../rn_rater_v1.keras")
+
+... data prep, repeating stuff from chapt 6.1 ...
+
+rn_ratings = rater_model.predict(img32, verbose=1)
+for i, value in enumerate(rn_ratings):
+    pred = round(float(value[0]), 3)
+    print(f'actual: {jb_test_ratings[i]}, predicted: {pred}')
+```
+
+I rounded off the float pred values to 3dp for readability.
+
+Here is a small excerpt, the full output is at line 401 [here](full_epoch_losses.txt):
+
+```
+...
+actual: 0.0, predicted: 0.04
+actual: 0.0, predicted: 0.2
+actual: 4.0, predicted: 2.89
+actual: 5.0, predicted: 4.79
+. . .
+actual: 5.0, predicted: 4.89
+actual: 3.0, predicted: 1.84
+actual: 4.0, predicted: 2.67
+actual: 1.0, predicted: 0.46
+actual: 3.0, predicted: 2.25
+actual: 2.0, predicted: 1.25
+...
+```
+
+The predictions are very close when the actual rating is either 5 or 0, but losses begin to creep up to whole numbers for anything in between.
+
+To combat this, I have 2 possible solutions, neither of which I like very much.
+
+1) Increase loss weightage *slightly* for training snaps with ratings != 0 or 5. But we both have seen what messing with the weights led to earlier in this subchapter. Adjusting weights is clearly not my forte.
+
+2) if (rating > 1 && rating < 4) {use math ceiling to round up :)}, but this is quite an unscientific and lazy way around this problem. Barbaric even, if you will.
+
+Furthermore, we will have to train all over again, and the optimal hyperparameter values might shift with different loss weightages.
+
+Due to time constraint, I will use option 2 **for now**, but I will definitely come back and sort the weights out.
+
+Now I need to make and export the keras model which targets the side of the road heading to woodlands. Lets see how it performs on the optimal hyperparams we obtained listed above.
+
+```
+Epoch 10/12
+220/220 ━━━━━━━━━━━━━━━━━━━━ 239s 1s/step - loss: 0.2182 - mae: 0.2653 - val_loss: 0.1126 - val_mae: 0.1849
+Epoch 11/12
+220/220 ━━━━━━━━━━━━━━━━━━━━ 233s 1s/step - loss: 0.2235 - mae: 0.2708 - val_loss: 0.1453 - val_mae: 0.2013
+Epoch 12/12
+220/220 ━━━━━━━━━━━━━━━━━━━━ 766s 3s/step - loss: 0.2201 - mae: 0.2706 - val_loss: 0.1474 - val_mae: 0.2324
+```
+
+Same hyperparameters, yet loss values are nowhere near as good as when training with data from the other side of the causeway.
+
+Thats not to say an MAE average of ~ 0.2 is not good, but I'd like those numbers a tad lower.
