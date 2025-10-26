@@ -3182,40 +3182,56 @@ rater_model = keras.models.load_model("../rn_rater_v1.keras")
 rn_ratings = rater_model.predict(img32, verbose=1)
 for i, value in enumerate(rn_ratings):
     pred = round(float(value[0]), 3)
-    print(f'actual: {jb_test_ratings[i]}, predicted: {pred}')
+    print(f'actual: {jb_test_ratings[i]}, labelled: {pred}')
 ```
 
 I rounded off the float pred values to 3dp for readability.
 
-Here is a small excerpt, the full output is at line 401 [here](full_epoch_losses.txt):
+Here is a small excerpt, the full output is at line 401 [here](full_epoch_losses.txt).:
 
 ```
 ...
-actual: 0.0, predicted: 0.04
-actual: 0.0, predicted: 0.2
-actual: 4.0, predicted: 2.89
-actual: 5.0, predicted: 4.79
-. . .
-actual: 5.0, predicted: 4.89
-actual: 3.0, predicted: 1.84
-actual: 4.0, predicted: 2.67
-actual: 1.0, predicted: 0.46
-actual: 3.0, predicted: 2.25
-actual: 2.0, predicted: 1.25
+actual: 5.0, labelled: 4.89 
+actual: 3.0, labelled: 1.84 (08-08_18-00_Fri.jpg)
+actual: 4.0, labelled: 2.67 (08-08_19-00_Fri.jpg)
+actual: 1.0, labelled: 0.46 (08-08_20-00_Fri.jpg)
+actual: 3.0, labelled: 2.25 (08-08_21-00_Fri.jpg)
+actual: 2.0, labelled: 1.25 
 ...
 ```
 
-The predictions are very close when the actual rating is either 5 or 0, but losses begin to creep up to whole numbers for anything in between.
+I added the corresponding filenames as well, lets take a closer look at whats happening.
 
-To combat this, I have 2 possible solutions, neither of which I like very much.
+![Fig 6.11](progress_pics/Fig-6.11-4_snaps_closer_inspection.jpg)
 
-1) Increase loss weightage *slightly* for training snaps with ratings != 0 or 5. But we both have seen what messing with the weights led to earlier in this subchapter. Adjusting weights is clearly not my forte.
+Fig 6.11: Closer look at the 4 images
+
+For the 2 snaps where the actual value was 3, I feel that 08-08_18-00_Fri was more underestimated by the resnet model than 08-08_21-00_Fri due to the presence of cars in the opposite lane. 
+
+It could be that, since its common for the jb road to be empty when the wdlands road is congested, the model somewhat associates a congested wdlands road with a lower jb rating.
+
+Its a shame, the predictions are very close when the actual rating is either 5 or 0 but losses begin to creep up to whole numbers for anything in between.
+
+To combat this, I have 3 possible solutions, none of which I like very much.
+
+1) We do masking again, but this time we just mask the opposite road, not the reservoir. I had really high hopes for masking before this chapter, but 
 
 2) if (rating > 1 && rating < 4) {use math ceiling to round up :)}, but this is quite an unscientific and lazy way around this problem. Barbaric even, if you will.
 
+3)  Increase loss weightage *slightly* for training snaps with ratings != 0 or 5. But we both have seen what messing with the weights led to earlier in this subchapter. Adjusting weights is clearly not my forte, so this is like a last resort.
+
 Furthermore, we will have to train all over again, and the optimal hyperparameter values might shift with different loss weightages.
 
-Due to time constraint, I will use option 2 **for now**, but I will definitely come back and sort the weights out.
+Due to time constraint, I will use option 2 **for now**, but I will definitely come back and develop mask v3, or finetune the weights if that does not work out.
+
+```
+    for i, value in enumerate(rn_ratings):
+        if value > 1 and pred < 4:
+            pred = np.ceil(value)
+        else:
+            pred = round(float(value[0]), 2)
+        print(f'actual: {wdlands_test_ratings[i]}, labelled: {pred}')
+```
 
 Now I need to make and export the keras model which targets the side of the road heading to woodlands. Lets see how it performs on the optimal hyperparams we obtained listed above.
 
@@ -3228,6 +3244,26 @@ Epoch 12/12
 220/220 ━━━━━━━━━━━━━━━━━━━━ 766s 3s/step - loss: 0.2201 - mae: 0.2706 - val_loss: 0.1474 - val_mae: 0.2324
 ```
 
-Same hyperparameters, yet loss values are nowhere near as good as when training with data from the other side of the causeway.
+Same hyperparameters, yet loss values are nowhere near as good as when training with data from the other side of the causeway. 
 
-Thats not to say an MAE average of ~ 0.2 is not good, but I'd like those numbers a tad lower.
+The loss values may not look terrible, but keep in mind the loss for ratings = 0 and 5 are already very small, so for the loss to average out to this value, it means the underrepresented classes have some slightly significant losses.
+
+Thats not to say an MAE average of ~ 0.2 is not good, but I'd like those numbers a tad lower. Lets inspect it on ratings32 like with the jb model. I'll excerpt areas of concern and display them below, the full ting will be at line [here](full_epoch_losses.txt)
+
+```
+actual: 0.0, labelled: 1.98 (08-08_14-00_Fri)
+...
+actual: 4.0, labelled: 4.47
+
+```
+For the first one, if you look at the [image](GCloud/all_snaps/snaps_32/08-08_14-00_Fri.jpg), you can see that the only vehicles travelling on the road to wdlands are trucks.
+
+Now trucks take a different path from cars into the customs, so I don't count them when deciding the rating. But the resnet model does not know that, nor can I tell it.
+
+One solution would be to mask out the truck and buses lane (the right most lane is for buses and trucks only, but cars sometimes take up this lane when the other lanes get congested), similar to option 1 earlier. 
+
+And similar to the approach we took with the jb model, I will not apply the mask just yet. However, I'm not going to round up either.
+
+This is because the wdlands model has a tendency to overestimate as well as you can see in the second line i pulled from the comparison results(4.47 to 4.0). This is unlike the jb model, which very rarely overestimates the rating.
+
+

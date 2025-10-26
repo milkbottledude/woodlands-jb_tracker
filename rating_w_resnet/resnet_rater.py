@@ -169,19 +169,19 @@ def train_save_model(model, train_dataset, val_dataset):
     results.model.save("../wdld_rn_rater_v1.keras")
     print('model saved yahoo')
 
-# full ting
-getting_trng_paths()
-to_wdlands_array = np.array(to_wdlands_ratings, dtype=np.float32)
-dses = create_trng_dataset(to_wdlands_array)
-model = prep_model(dses[0], dses[1])
-train_save_model(model, dses[0], dses[1])
+# # full ting
+# getting_trng_paths()
+# to_wdlands_array = np.array(to_wdlands_ratings, dtype=np.float32)
+# dses = create_trng_dataset(to_wdlands_array)
+# model = prep_model(dses[0], dses[1])
+# train_save_model(model, dses[0], dses[1])
 
 
 # just run it and watch anime, but b4 that do some js work so u dont start the day with ramune anime
 
 # testing rater model with just rating32
 # jb_model = "../rn_rater_v1.keras"
-# wdlands_model = "../wdld_rn_rater_v1.keras"
+wdlands_model = "../wdld_rn_rater_v1.keras"
 def in_depth_test(model_path):
     rater_model = keras.models.load_model(model_path)
 
@@ -203,5 +203,10 @@ def in_depth_test(model_path):
 
     rn_ratings = rater_model.predict(img32, verbose=1)
     for i, value in enumerate(rn_ratings):
-        pred = round(float(value[0]), 2)
-        print(f'actual: {jb_test_ratings[i]}, predicted: {pred}')
+        if value > 1 and pred < 4:
+            pred = np.ceil(value)
+        else:
+            pred = round(float(value[0]), 2)
+        print(f'actual: {wdlands_test_ratings[i]}, labelled: {pred}')
+
+in_depth_test(wdlands_model)
