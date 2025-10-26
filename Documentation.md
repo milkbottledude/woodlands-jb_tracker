@@ -3264,6 +3264,52 @@ One solution would be to mask out the truck and buses lane (the right most lane 
 
 And similar to the approach we took with the jb model, I will not apply the mask just yet. However, I'm not going to round up either.
 
-This is because the wdlands model has a tendency to overestimate as well as you can see in the second line i pulled from the comparison results(4.47 to 4.0). This is unlike the jb model, which very rarely overestimates the rating.
+This is because the wdlands model has a tendency to overestimate as well as you can see in the second line i pulled from the comparison results(4.47 to 4.0). This is unlike the jb model, which underestimates most of the time.
 
+On second thoughts, 0.2 is abit higher than I'd like, so I'm going to start with mask v3 for the road to wdlands. A last ditch effort to improve data labelling before processing the data into the actual predictor model (might convert from rfr to lightgbm for predictor model).
+
+Here is mask v3, with the white pixels representing normal pixels and the black representing the masked pixels for the image.
+
+![Fig 6.12](progress_pics/Fig-6.12-mask_v3_wdlands.jpg)
+
+Fig 6.12: Mask v3, for road to wdlands.
+
+Gonna replace the old mask path with this, and run the model again.
+
+*2 hours later...*
+```
+Epoch 5/12
+220/220 ━━━━━━━━━━━━━━━━━━━━ 236s 1s/step - loss: 0.2608 - mae: 0.2917 - val_loss: 0.5940 - val_mae: 0.4883
+Epoch 6/12
+220/220 ━━━━━━━━━━━━━━━━━━━━ 703s 3s/step - loss: 0.2662 - mae: 0.2948 - val_loss: 0.3545 - val_mae: 0.3520
+Epoch 7/12
+220/220 ━━━━━━━━━━━━━━━━━━━━ 682s 3s/step - loss: 0.2479 - mae: 0.2860 - val_loss: 0.6928 - val_mae: 0.5010
+```
+
+The loss values were so horrible i stopped it halfway through. After printing the mask tensor values, I realised what was *possibly* causing my masks to be so unhelpful:
+
+![Fig 6.13](progress_pics/Fig-6.13-mask_v3_wdlands_tensor_values.jpg)
+
+Not sure why, but the white and black values arent all exact 1s and 0s. When multiplied with the original image to get the masked image, the masked image might look good to us, but the shades of black which are supposed to be of the same RGB values might be different.
+
+Not sure if this is the reason why masks have been so unsuccessful for me so far, or is it just that masks are bad for this use case. Either way, imma find out.
+
+```
+mask = mask / 255.0 # convert 255 in white regions to 1
+mask = tf.where(mask > 0.5, 1.0, 0.0)
+```
+I added the second line to make sure any value inside the mask tensor less than 0.5 becomes 0, otherwise 1. The .where function acts like a quick if-else.
+
+Lets see if anything has changed, or am I as stupid as my 5th grade science teacher claimed I was.
+
+```
+Epoch 10/12
+220/220 ━━━━━━━━━━━━━━━━━━━━ 239s 1s/step - loss: 0.2816 - mae: 0.3061 - val_loss: 0.1246 - val_mae: 0.2373
+Epoch 11/12
+220/220 ━━━━━━━━━━━━━━━━━━━━ 236s 1s/step - loss: 0.2548 - mae: 0.2919 - val_loss: 0.1580 - val_mae: 0.2383
+Epoch 12/12
+220/220 ━━━━━━━━━━━━━━━━━━━━ 241s 1s/step - loss: 0.2522 - mae: 0.2932 - val_loss: 0.1719 - val_mae: 0.2163
+```
+
+About the same as without masking. But the I'll use the non-masked model since the data set up process for labelling is the same as the unmasked jb model, and I want to maintain some form of order in this chaotic repository.
 

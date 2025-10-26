@@ -84,11 +84,15 @@ def getting_trng_paths():
 # for c in corrupted:
 #     print(c)
 
-# # making mask
-# mask = tf.io.read_file("..\progress_pics\Fig-6.4-jb_masked_full.jpg")
-# mask = tf.image.decode_jpeg(mask, channels=3)
-# mask = tf.image.resize(mask, [224, 224])          
-# mask = mask / 255.0 # convert 255 in white regions to 1
+# making mask
+mask = tf.io.read_file("progress_pics/Fig-6.12-mask_v3_wdlands.jpg")
+mask = tf.image.decode_jpeg(mask, channels=3)
+mask = tf.image.resize(mask, [224, 224])  
+print(mask)
+mask = mask / 255.0 # convert 255 in white regions to 1
+mask = tf.where(mask > 0.5, 1.0, 0.0)
+print(mask)
+print('YOHOOOOOOOOOOOOOOOOO')
 
 # preprocessing function from claude
 def load_and_preprocess_image(filename, label=None):
@@ -100,13 +104,13 @@ def load_and_preprocess_image(filename, label=None):
     # Resize to expected input size
     img = tf.image.resize(img, [224, 224])
     # NEW! multiplying by mask EUGHRHHH
-    # masked_img = img * mask
+    masked_img = img * mask
     # Preprocess for ResNet
-    img = resnet50.preprocess_input(img)
+    masked_img = resnet50.preprocess_input(masked_img)
     
     if label == None:
-        return img
-    return img, label
+        return masked_img
+    return masked_img, label
 
 
 # creating dataset (start w to_jb, can do to_wdlands later)
@@ -166,15 +170,15 @@ def train_save_model(model, train_dataset, val_dataset):
     )
 
     # saving model
-    results.model.save("../wdld_rn_rater_v1.keras")
+    results.model.save("../wdld_rn_rater_v2.keras")
     print('model saved yahoo')
 
-# # full ting
-# getting_trng_paths()
-# to_wdlands_array = np.array(to_wdlands_ratings, dtype=np.float32)
-# dses = create_trng_dataset(to_wdlands_array)
-# model = prep_model(dses[0], dses[1])
-# train_save_model(model, dses[0], dses[1])
+# full ting
+getting_trng_paths()
+to_wdlands_array = np.array(to_wdlands_ratings, dtype=np.float32)
+dses = create_trng_dataset(to_wdlands_array)
+model = prep_model(dses[0], dses[1])
+train_save_model(model, dses[0], dses[1])
 
 
 # just run it and watch anime, but b4 that do some js work so u dont start the day with ramune anime
@@ -209,4 +213,4 @@ def in_depth_test(model_path):
             pred = round(float(value[0]), 2)
         print(f'actual: {wdlands_test_ratings[i]}, labelled: {pred}')
 
-in_depth_test(wdlands_model)
+# in_depth_test(wdlands_model)
