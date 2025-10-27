@@ -7,3 +7,4 @@ datetime,road_to,ratings_used,custom_hyperparameters,mae,rmse,model
 2025-07-05 19:56,wdlands,8-19,{'random_state': 0},1.308943271636963,1.7450697112709952,xgb
 2025-07-05 20:00,jb,4-19,{'random_state': 0},0.6196852726135388,1.1149817915248046,xgb
 2025-07-05 20:00,wdlands,4-19,{'random_state': 0},1.315393105013727,1.7452240268430597,xgb
+

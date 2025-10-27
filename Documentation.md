@@ -3313,3 +3313,37 @@ Epoch 12/12
 
 About the same as without masking. But the I'll use the non-masked model since the data set up process for labelling is the same as the unmasked jb model, and I want to maintain some form of order in this chaotic repository.
 
+## Chapter 7 - Incremental Learning with LightGBM 
+
+As the months go by, the number of total snaps we have will increase. And seeing as we need to update the predictor model every month with the new snaps for more accurate predictions, It makes sense to have a model that can train on just the new data without having to undergo training with the whole dataset all over again.
+
+Unfortunately, sklearn's RFR does not support incremental learning. However, there is a model that not only supports incremental learning but also captures non-linear patterns, which is the reason why we chose RFR over a standard linear model in the first place.
+
+The latest rfr model, rfr_model_v4, was trained on snaps 4-19. So lets do that but with a LightGBM model. The code for this portion is in [this file](python_scripts/rating_to_csv_to_joblib.py).
+
+The data prep was all done for the rfr model already, so all I had to do was initialize a LightGBM model.
+
+```
+    else:
+        if jb_or_wdlands == 'jb':
+            # hyperparams = rfr_model_jb_hyperparams
+            # model = RandomForestRegressor(**hyperparams)
+            model = lgb.LGBMRegressor()
+            model.fit(trainfinal_df, y_column_jb)
+            # joblib.dump(model, f'rfr_model_jb_v{str(version)}.joblib')
+            model.booster_.save_model(f"lgb_model_jb_v{str(version)}.txt") 
+            # print('jb joblibbed')
+
+        else:
+            # hyperparams = rfr_model_wdlands_hyperparams
+            model = lgb.LGBMRegressor()
+            # model = RandomForestRegressor(**hyperparams)
+            model.fit(trainfinal_df, y_column_wdlands)
+            # joblib.dump(model, f'rfr_model_wdlands_v{str(version)}.joblib')
+            model.booster_.save_model(f"lgb_model_wdlands_v{str(version)}.txt") 
+            # print('wdlands joblibbed')
+```
+
+Commented out the lines that use the rfr model and added the code to use a lgbm model, saving this model as v1 of many.
+
+Now lets test 'lgbm_model_jb_v1' against the defending champion, 'rfr_model_jb_v5', with some unseen data, snaps 25-29.

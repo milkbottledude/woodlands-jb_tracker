@@ -10,3 +10,4 @@ joblib
 seaborn
 matplotlib
 xgboost
+lightgbm --config-settings=cmake.define.USE_GPU=1

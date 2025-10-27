@@ -6,6 +6,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 import xgboost as xgb
+import lightgbm as lgb
 
 
 # currently making rfr_model_v4
@@ -120,7 +121,7 @@ def rating_to_df(rating_path):
 # test run 'rating_to_df' function (SUCCESS: 8, 9, 10)
 rating_no = 11
 def test1(x):
-    return rating_to_df(fr"C:\Users\cheah\OneDrive\Documents\Coding\Project-JBridge\GCloud\rating_{x}.txt")
+    return rating_to_df(fr"C:\Coding\Project-JBridge\GCloud\rating_{x}.txt")
 
 
 # 'df_to_csv' function
@@ -133,9 +134,11 @@ def df_to_csv(addition_df, csv_path, csv_empty=False):
     print("to csv'ed")
 
 # test run 'df_to_csv' function, need to test with test1 to work (SUCCESS: 8, 9, 10)
-def test2(test1_result):
+def test2(test1_result, csv_path):
     df_to_csv(test1_result, csv_path)
 
+for i in range(20, 33): # 20-32, excluding 33
+    test2(test1(i), 'finaldata_20_to_32.csv')
 
 test_results_csv_path = 'modeltest_results.csv'
 # 'csv_to_joblib' function
@@ -194,30 +197,33 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
 
     else:
         if jb_or_wdlands == 'jb':
-            hyperparams = rfr_model_jb_hyperparams
-            model = RandomForestRegressor(**hyperparams)
+            # hyperparams = rfr_model_jb_hyperparams
+            # model = RandomForestRegressor(**hyperparams)
+            model = lgb.LGBMRegressor(device='gpu')
             model.fit(trainfinal_df, y_column_jb)
-            joblib.dump(model, f'rfr_model_jb_v{str(version)}.joblib')
-            print('jb joblibbed')
+            # joblib.dump(model, f'rfr_model_jb_v{str(version)}.joblib')
+            model.booster_.save_model(f"lgbm_model_jb_v{str(version)}.txt") 
+            # print('jb joblibbed')
+
         else:
-            hyperparams = rfr_model_wdlands_hyperparams
-            model = RandomForestRegressor(**hyperparams)
+            # hyperparams = rfr_model_wdlands_hyperparams
+            model = lgb.LGBMRegressor(device='gpu')
+            # model = RandomForestRegressor(**hyperparams)
             model.fit(trainfinal_df, y_column_wdlands)
-            joblib.dump(model, f'rfr_model_wdlands_v{str(version)}.joblib')
-            print('wdlands joblibbed')
+            # joblib.dump(model, f'rfr_model_wdlands_v{str(version)}.joblib')
+            model.booster_.save_model(f"lgbm_model_wdlands_v{str(version)}.txt") 
+            # print('wdlands joblibbed')
 
 
 # test run 'csv_to_modeltest_or_joblib' function (SUCCESS: 8, 9, 10)
 def test3(ratings_range, jb_or_wdlands, data_csv_path, version):
-    csv_to_modeltest_or_joblib(ratings_range, jb_or_wdlands, data_csv_path, version)
+    csv_to_modeltest_or_joblib(ratings_range, jb_or_wdlands, data_csv_path, version, joblibb=True)
 
 # test3('8-19', 'wdlands')
-test3('4-19', 'wdlands', 'data_v4.csv', 5)
-
+# test3('4-19', 'jb', 'data_v4.csv', 1)
 
 
 # in data_v4.csv, ratings 4-7 is till line 752, lines 753-3163 is ratings 8-19
-
 
 
 # WAIT HOLUP THE TEST IS AGAINST ITS OWN % OF TEST DATA, SO NO WONDER THE ERROR IS GETTING WORSE AND WORSE, SHOULD TEST AGAINST A FRACTION OF THE ENTIRE SHIT, use 'trainfinal_data.csv' for the testing, but still use only 80% for train data when testing K BYEEE
@@ -227,3 +233,7 @@ test3('4-19', 'wdlands', 'data_v4.csv', 5)
 # ['03-02', '22-00', 'Sun']
 
 
+
+# LGBM_v1 VS RFR_v5
+
+lgbm_jb_v1 = lgb.Booster(model_file="lgbm_model_jb_v1.txt")
