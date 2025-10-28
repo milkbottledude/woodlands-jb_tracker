@@ -3489,3 +3489,12 @@ Yummy. I just tested 131 out of curiousity and the loss started increasing, so I
 Enough with tuning, lets export this new and improved lgb model, lgbm_model_jb_v2, and see how well it does when fed with data from the resnet NN model rater instead of the actual ratings labelled by yours truly.
 
 ### 7.2: Integrating Resnet Rater model with LighGBM Predictor model
+Lets see if using the resnet rater is feasible in the long term, or will we have to make changes. The loss values for the jb model in Chapter 6 was promising, but 'theory can only take you so far'. 
+
+Currently, the latest resnet model is only trained on snaps 7-29. Lets make jb_rn_rater_v2.keras, which will be trained on 4-32, all the ratings we currently have at our disposal.
+
+```
+folders_no = [4, 33] # snaps 7 to 29, 12 snaps_ folders, 
+```
+
+Changed line 21 in [resnet_rater.py](rating_w_resnet/resnet_rater.py)

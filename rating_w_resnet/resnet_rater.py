@@ -18,7 +18,7 @@ from tensorflow import keras
 
 # prepping training data (imma combine multiple snaps folders into 1 big dataset)
 
-folders_no = [7, 30] # snaps 7 to 29, 12 snaps_ folders, 
+folders_no = [4, 33] # snaps 7 to 29, 12 snaps_ folders, 
 # 4951 images - 5 corrupted:
 # snaps_5/12-03_10-00_Tue.jpg
 # snaps_5/12-04_12-00_Wed.jpg
@@ -33,8 +33,8 @@ ratings_file_template = rf"C:/Coding/Project-JBridge/GCloud/rating_"
 all_snaps_filepaths = []
 to_jb_ratings = []
 to_wdlands_ratings = []
-def getting_trng_paths():
-    for x in range(folders_no[0], folders_no[1]):
+def getting_trng_paths(index0, index1):
+    for x in range(index0, index1):
         # sort out snaps first
         snaps_folder_path = snaps_folder_template + str(x)
         print(f'accessing {snaps_folder_path} for snaps...')
@@ -53,6 +53,7 @@ def getting_trng_paths():
 
 # change ratings lists into numpy arrays
 # to_jb_array = np.array(to_jb_ratings, dtype=np.float32)
+# to_wdlands_array = np.array(to_wdlands_ratings, dtype=np.float32)
 
 
 
@@ -104,13 +105,13 @@ def load_and_preprocess_image(filename, label=None):
     # Resize to expected input size
     img = tf.image.resize(img, [224, 224])
     # NEW! multiplying by mask EUGHRHHH
-    masked_img = img * mask
+    # masked_img = img * mask
     # Preprocess for ResNet
-    masked_img = resnet50.preprocess_input(masked_img)
+    img = resnet50.preprocess_input(img)
     
     if label == None:
-        return masked_img
-    return masked_img, label
+        return img
+    return img, label
 
 
 # creating dataset (start w to_jb, can do to_wdlands later)
@@ -160,7 +161,7 @@ def prep_model(train_dataset, val_dataset):
 
     return full_regression_model
 
-def train_save_model(model, train_dataset, val_dataset):
+def train_save_model(model, train_dataset, val_dataset, save_model=False):
     # Training
     results = model.fit(
         train_dataset,
@@ -170,22 +171,25 @@ def train_save_model(model, train_dataset, val_dataset):
     )
 
     # saving model
-    results.model.save("../wdld_rn_rater_v2.keras")
-    print('model saved yahoo')
+    if save_model:
+        results.model.save("../jb_rn_rater_v2.keras")
+        print('model saved yahoo')
+
+
 
 # full ting
-getting_trng_paths()
-to_wdlands_array = np.array(to_wdlands_ratings, dtype=np.float32)
-dses = create_trng_dataset(to_wdlands_array)
+getting_trng_paths(folders_no[0], folders_no[1])
+to_jb_array = np.array(to_jb_ratings, dtype=np.float32)
+dses = create_trng_dataset(to_jb_array)
 model = prep_model(dses[0], dses[1])
-train_save_model(model, dses[0], dses[1])
+train_save_model(model, dses[0], dses[1], save_model=True)
 
 
 # just run it and watch anime, but b4 that do some js work so u dont start the day with ramune anime
 
 # testing rater model with just rating32
-# jb_model = "../rn_rater_v1.keras"
-wdlands_model = "../wdld_rn_rater_v1.keras"
+jb_model = "../rn_rater_v2.keras"
+# wdlands_model = "../wdld_rn_rater_v1.keras"
 def in_depth_test(model_path):
     rater_model = keras.models.load_model(model_path)
 

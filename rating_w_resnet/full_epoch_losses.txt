@@ -785,3 +785,29 @@ Epoch 11/12
 220/220 ━━━━━━━━━━━━━━━━━━━━ 236s 1s/step - loss: 0.2548 - mae: 0.2919 - val_loss: 0.1580 - val_mae: 0.2383
 Epoch 12/12
 220/220 ━━━━━━━━━━━━━━━━━━━━ 241s 1s/step - loss: 0.2522 - mae: 0.2932 - val_loss: 0.1719 - val_mae: 0.2163
+
+unmasked, all 29 folders (4-32)
+Epoch 1/12
+272/272 ━━━━━━━━━━━━━━━━━━━━ 610s 2s/step - loss: 0.6568 - mae: 0.3926 - val_loss: 0.1138 - val_mae: 0.1646
+Epoch 2/12
+272/272 ━━━━━━━━━━━━━━━━━━━━ 295s 1s/step - loss: 0.2248 - mae: 0.2031 - val_loss: 0.9275 - val_mae: 0.3640
+Epoch 3/12
+272/272 ━━━━━━━━━━━━━━━━━━━━ 635s 2s/step - loss: 0.1562 - mae: 0.1643 - val_loss: 0.0553 - val_mae: 0.0758
+Epoch 4/12
+272/272 ━━━━━━━━━━━━━━━━━━━━ 987s 4s/step - loss: 0.1328 - mae: 0.1545 - val_loss: 0.0639 - val_mae: 0.0907
+Epoch 5/12
+272/272 ━━━━━━━━━━━━━━━━━━━━ 1022s 4s/step - loss: 0.1299 - mae: 0.1538 - val_loss: 0.0770 - val_mae: 0.1250
+Epoch 6/12
+272/272 ━━━━━━━━━━━━━━━━━━━━ 1036s 4s/step - loss: 0.1421 - mae: 0.1640 - val_loss: 0.0885 - val_mae: 0.1301
+Epoch 7/12
+272/272 ━━━━━━━━━━━━━━━━━━━━ 945s 3s/step - loss: 0.1643 - mae: 0.1741 - val_loss: 0.2114 - val_mae: 0.1944
+Epoch 8/12
+272/272 ━━━━━━━━━━━━━━━━━━━━ 869s 3s/step - loss: 0.1371 - mae: 0.1626 - val_loss: 0.0768 - val_mae: 0.1189
+Epoch 9/12
+272/272 ━━━━━━━━━━━━━━━━━━━━ 1006s 4s/step - loss: 0.1333 - mae: 0.1595 - val_loss: 0.0558 - val_mae: 0.1118
+Epoch 10/12
+272/272 ━━━━━━━━━━━━━━━━━━━━ 805s 3s/step - loss: 0.1107 - mae: 0.1444 - val_loss: 0.0584 - val_mae: 0.1038
+Epoch 11/12
+272/272 ━━━━━━━━━━━━━━━━━━━━ 1078s 4s/step - loss: 0.1086 - mae: 0.1446 - val_loss: 0.0505 - val_mae: 0.1043
+Epoch 12/12
+272/272 ━━━━━━━━━━━━━━━━━━━━ 763s 3s/step - loss: 0.0946 - mae: 0.1358 - val_loss: 0.0519 - val_mae: 0.1112
