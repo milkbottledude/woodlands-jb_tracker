@@ -1,3 +1,4 @@
+Mon,Tue,Wed,Thu,Fri,Sat,hour_sin,hour_cos,week_value,date_sin,date_cos,day_of_year,day_of_year_sin,day_of_year_cos,sch_hol_period,public_hol_period,year_quarter_Q1,year_quarter_Q2,year_quarter_Q3,congestion_scale_jb,congestion_scale_wdlands
 1,0.0,0.0,0.0,0.0,0.0,0.258819045102521,-0.9659258262890682,1,0.8486442574947509,0.5289640103269624,125,0.8359254794186372,-0.548842958284719,False,False,False,True,False,5,5
 1,0.0,0.0,0.0,0.0,0.0,1.2246467991473532e-16,-1.0,1,0.8486442574947509,0.5289640103269624,125,0.8359254794186372,-0.548842958284719,False,False,False,True,False,5,5
 1,0.0,0.0,0.0,0.0,0.0,-0.2588190451025208,-0.9659258262890683,1,0.8486442574947509,0.5289640103269624,125,0.8359254794186372,-0.548842958284719,False,False,False,True,False,5,0

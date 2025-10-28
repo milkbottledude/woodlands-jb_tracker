@@ -7,4 +7,89 @@ datetime,road_to,ratings_used,custom_hyperparameters,mae,rmse,model
 2025-07-05 19:56,wdlands,8-19,{'random_state': 0},1.308943271636963,1.7450697112709952,xgb
 2025-07-05 20:00,jb,4-19,{'random_state': 0},0.6196852726135388,1.1149817915248046,xgb
 2025-07-05 20:00,wdlands,4-19,{'random_state': 0},1.315393105013727,1.7452240268430597,xgb
+2025-10-28 12:17,jb,4-32,{'random_state': 0},0.6424521861437601,1.0803907665205645,"LGBMRegressor(device='gpu', num_leaves=40, verbose=1)"
+2025-10-28 12:25,jb,4-32,{'random_state': 0},0.6426358051098259,1.0804629871432807,"LGBMRegressor(device='gpu', eval_metric='rmse',
+              eval_set=[(      Mon  Tue  Wed  Thu  Fri  Sat  hour_sin  hour_cos  week_value  date_sin  date_cos  day_of_year  day_of_year_sin  day_of_year_cos  sch_hol_period  public_hol_period  year_quarter_Q1  year_quarter_Q2  year_quarter_Q3
+1709  0.0  0.0  0.0  1.0  0.0  0.0  0.500000 -0.866025           1  0.394356  0.918958           44         0.687053         0.726608           False              False            False            False            False
+943   0.0  0.0  1.0  0.0  0....
+2872  0.0  0.0  1.0  0.0  0.0  0.0  0.965926  2.588190e-01           1  0.724793  0.688967          113         0.930724        -0.365723           False              False            False            False            False
+1559  0.0  0.0  0.0  1.0  0.0  0.0 -0.258819  9.659258e-01           1  0.394356  0.918958           37         0.594727         0.803928           False              False            False             True            False
 
+[949 rows x 19 columns],
+                         2531    0.0
+1728    0.0
+1266    2.0
+1880    0.0
+3059    0.0
+       ... 
+1418    0.0
+2126    0.0
+3001    0.0
+2872    0.0
+1559    0.0
+Name: congestion_scale_jb, Length: 949, dtype: float64)],
+              num_leaves=40, verbose=10)"
+2025-10-28 12:26,jb,4-32,{'random_state': 0},0.642321562788612,1.08016389188022,"LGBMRegressor(device='gpu', eval_metric='rmse', eval_names=['train', 'valid'],
+              eval_set=[(      Mon  Tue  Wed  Thu  Fri  Sat  hour_sin  hour_cos  week_value  date_sin  date_cos  day_of_year  day_of_year_sin  day_of_year_cos  sch_hol_period  public_hol_period  year_quarter_Q1  year_quarter_Q2  year_quarter_Q3
+1709  0.0  0.0  0.0  1.0  0.0  0.0  0.500000 -0.866025           1  0.394356  0.918958           44         0.687053         0.726608           False              False            Fal...
+2872  0.0  0.0  1.0  0.0  0.0  0.0  0.965926  2.588190e-01           1  0.724793  0.688967          113         0.930724        -0.365723           False              False            False            False            False
+1559  0.0  0.0  0.0  1.0  0.0  0.0 -0.258819  9.659258e-01           1  0.394356  0.918958           37         0.594727         0.803928           False              False            False             True            False
+
+[949 rows x 19 columns],
+                         2531    0.0
+1728    0.0
+1266    2.0
+1880    0.0
+3059    0.0
+       ... 
+1418    0.0
+2126    0.0
+3001    0.0
+2872    0.0
+1559    0.0
+Name: congestion_scale_jb, Length: 949, dtype: float64)],
+              num_leaves=40, verbose=10)"
+2025-10-28 12:32,jb,4-32,{'random_state': 0},0.6501184781919934,1.0876357746289522,"LGBMRegressor(device='gpu', num_leaves=52)"
+2025-10-28 12:35,jb,4-32,{'random_state': 0},0.6492763980690596,1.0850823240435357,"LGBMRegressor(device='gpu', num_leaves=46)"
+2025-10-28 12:36,jb,4-32,{'random_state': 0},0.6362441149929491,1.0802797910402198,"LGBMRegressor(device='gpu', num_leaves=35)"
+2025-10-28 12:36,jb,4-32,{'random_state': 0},0.6439259399688585,1.087455063308069,LGBMRegressor(device='gpu')
+2025-10-28 12:41,jb,4-32,{'random_state': 0},0.6373957843687991,1.0858091709719442,"LGBMRegressor(device='gpu', num_leaves=32)"
+2025-10-28 12:42,jb,4-32,{'random_state': 0},0.633370666487543,1.0794577154231806,"LGBMRegressor(device='gpu', num_leaves=33)"
+2025-10-28 13:09,jb,4-32,{'random_state': 0},0.6389345908529176,1.0865131755831088,"LGBMRegressor(device='gpu', learning_rate=0.07, n_estimators=120, num_leaves=33)"
+2025-10-28 13:09,jb,4-32,{'random_state': 0},0.6406402168828245,1.0852959581066144,"LGBMRegressor(device='gpu', learning_rate=0.07, n_estimators=160, num_leaves=33)"
+2025-10-28 13:10,jb,4-32,{'random_state': 0},0.6383254612504895,1.084411240426835,"LGBMRegressor(device='gpu', learning_rate=0.07, n_estimators=140, num_leaves=33)"
+2025-10-28 13:10,jb,4-32,{'random_state': 0},0.6396778951422345,1.0820727659633305,"LGBMRegressor(device='gpu', learning_rate=0.09, num_leaves=33)"
+2025-10-28 13:10,jb,4-32,{'random_state': 0},0.6413734618654093,1.0816701500887065,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=120, num_leaves=33)"
+2025-10-28 13:11,jb,4-32,{'random_state': 0},0.6350392119458447,1.0788282518091137,"LGBMRegressor(device='gpu', n_estimators=120, num_leaves=33)"
+2025-10-28 13:12,jb,4-32,{'random_state': 0},0.6350387360683296,1.0788271515314602,"LGBMRegressor(device='gpu', n_estimators=120, num_leaves=33)"
+2025-10-28 13:13,jb,4-32,{'random_state': 0},0.6366944104572149,1.0784644343284944,"LGBMRegressor(device='gpu', n_estimators=127, num_leaves=33)"
+2025-10-28 13:14,jb,4-32,{'random_state': 0},0.6359191813474728,1.0775877757011398,"LGBMRegressor(device='gpu', n_estimators=129, num_leaves=33)"
+2025-10-28 13:25,jb,4-32,{'random_state': 0},0.6360097731143961,1.0777884718976485,"LGBMRegressor(device='gpu', n_estimators=131, num_leaves=33)"
+2025-10-28 13:27,jb,4-32,{'random_state': 0},0.6409649389918228,1.0808507033010681,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=129, num_leaves=33)"
+2025-10-28 13:28,jb,4-32,{'random_state': 0},0.6404639383155993,1.0801034827301785,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=131, num_leaves=33)"
+2025-10-28 13:28,jb,4-32,{'random_state': 0},0.6400353837316313,1.0801104781221174,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=133, num_leaves=33)"
+2025-10-28 13:28,jb,4-32,{'random_state': 0},0.6391940446109194,1.0796039915953768,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=135, num_leaves=33)"
+2025-10-28 13:28,jb,4-32,{'random_state': 0},0.6399795243030223,1.0793539007198694,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=140, num_leaves=33)"
+2025-10-28 13:29,jb,4-32,{'random_state': 0},0.6403625654266465,1.0798522190238602,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=139, num_leaves=33)"
+2025-10-28 13:29,jb,4-32,{'random_state': 0},0.6397677987042938,1.0786924331790517,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=141, num_leaves=33)"
+2025-10-28 13:29,jb,4-32,{'random_state': 0},0.6395228251679153,1.0787206990710465,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=142, num_leaves=33)"
+2025-10-28 13:29,jb,4-32,{'random_state': 0},0.6398848906112053,1.079542473589231,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=144, num_leaves=33)"
+2025-10-28 13:29,jb,4-32,{'random_state': 0},0.6400806865065424,1.079665155206829,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=143, num_leaves=33)"
+2025-10-28 13:30,jb,4-32,{'random_state': 0},0.6521857986157042,1.0967813744347565,"LGBMRegressor(device='gpu', learning_rate=0.085, n_estimators=143,
+              num_leaves=33)"
+2025-10-28 13:30,jb,4-32,{'random_state': 0},0.6521066972452845,1.0957490287270435,"LGBMRegressor(device='gpu', learning_rate=0.085, n_estimators=149,
+              num_leaves=33)"
+2025-10-28 13:30,jb,4-32,{'random_state': 0},0.6518606209473161,1.0937231944218089,"LGBMRegressor(device='gpu', learning_rate=0.085, n_estimators=160,
+              num_leaves=33)"
+2025-10-28 13:30,jb,4-32,{'random_state': 0},0.6515136289513916,1.0919849999353903,"LGBMRegressor(device='gpu', learning_rate=0.085, n_estimators=162,
+              num_leaves=33)"
+2025-10-28 13:31,jb,4-32,{'random_state': 0},0.6529831150944516,1.0928001189651453,"LGBMRegressor(device='gpu', learning_rate=0.085, n_estimators=179,
+              num_leaves=33)"
+2025-10-28 13:31,jb,4-32,{'random_state': 0},0.6524548542335507,1.0930354623291276,"LGBMRegressor(device='gpu', learning_rate=0.085, n_estimators=171,
+              num_leaves=33)"
+2025-10-28 13:31,jb,4-32,{'random_state': 0},0.6400966040031638,1.0793732563742557,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=140, num_leaves=33)"
+2025-10-28 13:31,jb,4-32,{'random_state': 0},0.6411297476936973,1.0809304424928257,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=129, num_leaves=33)"
+2025-10-28 13:31,jb,4-32,{'random_state': 0},0.6404124241463537,1.0800063760237908,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=131, num_leaves=33)"
+2025-10-28 13:32,jb,4-32,{'random_state': 0},0.6394178957375373,1.079905180112164,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=135, num_leaves=33)"
+2025-10-28 13:32,jb,4-32,{'random_state': 0},0.6399551757032643,1.0792895402176093,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=140, num_leaves=33)"
+2025-10-28 13:32,jb,4-32,{'random_state': 0},0.640095948272218,1.080217427248883,"LGBMRegressor(device='gpu', learning_rate=0.09, n_estimators=137, num_leaves=33)"

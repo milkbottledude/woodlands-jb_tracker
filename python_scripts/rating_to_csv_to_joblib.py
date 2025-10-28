@@ -137,12 +137,12 @@ def df_to_csv(addition_df, csv_path, csv_empty=False):
 def test2(test1_result, csv_path):
     df_to_csv(test1_result, csv_path)
 
-for i in range(20, 33): # 20-32, excluding 33
-    test2(test1(i), 'finaldata_20_to_32.csv')
+# for i in range(20, 33): # 20-32, excluding 33
+#     test2(test1(i), 'finaldata_20_to_32.csv')
 
 test_results_csv_path = 'modeltest_results.csv'
 # 'csv_to_joblib' function
-def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, version, results_csv_path = 'modeltest_results.csv', joblibb=False, xgboosttt=False):
+def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, version, results_csv_path = 'modeltest_results.csv', joblibb=True, xgboosttt=False, model_='rfr'):
     # splitting up csv into x & y variables
     trainfinal_df = pd.read_csv(data_csv_path)
     print(trainfinal_df.columns)
@@ -161,33 +161,45 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
 
     if joblibb == False:
         if jb_or_wdlands == 'jb':
+            y = y_column_jb
             hyperparams = rfr_model_jb_hyperparams
-            if xgboosttt:
+            if model_ == 'lgb':
+                model = lgb.LGBMRegressor(
+                    device = 'gpu',
+                    num_leaves = 33,
+                    n_estimators = 129
+                )
+                model_type = model
+            elif xgboosttt:
                 model = xgb.XGBRegressor(**hyperparams)
                 model_type = 'xgb'
             else:
                 model = RandomForestRegressor(**hyperparams)
                 model_type = 'rfr'
-            y = y_column_jb
             print('jb selected for testing')
         else:
+            y = y_column_wdlands
             hyperparams = rfr_model_wdlands_hyperparams
-            if xgboosttt:
+            if model == 'lgb':
+                model = lgb.LGBMRegressor(
+                    device = 'gpu',
+                    num_leaves=40
+                )
+            elif xgboosttt:
                 model = xgb.XGBRegressor(**hyperparams)
                 model_type = 'xgb'
             else:
                 model = RandomForestRegressor(**hyperparams)
                 model_type = 'rfr'
-            y = y_column_wdlands
             print('wdlands selected for testing')
 
-        X_train, X_test, y_train, y_test = train_test_split(trainfinal_df, y, test_size=0.2, random_state=0)
+        X_train, X_test, y_train, y_test = train_test_split(trainfinal_df, y, test_size=0.3, random_state=0)
         model.fit(X_train, y_train)
         predictions = model.predict(X_test)
         mae = mean_absolute_error(y_test, predictions)
         rmse = mean_squared_error(y_test, predictions)**0.5
-        print(f"rfr mae: {mae} ")
-        print(f"rfr rmse: {rmse} ")
+        print(f"{model_} mae: {round(mae, 5)} ")
+        print(f"{model_} rmse: {round(rmse, 5)} ")
         date_time = datetime.now()
         date_time = date_time.strftime('%Y-%m-%d %H:%M')
         test_results_df = pd.DataFrame(columns=['datetime', 'road_to', 'ratings_used', 'custom_hyperparameters', 'mae', 'rmse', 'model'])
@@ -199,7 +211,7 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
         if jb_or_wdlands == 'jb':
             # hyperparams = rfr_model_jb_hyperparams
             # model = RandomForestRegressor(**hyperparams)
-            model = lgb.LGBMRegressor(device='gpu')
+            model = lgb.LGBMRegressor(device='gpu', )
             model.fit(trainfinal_df, y_column_jb)
             # joblib.dump(model, f'rfr_model_jb_v{str(version)}.joblib')
             model.booster_.save_model(f"lgbm_model_jb_v{str(version)}.txt") 
@@ -216,11 +228,10 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
 
 
 # test run 'csv_to_modeltest_or_joblib' function (SUCCESS: 8, 9, 10)
-def test3(ratings_range, jb_or_wdlands, data_csv_path, version):
-    csv_to_modeltest_or_joblib(ratings_range, jb_or_wdlands, data_csv_path, version, joblibb=True)
+def test3(ratings_range, jb_or_wdlands, data_csv_path, version, model_='lgb'):
+    csv_to_modeltest_or_joblib(ratings_range, jb_or_wdlands, data_csv_path, version, model_=model_)
 
-# test3('8-19', 'wdlands')
-# test3('4-19', 'jb', 'data_v4.csv', 1)
+test3('4-32', 'jb', 'data_v4.csv', 2, 'lgb')
 
 
 # in data_v4.csv, ratings 4-7 is till line 752, lines 753-3163 is ratings 8-19
@@ -237,3 +248,23 @@ def test3(ratings_range, jb_or_wdlands, data_csv_path, version):
 # LGBM_v1 VS RFR_v5
 
 lgbm_jb_v1 = lgb.Booster(model_file="lgbm_model_jb_v1.txt")
+rfr_model_v5 = joblib.load("rfr_model_jb_v5.joblib")
+csv_path = "finaldata_20_to_32.csv"
+
+def lgbm_vs_rfr(data_csv_path, models=list):
+    data_df = pd.read_csv(data_csv_path)
+    print(data_df.columns)
+    val_y = data_df.pop('congestion_scale_jb')
+    y_column_wdlands = data_df.pop('congestion_scale_wdlands')
+    num = 1
+    for model in models:
+        pred = model.predict(data_df)
+        rmse = np.sqrt(mean_squared_error(pred, val_y))
+        mae = mean_absolute_error(pred, val_y)
+
+        print(f'model_{num}_rmse: {round(rmse, 3)}')
+        print(f'model_{num}_me: {round(mae, 3)}')
+        num += 1
+
+# lgbm_vs_rfr(csv_path, [lgbm_jb_v1, rfr_model_v5])
+

@@ -37,6 +37,10 @@ Chapter 6: ResNet Neural Network for Labelling Traffic Images
 - 6.2: [Experimenting with Different Hyperparameters (in progress)](#62-experimenting-with-different-hyperparameters) (delete when done)
 - 6.3:
 
+Chapter 7: Incremental Learning with LightGBM
+- 7.1: [Getting LightGBM up to speed](#71-getting-lightgbm-up-to-speed)
+- 7.2: [Integrating Rater with Predictor](#72-integrating-resnet-rater-model-with-lighgbm-predictor-model)
+
 
 [Conclusion](#conclusion)
 
@@ -3315,6 +3319,9 @@ About the same as without masking. But the I'll use the non-masked model since t
 
 ## Chapter 7 - Incremental Learning with LightGBM 
 
+### 7.1: Getting LightGBM up to speed
+
+#### Contender LightGBM vs Reigning Champion RFR
 As the months go by, the number of total snaps we have will increase. And seeing as we need to update the predictor model every month with the new snaps for more accurate predictions, It makes sense to have a model that can train on just the new data without having to undergo training with the whole dataset all over again.
 
 Unfortunately, sklearn's RFR does not support incremental learning. However, there is a model that not only supports incremental learning but also captures non-linear patterns, which is the reason why we chose RFR over a standard linear model in the first place.
@@ -3347,3 +3354,138 @@ The data prep was all done for the rfr model already, so all I had to do was ini
 Commented out the lines that use the rfr model and added the code to use a lgbm model, saving this model as v1 of many.
 
 Now lets test 'lgbm_model_jb_v1' against the defending champion, 'rfr_model_jb_v5', with some unseen data, snaps 25-29.
+
+```
+# LGBM_v1 VS RFR_v5
+
+lgbm_jb_v1 = lgb.Booster(model_file="lgbm_model_jb_v1.txt")
+rfr_model_v5 = joblib.load("rfr_model_jb_v5.joblib")
+csv_path = "finaldata_20_to_32.csv"
+
+def lgbm_vs_rfr(data_csv_path, models=list):
+    data_df = pd.read_csv(data_csv_path)
+    print(data_df.columns)
+    val_y = data_df.pop('congestion_scale_jb')
+    y_column_wdlands = data_df.pop('congestion_scale_wdlands')
+    num = 1
+    for model in models:
+        pred = model.predict(data_df)
+        rmse = np.sqrt(mean_squared_error(pred, val_y))
+        mae = mean_absolute_error(pred, val_y)
+
+        print(f'model_{num}_rmse: {round(rmse, 3)}')
+        print(f'model_{num}_mAe: {round(mae, 3)}')
+        num += 1
+
+lgbm_vs_rfr(csv_path, [lgbm_jb_v1, rfr_model_v5])
+```
+Whipped up a quick testing function which allows us to input the models of note and compares their RMSE and MAE when validated with snaps 20-32.
+
+I was inspired by the *spread* function in javascript `...args` and decided to do something similar here, setting the input type for the models as a list and using a for loop so that we can compare however many models we want for future model testing.
+
+In this case, the lgbm model is model_1, while the rfr_model is model_2.
+
+```
+model_1_rmse: 1.888
+model_1_mae: 1.438
+model_2_rmse: 1.939
+model_2_mae: 1.381
+```
+Very comparable results, with the lgbm model doing better for rmse but slightly worse for mae. Keep in mind this is a bare bones LightGBM model with no custom hyperparams. Lets change that and compare again later.
+
+#### Tuning LightGBM
+I'll be doing some train_test_splitting, so I thought it would be a good idea to combine the entire dataset together [here](python_scripts\REAL_finaldataFULL.csv), from snaps 4 all the way to 32. 
+
+##### num_leaves, default = 31
+The first hyperparam I'll be tuning in the LighGBM model is num_leaves, which we also messed with when developing the rfr_model. The 2 models share similar hyperparams, so this shouldnt be too confusing. I hope.
+
+To start, I'll increase the value from the default 31 leaves to 40. Since we are using the whole dataset to train_test_split, I figured underfitting would be more likely than overfitting with leaves = 31.
+
+```
+                model = lgb.LGBMRegressor(
+                    device = 'gpu',
+                    num_leaves = 40,
+                )
+```
+
+Device = gpu so that I dont overheat the cpu, and verbose = 10 so we only see losses for every 10th tree. Lets see how she does:
+
+```
+lgb mae: 0.642321562788612
+lgb rmse: 1.08016389188022
+```
+
+As expected, since we are training on 70% of the full dataset (4 - 32) which is > ratings 4-19, the loss values are much better. But I did not expect it to improve by that much.
+
+Unfortunately, as tree based models dont have epochs like neural networks, and I **currently** do not have the expertise to inspect individual trees and leaves for signs of overfitting/underfitting.
+
+I think the best course of action for me now is to increase num_leaves and see if loss decreases. If yes, then its overfitting. Lets try 52 next.
+
+```
+lgb mae: 0.6501184781919934 
+lgb rmse: 1.0876357746289522 
+```
+
+The good thing about tree based models is that they are much faster and require **much** less compute to train than neural network models.
+
+We can see that the loss has increased *very* slightly, which is unusual since I increased the num_leaves by 30%. It could be that the optimal value is somewhere in between. Lets try 46, 35 and 32. But the long dps are quite an eyesore, lets round the loss values to 5dp.
+
+```
+        print(f"{model_} mae: {round(mae, 5)} ")
+        print(f"{model_} rmse: {round(rmse, 5)} ")
+```
+
+```
+num_leaves = 46:
+lgb mae: 0.64928 
+lgb rmse: 1.08508
+
+num_leaves = 35:
+lgb mae: 0.63624
+lgb rmse: 1.08028
+
+num_leaves = 31:
+lgb mae: 0.64393 
+lgb rmse: 1.08746 
+```
+
+It looks like the losses were decreasing from 46 to 35, but increased again from somewhere below 35 to 31. One last try of 33 before moving on:
+
+```
+lgb mae: 0.63337 
+lgb rmse: 1.07946 
+```
+
+Bingo, a new low. Lets move on to learning_rate.
+
+##### n_estimators, default = 100
+When working with the resnet NN model, we worked with epochs. In this case, instead of epochs, we have the tree based model equivalent: n_estimators (basically no. of trees)
+
+To start, lets go with n_estimators = 120
+
+```
+            if model_ == 'lgb':
+                model = lgb.LGBMRegressor(
+                    device = 'gpu',
+                    num_leaves = 33,
+                    n_estimators = 120
+                )
+```
+
+```
+lgb mae: 0.63504 
+lgb rmse: 1.07883 
+```
+
+Our second best mae and best mse so far. Lets try a slightly higher value, 129. What we are trying to do here is find the max n_estmator value we can get before overfitting occurs.
+
+```
+lgb mae: 0.63592 
+lgb rmse: 1.07759 
+```
+
+Yummy. I just tested 131 out of curiousity and the loss started increasing, so I think this is the best we are going to get out of this hyperparameter.
+
+Enough with tuning, lets export this new and improved lgb model, lgbm_model_jb_v2, and see how well it does when fed with data from the resnet NN model rater instead of the actual ratings labelled by yours truly.
+
+### 7.2: Integrating Resnet Rater model with LighGBM Predictor model
