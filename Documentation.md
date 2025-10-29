@@ -3394,7 +3394,7 @@ model_2_mae: 1.381
 Very comparable results, with the lgbm model doing better for rmse but slightly worse for mae. Keep in mind this is a bare bones LightGBM model with no custom hyperparams. Lets change that and compare again later.
 
 #### Tuning LightGBM
-I'll be doing some train_test_splitting, so I thought it would be a good idea to combine the entire dataset together [here](python_scripts\REAL_finaldataFULL.csv), from snaps 4 all the way to 32. 
+I'll be doing some train_test_splitting, so I thought it would be a good idea to combine the entire dataset together [here](python_scripts\REAL_finaldataFULL.csv), from snaps 8 all the way to 32. 
 
 ##### num_leaves, default = 31
 The first hyperparam I'll be tuning in the LighGBM model is num_leaves, which we also messed with when developing the rfr_model. The 2 models share similar hyperparams, so this shouldnt be too confusing. I hope.
@@ -3408,14 +3408,14 @@ To start, I'll increase the value from the default 31 leaves to 40. Since we are
                 )
 ```
 
-Device = gpu so that I dont overheat the cpu, and verbose = 10 so we only see losses for every 10th tree. Lets see how she does:
+Device = gpu so that I dont overheat the cpu, lets see how she does:
 
 ```
 lgb mae: 0.642321562788612
 lgb rmse: 1.08016389188022
 ```
 
-As expected, since we are training on 70% of the full dataset (4 - 32) which is > ratings 4-19, the loss values are much better. But I did not expect it to improve by that much.
+As expected, since we are training on 70% of the full dataset (8 - 32) which is > ratings 4-19, the loss values are much better. But I did not expect it to improve by that much.
 
 Unfortunately, as tree based models dont have epochs like neural networks, and I **currently** do not have the expertise to inspect individual trees and leaves for signs of overfitting/underfitting.
 
@@ -3428,7 +3428,7 @@ lgb rmse: 1.0876357746289522
 
 The good thing about tree based models is that they are much faster and require **much** less compute to train than neural network models.
 
-We can see that the loss has increased *very* slightly, which is unusual since I increased the num_leaves by 30%. It could be that the optimal value is somewhere in between. Lets try 46, 35 and 32. But the long dps are quite an eyesore, lets round the loss values to 5dp.
+We can see that the loss has increased *very* slightly, which is unusual since I increased the num_leaves by 30%. It could be that the optimal value is somewhere in between. Lets try 46, 39 and 35. But the long dps are quite an eyesore, lets round the loss values to 5dp.
 
 ```
         print(f"{model_} mae: {round(mae, 5)} ")
@@ -3440,23 +3440,16 @@ num_leaves = 46:
 lgb mae: 0.64928 
 lgb rmse: 1.08508
 
-num_leaves = 35:
+num_leaves = 39:
 lgb mae: 0.63624
 lgb rmse: 1.08028
 
-num_leaves = 31:
-lgb mae: 0.64393 
-lgb rmse: 1.08746 
+num_leaves = 35:
+lgb mae: 0.63261 
+lgb rmse: 1.10443 
 ```
 
-It looks like the losses were decreasing from 46 to 35, but increased again from somewhere below 35 to 31. One last try of 33 before moving on:
-
-```
-lgb mae: 0.63337 
-lgb rmse: 1.07946 
-```
-
-Bingo, a new low. Lets move on to learning_rate.
+Bingo, a new MAE low. Lets move on to learning_rate.
 
 ##### n_estimators, default = 100
 When working with the resnet NN model, we worked with epochs. In this case, instead of epochs, we have the tree based model equivalent: n_estimators (basically no. of trees)
@@ -3467,21 +3460,21 @@ To start, lets go with n_estimators = 120
             if model_ == 'lgb':
                 model = lgb.LGBMRegressor(
                     device = 'gpu',
-                    num_leaves = 33,
+                    num_leaves = 35,
                     n_estimators = 120
                 )
 ```
 
 ```
-lgb mae: 0.63504 
-lgb rmse: 1.07883 
+lgb mae: 0.63176 
+lgb rmse: 1.10515
 ```
 
-Our second best mae and best mse so far. Lets try a slightly higher value, 129. What we are trying to do here is find the max n_estmator value we can get before overfitting occurs.
+Our second best rmse and best mae so far. Lets try a slightly higher value, 129. What we are trying to do here is find the max n_estmator value we can get before overfitting occurs.
 
 ```
-lgb mae: 0.63592 
-lgb rmse: 1.07759 
+lgb mae: 0.63161 
+lgb rmse: 1.10455 
 ```
 
 Yummy. I just tested 131 out of curiousity and the loss started increasing, so I think this is the best we are going to get out of this hyperparameter.
@@ -3497,4 +3490,174 @@ Currently, the latest resnet model is only trained on snaps 7-29. Lets make jb_r
 folders_no = [4, 33] # snaps 7 to 29, 12 snaps_ folders, 
 ```
 
-Changed line 21 in [resnet_rater.py](rating_w_resnet/resnet_rater.py)
+Changed line 21 in [resnet_rater.py](rating_w_resnet/resnet_rater.py). After training, we can use it to label all the ratings (excluding the rating.txt files in the old format (4-7)) and store it in a [separate csv](RN_finaldataFULL.csv). Btw the results from training the resnet rater on all 29 rating txt files can be found on line 789 [here](rating_w_resnet\full_epoch_losses.txt).
+
+```
+def in_depth_test(model_path, to_csv=False):
+    rater_model = keras.models.load_model(model_path)
+    folder_temp = "GCloud/all_snaps/snaps_"
+    snap_filenames = []
+    snapnames = []
+    for i in range(folders_no[0], folders_no[1]):
+        folder_path = folder_temp + str(i)
+        for f in os.listdir(folder_path):
+            full_path = os.path.join(folder_path, f)
+            snapnames.append(f)
+            snap_filenames.append(full_path)
+```
+
+First, I collate all the jpg filepaths by looping through a range of numbers and pasting the number into a path template to get the file path. Nothing new.
+
+```
+    img_all = [load_and_preprocess_image(img_path) for img_path in snap_filenames]
+    img_all = np.stack(img_all, axis=0)
+
+    rn_ratings = rater_model.predict(img_all, verbose=1)
+
+    df = pd.DataFrame(columns=['snapname', 'jb_rating'])
+    for i, value in enumerate(rn_ratings):
+        if value > 1 and value < 4:
+            value = np.ceil(value)
+
+        snapname = snapnames[i]
+        df.loc[i] = [snapname, value[0]]
+
+    print(df.head(10))
+    df.to_csv('rating_w_resnet/RN_finaldaytaFULL.csv')
+in_depth_test(jb_model, to_csv=True)
+```
+
+Then, I add process and resize all the images, before carrying out np.ceil on ratings between 1 and 4, because the model tends to underestimate in those ranges.
+
+Finally, I save the jpg filename and the corresponding rating side by side in a pandas dataframe, before saving it as a csv file at the end of the loop. Here are the first 10 rows of the df.
+
+```
+              snapname  jb_rating
+0  01-01_13-00_Wed.jpg   0.105126
+1  01-01_14-00_Wed.jpg   0.050561
+2  01-01_15-00_Wed.jpg   0.049054
+3  01-01_16-00_Wed.jpg   0.049550
+4  01-01_17-00_Wed.jpg   0.042839
+5  01-01_18-00_Wed.jpg   0.041538
+6  01-01_19-00_Wed.jpg   0.028353
+7  01-01_20-00_Wed.jpg   0.007748
+8  01-01_21-00_Wed.jpg   0.005974
+9  01-01_22-00_Wed.jpg   0.009494
+```
+
+I cannibalized the in_depth_test function, which printed the true ratings and the resnet ratings side by side, to get this function, so it might look quite familiar.
+
+As we can see from the first 10 rows of [REAL_finaldataFULL](python_scripts/REAL_finaldataFULL.csv), they match up with the 10 rows above, so the order of ratings are exactly the same for these 2 files. Same number of rows as well, 4680. 4681 if you include the column names.
+
+Now lets check if the train_test_split works the same for the true ratings as well as the resnet ratings. It probably is, cuz random_state, but lets just be sure.
+
+```
+#TESTING TRAIN TEST SPLIT REPLICABILITY W DIFF DFs
+
+ril_df = pd.read_csv('python_scripts/REAL_finaldataFULL.csv')
+ril_y = ril_df.pop('congestion_scale_jb')
+fek_df = pd.read_csv('rating_w_resnet/RN_finaldaytaFULL.csv')
+fek_y = fek_df.pop('jb_rating')
+
+ril_X_train, ril_X_test, ril_y_train, ril_y_test = train_test_split(ril_df, ril_y, test_size=0.3, random_state=0)
+fek_X_train, fek_X_test, fek_y_train, fek_y_test = train_test_split(fek_df, fek_y, test_size=0.3, random_state=0)
+
+# print('X_train comparison')
+print(ril_X_train.head(5))
+print(fek_X_train.head(5))
+
+print('X_test comparison')
+print(ril_X_test.head(5))
+print(fek_X_test.head(5))
+```
+
+This will print the output of the X variables for both splits.
+
+```
+X_train comparison
+      Mon  Tue  Wed  Thu  Fri  Sat  hour_sin  hour_cos  week_value  date_sin  date_cos ...
+3738  0.0  1.0  0.0  0.0  0.0  0.0  0.707107 -0.707107           2  0.988468  0.151428 ...
+3766  0.0  0.0  1.0  0.0  0.0  0.0 -0.500000 -0.866025           2  0.988468  0.151428 ...
+1601  0.0  1.0  0.0  0.0  0.0  0.0  0.258819  0.965926           1  0.724793  0.688967 ...
+834   0.0  0.0  0.0  0.0  0.0  1.0  0.258819  0.965926           1  0.394356  0.918958 ...
+2379  0.0  0.0  0.0  0.0  0.0  0.0  0.500000  0.866025           1  0.848644  0.528964 ...
+                 snapname
+3738  07-01_09-00_Tue.jpg
+3766  07-02_14-00_Wed.jpg
+1601  04-01_01-00_Tue.jpg
+834   02-08_01-00_Sat.jpg
+2379  05-04_02-00_Sun.jpg
+X_test comparison
+      Mon  Tue  Wed  Thu  Fri  Sat  hour_sin  hour_cos  week_value  date_sin  date_cos ...
+1277  0.0  0.0  0.0  1.0  0.0  0.0  0.000000  1.000000           1  0.394356  0.918958 ...
+4233  0.0  1.0  0.0  0.0  0.0  0.0 -0.500000  0.866025           2  0.988468  0.151428 ...
+3312  0.0  0.0  0.0  0.0  1.0  0.0  0.707107 -0.707107           1  0.937752  0.347305 ...
+3133  0.0  0.0  0.0  1.0  0.0  0.0 -0.500000 -0.866025           1  0.937752  0.347305 ...
+2868  0.0  1.0  0.0  0.0  0.0  0.0 -0.866025 -0.500000           1  0.848644  0.528964 ...
+                 snapname
+1277  02-27_00-00_Thu.jpg
+4233  07-22_22-00_Tue.jpg
+3312  06-13_09-00_Fri.jpg
+3133  06-05_14-00_Thu.jpg
+2868  05-27_16-00_Tue.jpg
+```
+As we can see from the indexes, the split remains exactly the same for both dfs, which means we can interchange data between the 2, passing X_train from REAL and y_train from RN, etc.
+
+```
+# Testing model trained on ril data, vs fek data (rated by RN rater)
+
+def ril_or_fek(y_train, ril=True):
+    model = lgb.LGBMRegressor(
+        device = 'gpu',
+        num_leaves = 35,
+        n_estimators = 131
+    )
+    model.fit(ril_X_train, y_train)
+    predictions = model.predict(ril_X_test)
+    mae = mean_absolute_error(ril_y_test, predictions)
+    rmse = mean_squared_error(ril_y_test, predictions)**0.5
+    which = 'fek'
+    if ril:
+        which = 'ril'
+    print(f"{which} mae: {round(mae, 5)} ")
+    print(f"{which} rmse: {round(rmse, 5)} ")
+```
+
+I feed the training and val data I want depending on what I want to test, then I print the metrics. The model is defined as such no matter what we are testing as those are the hyperparams all the models will use regardless of what we are testing.
+
+By the way, X_train, X_test and y_test will always be from REAL_finaldataFULL.csv. Only y_train is interchangeable.
+
+Here is the loss values when we use a model trained on ril_X_train.
+
+```
+ril_or_fek(ril_y_train)
+.
+.
+.
+ril mae: 0.67642 
+ril rmse: 1.16691 
+```
+
+Not fantastic, but not bad either. This is our baseline to compare the other model to.
+
+This other model will train on RN rated data, but will be tested the same way as the prior model, with ril_y_test. Ideally, the loss values dont increase too much.
+
+```
+ril_or_fek(fek_y_train, ril=False)
+.
+.
+.
+fek mae: 0.6818 
+fek rmse: 1.165 
+```
+
+WOW. Barely a 0.006 MAE increase, and a **decrease** in RMSE. This confirms that the LightGBM predictor model performance won't deviate too much whether we use resnet-generated jb ratings or human-annotated ones. 
+
+Before we go ahead and train the resnet model on the rest of our unlabelled snaps (33-40 as of the time of writing), lets go ahead and do the same for the other side of the road heading towards woodlands.
+
+Starting off with training the resnet model on the wdlands ratings and labelling snaps 8-32. Same deal as earlier, just a different y_value.
+
+```
+code to train n label here, do in resnet rater. can condense cos we did this earlier alr w jb
+```
+

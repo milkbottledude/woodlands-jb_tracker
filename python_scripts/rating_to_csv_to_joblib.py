@@ -114,7 +114,7 @@ def rating_to_df(rating_path):
             # connecting row to addition_df
             addition_df = pd.concat([addition_df, input_dfrow], axis=0, ignore_index=True)
             print(line_no)
-            print(addition_df.columns)
+            # print(addition_df.columns)
             line_no += 1
     return addition_df
         
@@ -137,12 +137,12 @@ def df_to_csv(addition_df, csv_path, csv_empty=False):
 def test2(test1_result, csv_path):
     df_to_csv(test1_result, csv_path)
 
-# for i in range(20, 33): # 20-32, excluding 33
-#     test2(test1(i), 'finaldata_20_to_32.csv')
+# for i in range(8, 33): # 20-32, excluding 33
+#     test2(test1(i), r'python_scripts\REAL_finaldataFULL.csv')
 
 test_results_csv_path = 'modeltest_results.csv'
 # 'csv_to_joblib' function
-def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, version, results_csv_path = 'modeltest_results.csv', joblibb=True, xgboosttt=False, model_='rfr'):
+def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, version, results_csv_path = 'modeltest_results.csv', joblibb=False, xgboosttt=False, model_='rfr'):
     # splitting up csv into x & y variables
     trainfinal_df = pd.read_csv(data_csv_path)
     print(trainfinal_df.columns)
@@ -166,8 +166,8 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
             if model_ == 'lgb':
                 model = lgb.LGBMRegressor(
                     device = 'gpu',
-                    num_leaves = 33,
-                    n_estimators = 129
+                    num_leaves = 35,
+                    n_estimators = 131
                 )
                 model_type = model
             elif xgboosttt:
@@ -183,7 +183,8 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
             if model == 'lgb':
                 model = lgb.LGBMRegressor(
                     device = 'gpu',
-                    num_leaves=40
+                    num_leaves = 35,
+                    n_estimators = 131
                 )
             elif xgboosttt:
                 model = xgb.XGBRegressor(**hyperparams)
@@ -211,7 +212,11 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
         if jb_or_wdlands == 'jb':
             # hyperparams = rfr_model_jb_hyperparams
             # model = RandomForestRegressor(**hyperparams)
-            model = lgb.LGBMRegressor(device='gpu', )
+            model = lgb.LGBMRegressor(
+                device = 'gpu',
+                num_leaves = 35,
+                n_estimators = 131
+            )
             model.fit(trainfinal_df, y_column_jb)
             # joblib.dump(model, f'rfr_model_jb_v{str(version)}.joblib')
             model.booster_.save_model(f"lgbm_model_jb_v{str(version)}.txt") 
@@ -231,7 +236,7 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
 def test3(ratings_range, jb_or_wdlands, data_csv_path, version, model_='lgb'):
     csv_to_modeltest_or_joblib(ratings_range, jb_or_wdlands, data_csv_path, version, model_=model_)
 
-test3('4-32', 'jb', 'data_v4.csv', 2, 'lgb')
+# test3('8-32', 'jb', 'python_scripts/REAL_finaldataFULL.csv', 2, 'lgb')
 
 
 # in data_v4.csv, ratings 4-7 is till line 752, lines 753-3163 is ratings 8-19
@@ -247,7 +252,7 @@ test3('4-32', 'jb', 'data_v4.csv', 2, 'lgb')
 
 # LGBM_v1 VS RFR_v5
 
-lgbm_jb_v1 = lgb.Booster(model_file="lgbm_model_jb_v1.txt")
+lgbm_jb_v2 = lgb.Booster(model_file="lgbm_model_jb_v2.txt")
 rfr_model_v5 = joblib.load("rfr_model_jb_v5.joblib")
 csv_path = "finaldata_20_to_32.csv"
 
@@ -268,3 +273,45 @@ def lgbm_vs_rfr(data_csv_path, models=list):
 
 # lgbm_vs_rfr(csv_path, [lgbm_jb_v1, rfr_model_v5])
 
+
+
+
+# #TESTING TRAIN TEST SPLIT REPLICABILITY W DIFF DFs
+
+ril_df = pd.read_csv('python_scripts/REAL_finaldataFULL.csv')
+ril_y = ril_df.pop('congestion_scale_jb')
+ril_y_wdlands = ril_df.pop('congestion_scale_wdlands')
+fek_df = pd.read_csv('rating_w_resnet/RN_finaldaytaFULL.csv')
+fek_y = fek_df.pop('jb_rating')
+
+ril_X_train, ril_X_test, ril_y_train, ril_y_test = train_test_split(ril_df, ril_y, test_size=0.3, random_state=0)
+fek_X_train, fek_X_test, fek_y_train, fek_y_test = train_test_split(fek_df, fek_y, test_size=0.3, random_state=0)
+
+# print('X_train comparison')
+print(ril_X_train.head(5))
+print(fek_X_train.head(5))
+
+print('X_test comparison')
+print(ril_X_test.head(5))
+print(fek_X_test.head(5))
+
+
+# Testing model trained on ril data, vs fek data (rated by RN rater)
+
+def ril_or_fek(y_train, ril=True):
+    model = lgb.LGBMRegressor(
+        device = 'gpu',
+        num_leaves = 35,
+        n_estimators = 131
+    )
+    model.fit(ril_X_train, y_train)
+    predictions = model.predict(ril_X_test)
+    mae = mean_absolute_error(ril_y_test, predictions)
+    rmse = mean_squared_error(ril_y_test, predictions)**0.5
+    which = 'fek'
+    if ril:
+        which = 'ril'
+    print(f"{which} mae: {round(mae, 5)} ")
+    print(f"{which} rmse: {round(rmse, 5)} ")
+
+ril_or_fek(fek_y_train, ril=False)

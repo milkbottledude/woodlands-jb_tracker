@@ -18,7 +18,7 @@ from tensorflow import keras
 
 # prepping training data (imma combine multiple snaps folders into 1 big dataset)
 
-folders_no = [4, 33] # snaps 7 to 29, 12 snaps_ folders, 
+folders_no = [8, 33] # snaps 7 to 29, 12 snaps_ folders, 
 # 4951 images - 5 corrupted:
 # snaps_5/12-03_10-00_Tue.jpg
 # snaps_5/12-04_12-00_Wed.jpg
@@ -85,15 +85,15 @@ def getting_trng_paths(index0, index1):
 # for c in corrupted:
 #     print(c)
 
-# making mask
-mask = tf.io.read_file("progress_pics/Fig-6.12-mask_v3_wdlands.jpg")
-mask = tf.image.decode_jpeg(mask, channels=3)
-mask = tf.image.resize(mask, [224, 224])  
-print(mask)
-mask = mask / 255.0 # convert 255 in white regions to 1
-mask = tf.where(mask > 0.5, 1.0, 0.0)
-print(mask)
-print('YOHOOOOOOOOOOOOOOOOO')
+# # making mask
+# mask = tf.io.read_file("progress_pics/Fig-6.12-mask_v3_wdlands.jpg")
+# mask = tf.image.decode_jpeg(mask, channels=3)
+# mask = tf.image.resize(mask, [224, 224])  
+# print(mask)
+# mask = mask / 255.0 # convert 255 in white regions to 1
+# mask = tf.where(mask > 0.5, 1.0, 0.0)
+# print(mask)
+# print('YOHOOOOOOOOOOOOOOOOO')
 
 # preprocessing function from claude
 def load_and_preprocess_image(filename, label=None):
@@ -177,44 +177,56 @@ def train_save_model(model, train_dataset, val_dataset, save_model=False):
 
 
 
-# full ting
-getting_trng_paths(folders_no[0], folders_no[1])
-to_jb_array = np.array(to_jb_ratings, dtype=np.float32)
-dses = create_trng_dataset(to_jb_array)
-model = prep_model(dses[0], dses[1])
-train_save_model(model, dses[0], dses[1], save_model=True)
+# # full ting
+# getting_trng_paths(folders_no[0], folders_no[1])
+# to_jb_array = np.array(to_jb_ratings, dtype=np.float32)
+# dses = create_trng_dataset(to_jb_array)
+# model = prep_model(dses[0], dses[1])
+# train_save_model(model, dses[0], dses[1], save_model=True)
 
 
 # just run it and watch anime, but b4 that do some js work so u dont start the day with ramune anime
 
 # testing rater model with just rating32
-jb_model = "../rn_rater_v2.keras"
+jb_model = "../jb_rn_rater_v2.keras"
 # wdlands_model = "../wdld_rn_rater_v1.keras"
-def in_depth_test(model_path):
+def in_depth_test(model_path, to_csv=False):
     rater_model = keras.models.load_model(model_path)
 
-    jb_test_ratings = []
-    wdlands_test_ratings = []
-    with open("GCloud/rating_32.txt", 'r') as f:
-        for line in f:
-            jb_test_ratings.append(float(line[-3]))
-            wdlands_test_ratings.append(float(line[-2]))
+    if not to_csv:
+        jb_test_ratings = []
+        wdlands_test_ratings = []
+        with open("GCloud/rating_32.txt", 'r') as f:
+            for line in f:
+                jb_test_ratings.append(float(line[-3]))
+                wdlands_test_ratings.append(float(line[-2]))
 
-    test_folder = "GCloud/all_snaps/snaps_32"
-    test_filenames = []
-    for f in os.listdir(test_folder):
-        full_path = os.path.join(test_folder, f)
-        test_filenames.append(full_path)
+    folder_temp = "GCloud/all_snaps/snaps_"
+    snap_filenames = []
+    snapnames = []
+    for i in range(folders_no[0], folders_no[1]):
+        folder_path = folder_temp + str(i)
+        for f in os.listdir(folder_path):
+            full_path = os.path.join(folder_path, f)
+            snapnames.append(f)
+            snap_filenames.append(full_path)
 
-    img32 = [load_and_preprocess_image(img_path) for img_path in test_filenames]
-    img32 = np.stack(img32, axis=0)
+    img_all = [load_and_preprocess_image(img_path) for img_path in snap_filenames]
+    img_all = np.stack(img_all, axis=0)
 
-    rn_ratings = rater_model.predict(img32, verbose=1)
+    rn_ratings = rater_model.predict(img_all, verbose=1)
+
+    df = pd.DataFrame(columns=['snapname', 'jb_rating'])
     for i, value in enumerate(rn_ratings):
-        if value > 1 and pred < 4:
-            pred = np.ceil(value)
-        else:
-            pred = round(float(value[0]), 2)
-        print(f'actual: {wdlands_test_ratings[i]}, labelled: {pred}')
+        if value > 1 and value < 4:
+            value = np.ceil(value)
+    # if to_csv:
+        snapname = snapnames[i]
+        df.loc[i] = [snapname, value[0]]
+        # else:
+        #     pred = round(float(value[0]), 2)
+        # print(f'actual: {wdlands_test_ratings[i]}, labelled: {pred}')
 
-# in_depth_test(wdlands_model)
+    print(df.head(10))
+    df.to_csv('rating_w_resnet/RN_finaldaytaFULL.csv', index=False)
+in_depth_test(jb_model, to_csv=True)
