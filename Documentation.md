@@ -3765,7 +3765,9 @@ fek mae: 1.39552
 fek rmse: 1.75808 
 ```
 
-Very close, almost identical losses to the ril losses. While that is indeed good news, I cant help but be disheartened that the original losses were so bad. This is not a resnet problem, but a LightGBM problem.
+Not much difference compared the ril losses, 0.27% increase for MAE and a *decrease* surprisingly for RMSE. 
+
+While that is indeed good news, I cant help but be disheartened that the original losses were so bad. This is not a resnet problem, but a LightGBM problem.
 
 Its possible that the optimal hyperparams for predicting jb_ratings is not the best for predicting wdlands_ratings. 
 
@@ -3773,6 +3775,69 @@ But going back to the whole point of this subchapter, which was to find out whet
 
 I can say now, with confidence and relief, a definite yes.
 
-### 7.3: Optimizing LightGBM model for wdlands_ratings
+### Setting up Incremental Learning
+
+As you all know, we still have ratings 33-40 that are unlabelled, so lets go ahead and create a [new csv](rating_w_resnet/RNdayta_33_40.csv) for resnet ratings 33-40:
+
+```
+def rate_to_csv(jb_model_path, wdlands_model_path, no_range):
+    jb_model = keras.models.load_model(jb_model_path)
+    ...
+...
+
+rate_to_csv(jb_RN_path, wdlands_RN_path, [33, 41])
+```
+
+Now lets train the lgbm model on the csv together with a df of all the X_column values from ratings 33-40
+
+```
+# LightGBM incremental training
+
+incremental_csv_path = r'rating_w_resnet\RNdayta_33_40.csv'
+lightgbm_jb_model_path = 'lgbm_model_jb_v2.txt'
+# lightgbm_wdlnd_model_path = 'CMGSOON.txt'
+
+def incr_gbm_trng(incr_csv_path, lgb_model_path, to_where='jb'):
+    incr_df = pd.read_csv(incr_csv_path)
+    if to_where == 'jb':
+        y_rn = incr_df.pop('jb_rating')
+    elif to_where =='wdlands':
+        y_rn = incr_df.pop('wdlands rating')
+    full_df = 'empty'
+
+    for i in range(33, 41):
+        to_attach = test2(test1(i, own_r=True), r'rating_w_resnet\w_cols_33_40.csv')
+        if full_df == 'empty':
+            full_df = to_attach
+        else:
+            full_df = pd.concat([full_df, to_attach], axis=1)
+
+    lgb_dataset = lgb.Dataset(full_df, label=y_rn)
+
+    params = {
+        'device': 'gpu',
+        'num_leaves': 35,
+        'n_estimators': 131
+    }
+
+    incr_model = lgb.train(
+        params,
+        lgb_dataset,
+        # num_boost_round=50, # adds more trees cos more data ukwim
+        init_model=lgb_model_path  # Pass path directly
+    )
+
+    incr_model.save_model(f'{to_where}_incrLGBM_model_v1.txt')
+
+incr_gbm_trng(incremental_csv_path, lightgbm_jb_model_path)
+```
+
+This function handles all incremental training for the LightGBM model, just make sure you have created the [incremental_csv](rating_w_resnet\RNdayta_33_40.csv) using the rate_to_csv function in [resnet_rater.py](rating_w_resnet/resnet_rater.py). 
+
+This way, every month when new snaps comes in, the process will be smooth: Call 1 function to label the snaps, call another function to process the X_columns data and increment-train the LGBM model.
+
+Now all thats left is to replace the jb RFR model joblib file in GAE with this [bad boy](jb_incrLGBM_model_v1.txt).
+
+### 7.4: Optimizing LightGBM model for wdlands_ratings
 
 As we saw from before, the loss values for predicting wdlands ratings were not the best, both with and without training on human annotated data.

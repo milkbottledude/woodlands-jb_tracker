@@ -52,7 +52,7 @@ def holidating(date_obj):
 
 
 
-def rating_to_df(rating_path):
+def rating_to_df(rating_path, own_rating=False):
     cols = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'hour_sin', 'hour_cos', 'week_value', 'date_sin', 'date_cos', 'day_of_year', 'day_of_year_sin', 'day_of_year_cos', 'sch_hol_period', 'public_hol_period', 'year_quarter_Q1', 'year_quarter_Q2', 'year_quarter_Q3']
     addition_df = pd.DataFrame(columns=cols)
     with open(rating_path, 'r') as f:
@@ -62,9 +62,9 @@ def rating_to_df(rating_path):
             input_dfrow = pd.DataFrame(np.zeros((1, len(cols))), columns=cols)
             separation = line.split(' ')
             # getting ratings, the 'y value'
-            ratings = separation[1]
-            jb_rating = ratings[0]
-            wdlands_rating = ratings[1]
+            # ratings = separation[1]
+            jb_rating = None # ratings[0]
+            wdlands_rating = None # ratings[1]
             info = separation[0][:-4]
             info_parts = info.split('_')
             # getting day of week index (within function)
@@ -109,8 +109,9 @@ def rating_to_df(rating_path):
             elif month_value <= 9:
                 input_dfrow['year_quarter_Q3'] = True
             # adding jb and wdlands ratings as the last 2 cols
-            input_dfrow['congestion_scale_jb'] = jb_rating
-            input_dfrow['congestion_scale_wdlands'] = wdlands_rating
+            if not own_rating:
+                input_dfrow['congestion_scale_jb'] = jb_rating
+                input_dfrow['congestion_scale_wdlands'] = wdlands_rating
             # connecting row to addition_df
             addition_df = pd.concat([addition_df, input_dfrow], axis=0, ignore_index=True)
             print(line_no)
@@ -120,22 +121,22 @@ def rating_to_df(rating_path):
         
 # test run 'rating_to_df' function (SUCCESS: 8, 9, 10)
 rating_no = 11
-def test1(x):
-    return rating_to_df(fr"C:\Coding\Project-JBridge\GCloud\rating_{x}.txt")
+def test1(x, own_r):
+    return rating_to_df(fr"C:\Coding\Project-JBridge\GCloud\rating_{x}.txt", own_rating=own_r)
 
 
 # 'df_to_csv' function
-csv_path = r'C:\Users\cheah\OneDrive\Documents\Coding\Project-JBridge\python_scripts\REAL_finaldataFULL.csv'
 def df_to_csv(addition_df, csv_path, csv_empty=False):
     if csv_empty:
         addition_df.to_csv(csv_path, mode='a', header=True, index=False)
     else:
         addition_df.to_csv(csv_path, mode='a', header=False, index=False)
     print("to csv'ed")
+    return addition_df
 
 # test run 'df_to_csv' function, need to test with test1 to work (SUCCESS: 8, 9, 10)
 def test2(test1_result, csv_path):
-    df_to_csv(test1_result, csv_path)
+    return df_to_csv(test1_result, csv_path)
 
 # for i in range(8, 33): # 20-32, excluding 33
 #     test2(test1(i), r'python_scripts\REAL_finaldataFULL.csv')
@@ -219,7 +220,11 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
 
         else:
             # hyperparams = rfr_model_wdlands_hyperparams
-            model = lgb.LGBMRegressor(device='gpu')
+            model = lgb.LGBMRegressor(
+                device = 'gpu',
+                num_leaves = 35,
+                n_estimators = 131
+            )
             # model = RandomForestRegressor(**hyperparams)
             model.fit(trainfinal_df, y_column_wdlands)
             # joblib.dump(model, f'rfr_model_wdlands_v{str(version)}.joblib')
@@ -231,7 +236,7 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
 def test3(ratings_range, jb_or_wdlands, data_csv_path, version, model_='lgb'):
     csv_to_modeltest_or_joblib(ratings_range, jb_or_wdlands, data_csv_path, version, model_=model_)
 
-test3('8-32', 'wdlands', 'python_scripts/REAL_finaldataFULL.csv', 2)
+# test3('8-32', 'jb', 'python_scripts/RN_finaldayta_8_40.csv', 3, 'lgb')
 
 
 # in data_v4.csv, ratings 4-7 is till line 752, lines 753-3163 is ratings 8-19
@@ -314,3 +319,40 @@ def ril_or_fek(y_train, ril=bool, train=True, model_path=False):
     print(f"{which} rmse: {round(rmse, 5)} ")
 
 # ril_or_fek(fek_y_train, ril=False)
+
+# LightGBM incremental training
+
+incremental_csv_path = r'rating_w_resnet\RNdayta_33_40.csv'
+lightgbm_jb_model_path = 'lgbm_model_jb_v2.txt'
+# lightgbm_wdlnd_model_path = 'CMGSOON.txt'
+
+def incr_gbm_trng(incr_csv_path, lgb_model_path, to_where='jb'):
+    incr_df = pd.read_csv(incr_csv_path)
+    if to_where == 'jb':
+        y_rn = incr_df.pop('jb_rating')
+    elif to_where =='wdlands':
+        y_rn = incr_df.pop('wdlands rating')
+
+    for i in range(33, 41):
+        test2(test1(i, own_r=True), r'rating_w_resnet\w_cols_33_40.csv')
+
+    full_df = pd.read_csv(r'rating_w_resnet\w_cols_33_40.csv')
+    print(full_df)
+    lgb_dataset = lgb.Dataset(full_df, label=y_rn)
+
+    params = {
+        'device': 'gpu',
+        'num_leaves': 35,
+        'n_estimators': 131
+    }
+
+    incr_model = lgb.train(
+        params,
+        lgb_dataset,
+        # num_boost_round=50, # adds more trees cos more data ukwim
+        init_model=lgb_model_path  # Pass path directly
+    )
+
+    incr_model.save_model(f'{to_where}_incrLGBM_model_v1.txt')
+
+incr_gbm_trng(incremental_csv_path, lightgbm_jb_model_path)

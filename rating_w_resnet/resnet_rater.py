@@ -20,7 +20,7 @@ from tensorflow import keras
 
 to_where = 'wdlands'
 
-folders_no = [8, 33] # snaps 7 to 29, 12 snaps_ folders, 
+folders_no = [33, 41] # snaps 7 to 29, 12 snaps_ folders, 
 # 4951 images - 5 corrupted:
 # snaps_5/12-03_10-00_Tue.jpg
 # snaps_5/12-04_12-00_Wed.jpg
@@ -190,50 +190,48 @@ def train_save_model(model, train_dataset, val_dataset, save_model=False):
 # just run it and watch anime, but b4 that do some js work so u dont start the day with ramune anime
 
 # testing rater model with just rating32
-jb_model = "../jb_rn_rater_v2.keras"
-wdlands_model = "../wdlands_rn_rater_v2.keras"
-def in_depth_test(model_path, to_csv=False):
-    rater_model = keras.models.load_model(model_path)
-
-    if not to_csv:
-        jb_test_ratings = []
-        wdlands_test_ratings = []
-        with open("GCloud/rating_32.txt", 'r') as f:
-            for line in f:
-                jb_test_ratings.append(float(line[-3]))
-                wdlands_test_ratings.append(float(line[-2]))
+jb_RN_path = "../jb_rn_rater_v2.keras"
+wdlands_RN_path = "../wdlands_rn_rater_v2.keras"
+def rate_to_csv(jb_model_path, wdlands_model_path, no_range):
+    jb_model = keras.models.load_model(jb_model_path)
+    wdlands_model = keras.models.load_model(wdlands_model_path)
 
     folder_temp = "GCloud/all_snaps/snaps_"
     snap_filenames = []
     snapnames = []
-    for i in range(folders_no[0], folders_no[1]):
+    for i in range(no_range[0], no_range[1]):
         folder_path = folder_temp + str(i)
         for f in os.listdir(folder_path):
             full_path = os.path.join(folder_path, f)
-            # snapnames.append(f)
+            snapnames.append(f)
             snap_filenames.append(full_path)
 
     img_all = [load_and_preprocess_image(img_path) for img_path in snap_filenames]
     img_all = np.stack(img_all, axis=0)
+    
 
-    rn_ratings = rater_model.predict(img_all, verbose=1)
+    # taking care of jb side of things
+    rn_jb_ratings = jb_model.predict(img_all, verbose=1)
+    jb_ratings_fek = []
+    for i, value in enumerate(rn_jb_ratings):
+        if value[0] > 1 and value[0] < 4:
+            value[0] = np.ceil(value[0])
+        pred = round(float(value[0]), 2)
+        jb_ratings_fek.append(pred)
 
-    # df = pd.DataFrame(columns=['jb_rating'])
+    # taking care of wdlands side of things
+    rn_wdlands_ratings = wdlands_model.predict(img_all, verbose=1)
     wdlnd_ratings_fek = []
-    for i, value in enumerate(rn_ratings):
-        # if value > 1 and value < 4:
-        #     value = np.ceil(value)
-    # if to_csv:
-        # snapname = snapnames[i]
-        wdlnd_ratings_fek.append(value[0])
-        # else:
-        #     pred = round(float(value[0]), 2)
-        # print(f'actual: {wdlands_test_ratings[i]}, labelled: {pred}')
+    for i, value in enumerate(rn_wdlands_ratings):
+        pred = round(float(value[0]), 2)
+        wdlnd_ratings_fek.append(pred)
 
-    df = pd.read_csv('rating_w_resnet/RN_finaldaytaFULL.csv')
-    df['wdlands_rating'] = wdlnd_ratings_fek
-    print(df.head(10))
-    df.to_csv('rating_w_resnet/RN_finaldaytaFULL.csv', index=False)
+    df = pd.DataFrame({
+        'snapname': snapnames,
+        'jb_rating': jb_ratings_fek,
+        'wdlands_rating': wdlnd_ratings_fek
+    })
+    df.to_csv('rating_w_resnet/RNdayta_33_40.csv', index=False)
 
 
-in_depth_test(wdlands_model, to_csv=True)
+rate_to_csv(jb_RN_path, wdlands_RN_path, [33, 41])
