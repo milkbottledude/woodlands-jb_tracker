@@ -279,12 +279,12 @@ def lgbm_vs_rfr(data_csv_path, models=list):
 # #TESTING TRAIN TEST SPLIT REPLICABILITY W DIFF DFs
 
 ril_df = pd.read_csv('python_scripts/REAL_finaldataFULL.csv')
-ril_y = ril_df.pop('congestion_scale_jb')
+ril_y_jb = ril_df.pop('congestion_scale_jb')
 ril_y_wdlands = ril_df.pop('congestion_scale_wdlands')
 fek_df = pd.read_csv('rating_w_resnet/RN_finaldaytaFULL.csv')
-fek_y = fek_df.pop('jb_rating')
+fek_y = fek_df.pop('wdlands_rating')
 
-ril_X_train, ril_X_test, ril_y_train, ril_y_test = train_test_split(ril_df, ril_y, test_size=0.3, random_state=0)
+ril_X_train, ril_X_test, ril_y_train, ril_y_test = train_test_split(ril_df, ril_y_wdlands, test_size=0.3, random_state=0)
 fek_X_train, fek_X_test, fek_y_train, fek_y_test = train_test_split(fek_df, fek_y, test_size=0.3, random_state=0)
 
 # print('X_train comparison')
@@ -298,7 +298,7 @@ print(fek_X_test.head(5))
 
 # Testing model trained on ril data, vs fek data (rated by RN rater)
 
-def ril_or_fek(y_train, ril=True):
+def ril_or_fek(y_train, ril=bool):
     model = lgb.LGBMRegressor(
         device = 'gpu',
         num_leaves = 35,

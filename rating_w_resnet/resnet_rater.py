@@ -18,6 +18,8 @@ from tensorflow import keras
 
 # prepping training data (imma combine multiple snaps folders into 1 big dataset)
 
+to_where = 'wdlands'
+
 folders_no = [8, 33] # snaps 7 to 29, 12 snaps_ folders, 
 # 4951 images - 5 corrupted:
 # snaps_5/12-03_10-00_Tue.jpg
@@ -31,7 +33,7 @@ snaps_folder_template = rf"C:/Coding/Project-JBridge/GCloud/all_snaps/snaps_"
 ratings_file_template = rf"C:/Coding/Project-JBridge/GCloud/rating_"
 
 all_snaps_filepaths = []
-to_jb_ratings = []
+# to_jb_ratings = []
 to_wdlands_ratings = []
 def getting_trng_paths(index0, index1):
     for x in range(index0, index1):
@@ -47,7 +49,7 @@ def getting_trng_paths(index0, index1):
         print(f'digging thru rating_{x} text file for ratings')
         with open(ratings_file_path, 'r') as f:
             for line in f:
-                to_jb_ratings.append(float(line[-3]))
+                # to_jb_ratings.append(float(line[-3]))
                 to_wdlands_ratings.append(float(line[-2]))
     # print(f'length of snaps_{x} and ratings_{x}: {str(len(all_snaps_filepaths))} and {str(len(to_jb_ratings))}, {str(len(to_wdlands_ratings))}')
 
@@ -151,7 +153,7 @@ def prep_model(train_dataset, val_dataset):
     ])
 
     full_regression_model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=0.00036), # optimizer decides how model weights are updated during trng, have no idea how it works
+        optimizer=tf.keras.optimizers.Adam(learning_rate=0.00026), # optimizer decides how model weights are updated during trng, have no idea how it works
         loss='mse',  # Mean Squared Error
         metrics=['mae']  # Mean Absolute Error
     )
@@ -169,18 +171,18 @@ def train_save_model(model, train_dataset, val_dataset, save_model=False):
         epochs = 12, # switching to 12 epochs instead, 20 takes way too long
         # class_weight = custom_weights
     )
-
+ 
     # saving model
     if save_model:
-        results.model.save("../jb_rn_rater_v2.keras")
+        results.model.save(f"../{to_where}_rn_rater_v2.keras")
         print('model saved yahoo')
 
 
 
 # # full ting
 # getting_trng_paths(folders_no[0], folders_no[1])
-# to_jb_array = np.array(to_jb_ratings, dtype=np.float32)
-# dses = create_trng_dataset(to_jb_array)
+# to_wdlands_array = np.array(to_wdlands_ratings, dtype=np.float32)
+# dses = create_trng_dataset(to_wdlands_array)
 # model = prep_model(dses[0], dses[1])
 # train_save_model(model, dses[0], dses[1], save_model=True)
 
@@ -189,7 +191,7 @@ def train_save_model(model, train_dataset, val_dataset, save_model=False):
 
 # testing rater model with just rating32
 jb_model = "../jb_rn_rater_v2.keras"
-# wdlands_model = "../wdld_rn_rater_v1.keras"
+wdlands_model = "../wdlands_rn_rater_v2.keras"
 def in_depth_test(model_path, to_csv=False):
     rater_model = keras.models.load_model(model_path)
 
@@ -208,7 +210,7 @@ def in_depth_test(model_path, to_csv=False):
         folder_path = folder_temp + str(i)
         for f in os.listdir(folder_path):
             full_path = os.path.join(folder_path, f)
-            snapnames.append(f)
+            # snapnames.append(f)
             snap_filenames.append(full_path)
 
     img_all = [load_and_preprocess_image(img_path) for img_path in snap_filenames]
@@ -216,17 +218,22 @@ def in_depth_test(model_path, to_csv=False):
 
     rn_ratings = rater_model.predict(img_all, verbose=1)
 
-    df = pd.DataFrame(columns=['snapname', 'jb_rating'])
+    # df = pd.DataFrame(columns=['jb_rating'])
+    wdlnd_ratings_fek = []
     for i, value in enumerate(rn_ratings):
-        if value > 1 and value < 4:
-            value = np.ceil(value)
+        # if value > 1 and value < 4:
+        #     value = np.ceil(value)
     # if to_csv:
-        snapname = snapnames[i]
-        df.loc[i] = [snapname, value[0]]
+        # snapname = snapnames[i]
+        wdlnd_ratings_fek.append(value[0])
         # else:
         #     pred = round(float(value[0]), 2)
         # print(f'actual: {wdlands_test_ratings[i]}, labelled: {pred}')
 
+    df = pd.read_csv('rating_w_resnet/RN_finaldaytaFULL.csv')
+    df['wdlands_ratings'] = wdlnd_ratings_fek
     print(df.head(10))
     df.to_csv('rating_w_resnet/RN_finaldaytaFULL.csv', index=False)
-in_depth_test(jb_model, to_csv=True)
+
+
+in_depth_test(wdlands_model, to_csv=True)

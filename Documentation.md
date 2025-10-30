@@ -3658,6 +3658,104 @@ Before we go ahead and train the resnet model on the rest of our unlabelled snap
 Starting off with training the resnet model on the wdlands ratings and labelling snaps 8-32. Same deal as earlier, just a different y_value.
 
 ```
-code to train n label here, do in resnet rater. can condense cos we did this earlier alr w jb
+# # full ting
+getting_trng_paths(folders_no[0], folders_no[1])
+to_wdlands_array = np.array(to_wdlands_ratings, dtype=np.float32)
+dses = create_trng_dataset(to_wdlands_array)
+model = prep_model(dses[0], dses[1])
+train_save_model(model, dses[0], dses[1], save_model=True)
 ```
+
+Swapped the 'to_jb' variables with their 'to_wdlands' counterparts.
+
+Now we shall rate snaps 8-33 using the model we just developed, `wdlands_rn_rater_v2.keras`.
+
+```
+def in_depth_test(model_path, to_csv=False):
+    rater_model = keras.models.load_model(model_path)
+
+    folder_temp = "GCloud/all_snaps/snaps_"
+    snap_filenames = []
+    snapnames = []
+    for i in range(folders_no[0], folders_no[1]):
+        folder_path = folder_temp + str(i)
+        for f in os.listdir(folder_path):
+            full_path = os.path.join(folder_path, f)
+            # snapnames.append(f)
+            snap_filenames.append(full_path)
+
+    img_all = [load_and_preprocess_image(img_path) for img_path in snap_filenames]
+    img_all = np.stack(img_all, axis=0)
+
+    rn_ratings = rater_model.predict(img_all, verbose=1)
+
+    wdlnd_ratings_fek = []
+    for i, value in enumerate(rn_ratings):
+        wdlnd_ratings_fek.append(value[0])
+
+    df = pd.read_csv('rating_w_resnet/wdlnd_RN_finaldaytaFULL.csv')
+    df['wdlands_rating'] = wdlnd_ratings_fek
+    print(df.head(10))
+    df.to_csv('rating_w_resnet/wdlnd_RN_finaldaytaFULL.csv', index=False)
+```
+
+Much shorter than with jb, as I removed the if statement that will np.ceil if 1 < value < 4. I also did not need to create a new df, just load the previous one and append the wdlands column to its end.
+
+```
+              snapname  jb_rating  wdlands_rating
+0  01-01_13-00_Wed.jpg   0.105126         0.018367
+1  01-01_14-00_Wed.jpg   0.050561         0.025663
+2  01-01_15-00_Wed.jpg   0.049054         0.017867
+3  01-01_16-00_Wed.jpg   0.049550         1.241041
+4  01-01_17-00_Wed.jpg   0.042839         0.136072
+5  01-01_18-00_Wed.jpg   0.041538         0.009586
+6  01-01_19-00_Wed.jpg   0.028353         0.011576
+7  01-01_20-00_Wed.jpg   0.007748         0.013445
+8  01-01_21-00_Wed.jpg   0.005974         0.020411
+9  01-01_22-00_Wed.jpg   0.009494         0.056987
+```
+
+Now lets see how the LightGBM model predicts to_wdlands congestion values when trained with human annotated data as compared to with resnet labelled data.
+
+Starting off with human annotated data:
+
+```
+# #TESTING TRAIN TEST SPLIT REPLICABILITY W DIFF DFs
+
+...
+ril_y_wdlands = ril_df.pop('congestion_scale_wdlands')
+...
+fek_y = fek_df.pop('wdlands_rating')
+
+ril_X_train, ril_X_test, ril_y_train, ril_y_test = train_test_split(ril_df, ril_y_wdlands, test_size=0.3, random_state=0)
+fek_X_train, fek_X_test, fek_y_train, fek_y_test = train_test_split(fek_df, fek_y, test_size=0.3, random_state=0)
+...
+ril_or_fek(ril_y_train, ril=True)
+```
+
+```
+ril mae: 1.39184 
+ril rmse: 1.75846 
+```
+Even with real data, the loss is very high... Nevertheless, we press on.
+
+```
+...
+ril_or_fek(fek_y_train, ril=False)
+```
+
+```
+fek mae: 1.39552 
+fek rmse: 1.75808 
+```
+
+Very close, almost identical losses to the ril losses. While that is indeed good news, I cant help but be disheartened that the original losses were so bad. This is not a resnet problem, but a LightGBM problem.
+
+Its possible that the optimal hyperparams for predicting jb_ratings is not the best for predicting wdlands_ratings. 
+
+But going back to the whole point of this subchapter, which was to find out whether automation of snaps labelling using the resnet models is feasible.
+
+I can say now, with confidence and relief, a definite yes.
+
+### 7.3: Optimizing LightGBM model for wdlands_ratings
 
