@@ -169,18 +169,15 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
                     num_leaves = 35,
                     n_estimators = 131
                 )
-                model_type = model
             elif xgboosttt:
                 model = xgb.XGBRegressor(**hyperparams)
-                model_type = 'xgb'
             else:
                 model = RandomForestRegressor(**hyperparams)
-                model_type = 'rfr'
             print('jb selected for testing')
         else:
             y = y_column_wdlands
             hyperparams = rfr_model_wdlands_hyperparams
-            if model == 'lgb':
+            if model_ == 'lgb':
                 model = lgb.LGBMRegressor(
                     device = 'gpu',
                     num_leaves = 35,
@@ -188,10 +185,8 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
                 )
             elif xgboosttt:
                 model = xgb.XGBRegressor(**hyperparams)
-                model_type = 'xgb'
             else:
                 model = RandomForestRegressor(**hyperparams)
-                model_type = 'rfr'
             print('wdlands selected for testing')
 
         X_train, X_test, y_train, y_test = train_test_split(trainfinal_df, y, test_size=0.3, random_state=0)
@@ -204,7 +199,7 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
         date_time = datetime.now()
         date_time = date_time.strftime('%Y-%m-%d %H:%M')
         test_results_df = pd.DataFrame(columns=['datetime', 'road_to', 'ratings_used', 'custom_hyperparameters', 'mae', 'rmse', 'model'])
-        test_results_df.loc[0] = [date_time, jb_or_wdlands, rating_range, hyperparams, mae, rmse, model_type]
+        test_results_df.loc[0] = [date_time, jb_or_wdlands, rating_range, hyperparams, mae, rmse, model_]
         test_results_df.to_csv(results_csv_path, mode='a', header=False, index=False) # disable header=True
 
 
@@ -236,7 +231,7 @@ def csv_to_modeltest_or_joblib(rating_range, jb_or_wdlands, data_csv_path, versi
 def test3(ratings_range, jb_or_wdlands, data_csv_path, version, model_='lgb'):
     csv_to_modeltest_or_joblib(ratings_range, jb_or_wdlands, data_csv_path, version, model_=model_)
 
-# test3('8-32', 'jb', 'python_scripts/REAL_finaldataFULL.csv', 2, 'lgb')
+test3('8-32', 'wdlands', 'python_scripts/REAL_finaldataFULL.csv', 2)
 
 
 # in data_v4.csv, ratings 4-7 is till line 752, lines 753-3163 is ratings 8-19
@@ -282,29 +277,33 @@ ril_df = pd.read_csv('python_scripts/REAL_finaldataFULL.csv')
 ril_y_jb = ril_df.pop('congestion_scale_jb')
 ril_y_wdlands = ril_df.pop('congestion_scale_wdlands')
 fek_df = pd.read_csv('rating_w_resnet/RN_finaldaytaFULL.csv')
-fek_y = fek_df.pop('wdlands_rating')
+fek_y = fek_df.pop('jb_rating')
 
-ril_X_train, ril_X_test, ril_y_train, ril_y_test = train_test_split(ril_df, ril_y_wdlands, test_size=0.3, random_state=0)
+ril_X_train, ril_X_test, ril_y_train, ril_y_test = train_test_split(ril_df, ril_y_jb, test_size=0.3, random_state=0)
 fek_X_train, fek_X_test, fek_y_train, fek_y_test = train_test_split(fek_df, fek_y, test_size=0.3, random_state=0)
 
 # print('X_train comparison')
-print(ril_X_train.head(5))
-print(fek_X_train.head(5))
+# print(ril_X_train.head(5))
+# print(fek_X_train.head(5))
 
-print('X_test comparison')
-print(ril_X_test.head(5))
-print(fek_X_test.head(5))
+# print('X_test comparison')
+# print(ril_X_test.head(5))
+# print(fek_X_test.head(5))
 
 
 # Testing model trained on ril data, vs fek data (rated by RN rater)
 
-def ril_or_fek(y_train, ril=bool):
-    model = lgb.LGBMRegressor(
-        device = 'gpu',
-        num_leaves = 35,
-        n_estimators = 131
-    )
-    model.fit(ril_X_train, y_train)
+def ril_or_fek(y_train, ril=bool, train=True, model_path=False):
+    if train:
+        model = lgb.LGBMRegressor(
+            device = 'gpu',
+            num_leaves = 35,
+            n_estimators = 131
+        )
+        model.fit(ril_X_train, y_train)
+    else:
+        # model = lgb.Booster(model_file=model_path)
+        model = joblib.load('rfr_model_jb_v5.joblib')
     predictions = model.predict(ril_X_test)
     mae = mean_absolute_error(ril_y_test, predictions)
     rmse = mean_squared_error(ril_y_test, predictions)**0.5
@@ -314,4 +313,4 @@ def ril_or_fek(y_train, ril=bool):
     print(f"{which} mae: {round(mae, 5)} ")
     print(f"{which} rmse: {round(rmse, 5)} ")
 
-ril_or_fek(fek_y_train, ril=False)
+# ril_or_fek(fek_y_train, ril=False)

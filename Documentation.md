@@ -3653,6 +3653,15 @@ fek rmse: 1.165
 
 WOW. Barely a 0.006 MAE increase, and a **decrease** in RMSE. This confirms that the LightGBM predictor model performance won't deviate too much whether we use resnet-generated jb ratings or human-annotated ones. 
 
+To put that into perspective, heres the loss results from testing our latest rfr model (which is currently implemented into the jscrape website at the time of writing) on the same test set:
+
+```
+fek mae: 0.68167 
+fek rmse: 1.16489 
+```
+
+Near identical losses, which is good, except the LightGBM model supports incremental learning unlike sklearn's RFR model.
+
 Before we go ahead and train the resnet model on the rest of our unlabelled snaps (33-40 as of the time of writing), lets go ahead and do the same for the other side of the road heading towards woodlands.
 
 Starting off with training the resnet model on the wdlands ratings and labelling snaps 8-32. Same deal as earlier, just a different y_value.
@@ -3737,7 +3746,14 @@ ril_or_fek(ril_y_train, ril=True)
 ril mae: 1.39184 
 ril rmse: 1.75846 
 ```
-Even with real data, the loss is very high... Nevertheless, we press on.
+Even with real data, the loss is very high... but still a slight improvement from the currently deployed rfr model: 
+
+```
+fek mae: 1.39554 
+fek rmse: 1.75808 
+```
+
+Thats not to say that the LighGBM model is performing at a satisfactory level, its not. Nevertheless, we are here to test resnet labels VS human labels, so lets press on.
 
 ```
 ...
@@ -3759,3 +3775,4 @@ I can say now, with confidence and relief, a definite yes.
 
 ### 7.3: Optimizing LightGBM model for wdlands_ratings
 
+As we saw from before, the loss values for predicting wdlands ratings were not the best, both with and without training on human annotated data.

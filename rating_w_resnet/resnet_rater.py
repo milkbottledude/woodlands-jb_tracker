@@ -231,7 +231,7 @@ def in_depth_test(model_path, to_csv=False):
         # print(f'actual: {wdlands_test_ratings[i]}, labelled: {pred}')
 
     df = pd.read_csv('rating_w_resnet/RN_finaldaytaFULL.csv')
-    df['wdlands_ratings'] = wdlnd_ratings_fek
+    df['wdlands_rating'] = wdlnd_ratings_fek
     print(df.head(10))
     df.to_csv('rating_w_resnet/RN_finaldaytaFULL.csv', index=False)
 

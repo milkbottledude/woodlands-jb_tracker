@@ -25,3 +25,5 @@ datetime,road_to,ratings_used,custom_hyperparameters,mae,rmse,model
 2025-10-29 18:06,jb,8-32,{'random_state': 0},0.6316086695610893,1.1045547309204924,"LGBMRegressor(device='gpu', n_estimators=129, num_leaves=35)"
 2025-10-29 18:07,jb,8-32,{'random_state': 0},0.6317134829049667,1.1036305166255225,"LGBMRegressor(device='gpu', n_estimators=131, num_leaves=35)"
 2025-10-29 18:07,jb,8-32,{'random_state': 0},0.6316007276745265,1.1035676904199687,"LGBMRegressor(device='gpu', n_estimators=131, num_leaves=35)"
+2025-10-30 14:08,jb,8-32,{'random_state': 0},0.6763398429262488,1.1668402146559371,"LGBMRegressor(device='gpu', n_estimators=131, num_leaves=35)"
+2025-10-30 14:11,wdlands,8-32,{'random_state': 0},1.391977636760072,1.7587169725727023,lgb
