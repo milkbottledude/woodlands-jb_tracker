@@ -42,7 +42,7 @@ Chapter 7: Incremental Learning with LightGBM
 - 7.2: [Integrating Rater with Predictor](#72-integrating-resnet-rater-model-with-lighgbm-predictor-model)
 
 
-[Conclusion](#conclusion)
+Chapter 8: [Conclusion](#conclusion)
 
 
 
